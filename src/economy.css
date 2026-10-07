@@ -1,0 +1,1400 @@
+/* Extend the approved island UI: cream reading surfaces, teal hierarchy,
+   emerald selections, compact ledgers and the existing tactile controls. */
+.eco-scroll-panel {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Content lines up with the dossier header and tabs; the 6px bleed keeps
+     focus rings from being clipped at the panel edge. */
+  margin-inline: -6px;
+  padding: 14px 6px 30px;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #a4c6b1 transparent;
+  background: var(--q-cream);
+  color: var(--q-ink);
+}
+.eco-scroll-panel h2:focus,
+.eco-scroll-panel h3:focus {
+  outline: none;
+}
+.eco-scroll-panel p {
+  max-width: 80ch;
+}
+.eco-scroll-panel button {
+  padding: 8px 13px;
+}
+.eco-kicker {
+  color: var(--q-muted);
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 3px !important;
+}
+.eco-catalog-header,
+.eco-detail-header,
+.eco-region-heading,
+.eco-section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+.eco-catalog-header > div:first-child,
+.eco-detail-header > div:first-child,
+.eco-region-heading > div {
+  min-width: 0;
+}
+.eco-catalog-header h2,
+.eco-detail-header h2 {
+  margin-bottom: 8px;
+}
+.eco-catalog-header p,
+.eco-detail-header p {
+  color: var(--q-muted);
+}
+.eco-policy-counts {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.eco-policy-counts strong {
+  font-family: var(--q-heading);
+  font-size: 20px;
+}
+.eco-catalog-controls {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(180px, 0.5fr);
+  gap: 16px;
+  margin: 0 0 12px;
+}
+.eco-catalog-controls label {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.eco-catalog-controls input,
+.eco-catalog-controls .game-select {
+  width: 100%;
+  min-height: 42px;
+}
+.eco-filter-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 0 0 14px;
+}
+.eco-filter-row > span {
+  margin-left: auto;
+  color: var(--q-muted);
+  font-size: 14px;
+}
+.eco-impact-note,
+.eco-spending-explainer {
+  color: var(--q-muted);
+  font-size: 14px;
+  line-height: 1.4 !important;
+}
+.eco-policy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.eco-policy-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 176px;
+  column-gap: 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--q-line);
+  border-radius: 14px;
+  background: #fffdf7;
+}
+.eco-policy-summary {
+  min-width: 0;
+}
+.eco-policy-summary h3 {
+  margin: 2px 0 6px;
+}
+.eco-policy-summary p {
+  margin-bottom: 10px;
+}
+.eco-policy-row[data-planned="true"] .eco-kicker {
+  color: var(--q-green);
+}
+.eco-policy-meta,
+.eco-policy-cost {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-end;
+  text-align: right;
+}
+.eco-policy-meta strong,
+.eco-policy-cost strong {
+  font-size: 19px;
+  font-family: var(--q-heading);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.eco-policy-meta span,
+.eco-policy-meta small,
+.eco-policy-cost span {
+  color: var(--q-muted);
+  font-size: 13px;
+}
+.eco-policy-meta button {
+  margin-top: 10px;
+  width: 100%;
+}
+.eco-impacts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 18px;
+  list-style: none;
+  margin: 10px 0 12px;
+  padding: 0;
+}
+.eco-impacts li {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--q-green);
+}
+.eco-impacts li[data-direction="down"] {
+  color: #9a3829;
+}
+.eco-impacts li b {
+  font-size: 19px;
+}
+.eco-impacts li small {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--q-muted);
+}
+.eco-no-impact {
+  font-size: 14px;
+  color: var(--q-muted);
+  font-style: italic;
+}
+.eco-consequences {
+  margin: 8px 0 12px;
+  gap: 7px 18px;
+}
+.eco-consequences li {
+  color: #9a3829;
+}
+.eco-policy-meta .eco-startup-cost {
+  margin: 5px 0 2px;
+  color: #9a3829;
+  font-variant-numeric: tabular-nums;
+}
+.eco-allocation-total {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.eco-allocation-total span {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--q-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+.eco-budget-breakdown {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.eco-back {
+  margin-bottom: 16px;
+}
+.eco-detail-header {
+  gap: 22px;
+}
+.eco-policy-cost {
+  flex: 0 0 auto;
+}
+.eco-policy-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 35px;
+  padding: 14px 0;
+  margin: 12px 0 20px;
+  border-top: 1px solid var(--q-line);
+  border-bottom: 1px solid var(--q-line);
+}
+.eco-policy-facts > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.eco-policy-facts span {
+  font-size: 13px;
+  color: var(--q-muted);
+}
+.eco-policy-facts strong {
+  font-variant-numeric: tabular-nums;
+}
+.eco-explanation {
+  margin-bottom: 26px;
+}
+.eco-explanation h3 {
+  margin-top: 16px;
+}
+.eco-section-heading {
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.eco-section-heading h3 {
+  margin-bottom: 0;
+}
+.eco-section-heading > span {
+  font-size: 13px;
+  color: var(--q-muted);
+  text-align: right;
+}
+.eco-section-heading > strong {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.eco-notice {
+  background: #fff1bf;
+  border-left: 3px solid #d7ad39;
+  border-radius: 0 8px 8px 0;
+  padding: 10px 13px;
+  font-size: 14px;
+  color: #655022;
+}
+.eco-data-table,
+.eco-spending-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+}
+.eco-data-table th,
+.eco-spending-table th {
+  text-align: left;
+  font-weight: 700;
+}
+.eco-data-table thead th,
+.eco-spending-table thead th {
+  color: var(--q-muted);
+  font-size: 13px;
+  padding: 10px 9px;
+  background: #f1f5e9;
+  border-bottom: 1px solid var(--q-line);
+}
+.eco-data-table td,
+.eco-data-table tbody th,
+.eco-spending-table td,
+.eco-spending-table tbody th {
+  padding: 10px 9px;
+  border-bottom: 1px solid var(--q-line);
+}
+.eco-data-table td,
+.eco-spending-table td:nth-last-child(-n + 2) {
+  text-align: right;
+}
+.eco-data-table td {
+  overflow-wrap: anywhere;
+}
+.eco-spending-table th:first-child {
+  width: 18%;
+}
+.eco-spending-table td:nth-child(2) {
+  width: 42%;
+}
+.eco-spending-table td:nth-last-child(-n + 2) {
+  white-space: nowrap;
+}
+.eco-spending-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  border: 1px solid #b5cfc0;
+  border-radius: 10px;
+  overflow: visible;
+}
+.eco-spending-options label {
+  position: relative;
+  min-width: 0;
+  display: flex;
+}
+.eco-spending-options input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+.eco-spending-options input:disabled {
+  cursor: not-allowed;
+}
+.eco-spending-options label span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  width: 100%;
+  padding: 6px 8px;
+  font-family: var(--q-heading);
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  background: #fffdf6;
+  border-radius: 0;
+}
+.eco-spending-options label:first-of-type span {
+  border-radius: 9px 0 0 9px;
+}
+.eco-spending-options label:last-of-type span {
+  border-radius: 0 9px 9px 0;
+}
+.eco-spending-options label + label {
+  border-left: 1px solid var(--q-line);
+}
+.eco-spending-options input:checked + span {
+  background: var(--q-green);
+  color: #fffdf6;
+}
+.eco-spending-options input:focus-visible + span {
+  outline: 3px solid #14594d;
+  outline-offset: 3px;
+  z-index: 1;
+}
+.eco-spending-options input:disabled + span {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.eco-spending-options input:not(:checked):not(:disabled) + span:hover {
+  background: #edf5e9;
+}
+.eco-spending-section {
+  margin-bottom: 22px;
+}
+.eco-policy-action {
+  position: sticky;
+  bottom: -30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 -6px -30px;
+  padding: 14px 6px;
+  background: var(--q-cream);
+  border-top: 1px solid var(--q-line);
+  box-shadow: 0 -5px 12px #244d4909;
+  z-index: 2;
+}
+.eco-policy-action > div {
+  flex: 1 1 300px;
+}
+.eco-policy-action p {
+  margin: 4px 0 0;
+  color: var(--q-muted);
+  font-size: 13px;
+}
+.eco-policy-action > button {
+  flex: 0 0 auto;
+}
+.eco-empty {
+  padding: 26px 10px;
+}
+.eco-region-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 8px 0 24px;
+  gap: 16px;
+}
+.eco-region-metrics > div {
+  min-width: 0;
+}
+.eco-region-metrics dt {
+  color: var(--q-muted);
+  font-size: 13px;
+}
+.eco-region-metrics dd {
+  font-family: var(--q-heading);
+  font-weight: 900;
+  font-size: 19px;
+  margin: 5px 0 0;
+  font-variant-numeric: tabular-nums;
+}
+.eco-foundations {
+  margin-bottom: 23px;
+}
+.eco-foundation-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  padding: 13px 0;
+  border-top: 1px solid var(--q-line);
+  border-bottom: 1px solid var(--q-line);
+}
+.eco-foundation {
+  padding: 0 12px;
+  min-width: 0;
+  border-right: 1px solid var(--q-line);
+}
+.eco-foundation:first-child {
+  padding-left: 0;
+}
+.eco-foundation:last-child {
+  padding-right: 0;
+  border: 0;
+}
+.eco-foundation .stat-label {
+  font-size: 14px;
+  font-weight: 700;
+}
+.eco-foundation-value {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 5px 0 7px;
+}
+.eco-foundation-value strong {
+  font-size: 24px;
+  font-family: var(--q-heading);
+  font-weight: 900;
+  line-height: 1.1;
+}
+.eco-delta {
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.eco-delta[data-direction="up"] {
+  color: var(--q-green);
+}
+.eco-delta[data-direction="down"] {
+  color: #9a3829;
+}
+.eco-delta[data-direction="flat"] {
+  color: var(--q-muted);
+}
+.eco-foundation meter {
+  width: 100%;
+  height: 7px;
+  background: #e3ead9;
+  border: none;
+  border-radius: 4px;
+  display: block;
+}
+.eco-foundation meter::-webkit-meter-bar {
+  background: #e3ead9;
+  border: none;
+  border-radius: 4px;
+}
+.eco-foundation meter::-webkit-meter-optimum-value {
+  background: var(--q-green);
+  border-radius: 4px;
+}
+.eco-foundation meter::-moz-meter-bar {
+  background: var(--q-green);
+  border-radius: 4px;
+}
+.eco-region-tabs {
+  margin-bottom: 20px;
+}
+.eco-graph-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.eco-graph-controls > div > span {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.eco-graph-controls .game-select {
+  width: 100%;
+}
+.eco-graph-key {
+  margin: 12px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  font-size: 12px;
+  color: var(--q-muted);
+}
+.eco-graph-diagram {
+  position: relative;
+  padding: 8px 4px;
+  isolation: isolate;
+}
+.eco-graph-edges {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: -1;
+}
+.eco-graph-edges > path {
+  fill: none;
+  stroke: #a8c4ad;
+  stroke-width: var(--w, 1.5px);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.5;
+}
+.eco-graph-edges > path[data-highlighted="true"] {
+  stroke: var(--q-green);
+  stroke-width: calc(var(--w, 1.5px) + 0.75px);
+  opacity: 1;
+}
+.eco-graph-edges > path[data-negative="true"] {
+  stroke: #b34b37;
+}
+.eco-graph-edges > path.eco-graph-flow {
+  stroke: var(--q-green);
+  stroke-width: calc(var(--w, 1.5px) + 1px);
+  stroke-dasharray: 0.1 18;
+  opacity: 0.55;
+  animation: eco-graph-flow 1.4s linear infinite;
+}
+.eco-graph-edges > path.eco-graph-flow[data-indirect="true"] {
+  stroke-width: calc(var(--w, 1.5px) + 0.5px);
+  opacity: 0.35;
+  animation-duration: 2.2s;
+}
+.eco-graph-edges > path.eco-graph-flow[data-highlighted="true"] {
+  stroke: #e4f4dc;
+  stroke-width: calc(var(--w, 1.5px) * 0.7 + 0.5px);
+  opacity: 1;
+  animation-duration: 0.9s;
+}
+.eco-graph-edges > path.eco-graph-flow[data-negative="true"] {
+  stroke: #b34b37;
+}
+.eco-graph-edges
+  > path.eco-graph-flow[data-negative="true"][data-highlighted="true"] {
+  stroke: #ffe3d8;
+}
+.eco-graph-edges > path:not([data-highlighted="true"]) {
+  display: none;
+}
+@keyframes eco-graph-flow {
+  to {
+    stroke-dashoffset: -18.1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eco-graph-edges > path.eco-graph-flow {
+    animation: none;
+    display: none;
+  }
+}
+.eco-graph-row + .eco-graph-row {
+  margin-top: 72px;
+}
+
+.eco-graph-row h4 {
+  position: relative;
+  display: table;
+  margin: 0 0 8px;
+  padding: 0 4px;
+  background: var(--q-cream);
+  font-size: 13px;
+  color: var(--q-ink);
+  font-family: var(--q-heading);
+  font-weight: 800;
+}
+.eco-graph-nodes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.eco-graph-nodes[data-kind="foundations"] {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.eco-graph-nodes[data-kind="outcomes"],
+.eco-graph-nodes[data-kind="taxes"] {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.eco-graph-nodes[data-kind="single"] {
+  grid-template-columns: minmax(0, 320px);
+  justify-content: center;
+}
+.quarter-app .eco-graph-nodes button {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+  padding: 10px 8px;
+  border: 2px solid #c5d7ba;
+  border-radius: 12px;
+  background: #fffdf6;
+  box-shadow: 0 4px 0 #b4c7a9;
+  text-align: center;
+  min-height: 70px;
+}
+.eco-graph-nodes button > * {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.eco-graph-nodes button strong,
+.eco-graph-nodes button small {
+  display: block;
+}
+.eco-graph-nodes button strong {
+  font-family: var(--q-heading);
+  font-weight: 900;
+  font-size: 13px;
+  line-height: 1.3;
+}
+.eco-graph-nodes button small {
+  margin-top: 5px;
+  font:
+    12px "Source Sans 3",
+    sans-serif;
+}
+.eco-graph-nodes[data-kind="outcomes"] button strong {
+  display: grid;
+  align-items: center;
+  min-height: 51px;
+}
+.eco-graph-nodes[data-kind="outcomes"] button small,
+.eco-graph-nodes[data-kind="taxes"] button small {
+  font: 900 14px var(--q-heading);
+}
+.eco-graph-nodes[data-kind="outcomes"] button small {
+  display: grid;
+  align-items: center;
+  min-height: 36px;
+}
+.quarter-app .eco-graph-nodes button[data-connected="true"] {
+  border-color: #8daf91;
+  background: #edf4e8;
+}
+.quarter-app .eco-graph-nodes button[aria-pressed="true"] {
+  background: var(--q-green);
+  border-color: #15573e;
+  box-shadow: 0 4px 0 #15573e;
+  color: #fffdf6;
+}
+/* Reuse the economy board's miniature resources and raised industry core so
+   regional relationships read as the same game system. */
+.eco-graph-emblem {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 5px;
+  border-radius: 10px;
+  background: #fff4d5;
+}
+.eco-graph-emblem .economy-emblem {
+  width: 30px;
+  height: 30px;
+}
+.eco-graph-nodes[data-kind="policies"] {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.eco-graph-nodes[data-kind="industries"] {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.eco-graph-nodes[data-kind="policies"]:not([data-compact="true"]) {
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  justify-content: center;
+}
+.quarter-app .eco-graph-nodes .eco-graph-policy-card {
+  min-height: 70px;
+  padding: 8px;
+}
+.eco-graph-nodes[data-kind="policies"]:not([data-compact="true"])
+  .eco-graph-policy-card
+  small {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.eco-graph-nodes[data-compact="true"] {
+  gap: 6px;
+}
+.quarter-app .eco-graph-nodes[data-compact="true"] button {
+  min-height: 64px;
+  padding: 8px 3px;
+  border-radius: 10px;
+}
+.eco-graph-nodes[data-compact="true"] button strong {
+  font-size: 11px;
+  line-height: 1.2;
+  hyphens: auto;
+}
+.eco-graph-nodes[data-compact="true"] .eco-graph-emblem {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 3px;
+  border-radius: 8px;
+}
+.eco-graph-nodes[data-compact="true"] .economy-emblem {
+  width: 22px;
+  height: 22px;
+}
+.eco-graph-nodes[data-kind="policies"] button small {
+  display: none;
+}
+.eco-graph-nodes[data-kind="policies"]:not([data-compact="true"]) button small {
+  display: block;
+}
+.quarter-app .eco-graph-nodes button:hover {
+  border-color: var(--q-green);
+}
+.quarter-app .eco-graph-nodes button:focus-visible {
+  outline: 3px solid #14594d;
+  outline-offset: 3px;
+}
+.quarter-app .eco-graph-nodes button:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #15573e;
+}
+.eco-construction {
+  margin-bottom: 20px;
+}
+.eco-construction-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--q-line);
+  border-radius: 12px;
+  background: var(--q-cream);
+}
+.eco-construction-list li {
+  padding: 12px 14px;
+}
+.eco-construction-list li + li {
+  border-top: 1px solid var(--q-line);
+}
+.eco-construction-heading,
+.eco-construction-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.eco-construction-heading {
+  flex-wrap: wrap;
+}
+.eco-construction-heading span,
+.eco-construction-list p,
+.eco-region-card-construction {
+  color: var(--q-muted);
+  font-size: 13px;
+}
+.eco-construction-progress {
+  margin-top: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.eco-construction-progress progress {
+  appearance: none;
+  flex: 1;
+  min-width: 0;
+  height: 8px;
+  border: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #e3ead9;
+}
+.eco-construction-progress progress::-webkit-progress-bar {
+  background: #e3ead9;
+}
+.eco-construction-progress progress::-webkit-progress-value {
+  background: var(--q-green);
+}
+.eco-construction-progress progress::-moz-progress-bar {
+  background: var(--q-green);
+}
+.eco-construction-list p {
+  margin: 4px 0 0;
+  font-variant-numeric: tabular-nums;
+}
+.quarter-app .eco-industry-button {
+  text-align: left;
+  font-family: "Nunito", sans-serif;
+  background: #edf5e9;
+  border: 1px solid var(--q-line);
+  border-radius: 8px;
+  box-shadow: 0 2px 0 #c6d9cd;
+  min-height: 40px;
+  padding: 7px 10px;
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--q-ink);
+  text-decoration: none;
+}
+.quarter-app .eco-industry-button:hover:not(:disabled) {
+  background: #e2eedc;
+  border-color: #8db49d;
+}
+.eco-industry-table th:first-child {
+  width: 28%;
+}
+.eco-industry-table td {
+  white-space: nowrap;
+}
+.eco-regions-panel .eco-data-table thead th + th {
+  text-align: right;
+}
+.eco-regions-panel .eco-industry-table tr > :last-child,
+.eco-regions-panel .eco-regional-policy-table tr > :last-child {
+  text-align: left;
+}
+.eco-public-services {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+  padding: 16px 0;
+  border-top: 1px solid var(--q-line);
+}
+.eco-public-services p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--q-muted);
+}
+.eco-public-services > strong {
+  text-align: right;
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+}
+.eco-public-services small {
+  display: block;
+  color: var(--q-muted);
+  font-weight: 400;
+  margin-top: 4px;
+}
+.eco-industry-detail > h3 {
+  margin-top: 15px;
+}
+.eco-industry-detail > h3:first-of-type {
+  font-size: 24px;
+  margin-bottom: 14px;
+}
+.eco-industry-detail .eco-region-metrics {
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.eco-industry-detail .eco-region-metrics > div,
+.eco-industry-detail .eco-industry-accounts > div {
+  padding: 12px;
+  border: 1px solid var(--q-line);
+  border-radius: 12px;
+  background: #edf5e9;
+  box-shadow: 0 2px 0 #d6e4d8;
+}
+.eco-industry-detail .eco-region-metrics > [data-constraint] {
+  background: #fff1bf;
+  border-color: #e6d598;
+}
+.eco-industry-detail .eco-region-metrics dd {
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+.eco-industry-tip {
+  color: var(--q-muted);
+  font-size: 14px;
+  line-height: 1.45;
+  margin: 0 0 18px;
+}
+.eco-industry-requirements {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.eco-industry-requirements li {
+  padding: 9px 12px;
+  border: 1px solid var(--q-line);
+  border-radius: 10px;
+  background: #fffdf7;
+}
+.eco-requirement-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.eco-requirement-heading .stat-label {
+  font-family: var(--q-heading);
+  font-weight: 900;
+}
+.eco-requirement-role {
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 12px;
+  background: #edf5e9;
+  color: var(--q-ink);
+}
+[data-essential="true"] .eco-requirement-role {
+  background: #fff1bf;
+}
+.eco-requirement-weight {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--q-muted);
+  font-variant-numeric: tabular-nums;
+}
+.eco-industry-accounts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  padding: 12px 0;
+  margin: 0 0 15px;
+}
+.eco-industry-accounts dt {
+  font-size: 13px;
+  color: var(--q-muted);
+}
+.eco-industry-accounts dd {
+  margin: 4px 0 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.eco-policy-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+}
+.eco-muted {
+  color: var(--q-muted);
+}
+.eco-event-list {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+}
+.eco-event-list li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--q-line);
+}
+.eco-event-list strong {
+  font-family: var(--q-heading);
+  font-weight: 800;
+}
+.eco-event-list p {
+  margin: 4px 0 0;
+  color: var(--q-muted);
+}
+.eco-report {
+  min-width: 0;
+  color: var(--q-ink);
+}
+.eco-report > header {
+  padding-bottom: 10px;
+}
+.eco-report > section {
+  margin: 22px 0 30px;
+}
+.eco-report .eco-impact-note {
+  margin-top: 12px;
+}
+.eco-outcomes-table td {
+  white-space: nowrap;
+}
+.eco-result-direction {
+  color: #9a3829;
+  font-size: 13px;
+  font-weight: 700;
+}
+.eco-result-direction[data-improved="true"] {
+  color: var(--q-green);
+}
+.eco-result-direction[data-neutral="true"] {
+  color: var(--q-muted);
+}
+.eco-fiscal-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 28px;
+}
+.eco-fiscal-columns caption {
+  text-align: left;
+  font-weight: 700;
+  padding-bottom: 10px;
+}
+.eco-fiscal-columns td {
+  white-space: nowrap;
+}
+.eco-total-row {
+  background: #edf3e6;
+  font-weight: 700;
+}
+.eco-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+/* Supported laptop sizes retain the same panel and table structure. */
+@media (max-width: 1366px) {
+  .eco-scroll-panel {
+    padding: 18px 20px 24px;
+  }
+  .eco-policy-action {
+    bottom: -24px;
+    margin: 0 -20px -24px;
+    padding: 14px 20px;
+  }
+  .eco-policy-row {
+    grid-template-columns: minmax(0, 1fr) 145px;
+    gap: 16px;
+  }
+  .eco-data-table td,
+  .eco-data-table tbody th,
+  .eco-data-table thead th,
+  .eco-spending-table td,
+  .eco-spending-table tbody th,
+  .eco-spending-table thead th {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+  .eco-foundation {
+    padding: 0 8px;
+  }
+  .eco-foundation .stat-label {
+    font-size: 13px;
+  }
+  .eco-region-metrics {
+    gap: 12px;
+  }
+  .eco-region-metrics dd {
+    font-size: 17px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eco-scroll-panel *,
+  .eco-scroll-panel *::before,
+  .eco-scroll-panel *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+/* Policy catalog: a compact plan strip and in-row add/remove so players
+   build the plan from the list instead of opening each detail view. */
+.eco-scroll-panel .eco-filter-row button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.eco-filter-row button small {
+  min-width: 22px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: #e3eee4;
+  color: var(--q-ink);
+  font:
+    700 12px "Source Sans 3",
+    sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.eco-filter-row button[aria-pressed="true"] small {
+  background: #fffdf633;
+  color: #fffdf6;
+}
+.eco-filter-row > .stat-label {
+  font-size: 14px;
+  color: var(--q-muted);
+}
+.eco-policy-row[data-planned="true"] {
+  border-color: #b5d3bf;
+  background: #edf5e9;
+  box-shadow: inset 4px 0 0 var(--q-green);
+}
+.eco-row-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+  margin-top: 10px;
+}
+.eco-scroll-panel .eco-row-actions button {
+  width: 100%;
+  margin: 0;
+}
+.quarter-app
+  .eco-row-actions
+  [data-testid="policy-toggle"][data-planned="false"]:not(:disabled) {
+  border-color: #1a694e;
+  color: var(--q-green);
+}
+.quarter-app
+  .eco-row-actions
+  [data-testid="policy-toggle"][data-planned="true"] {
+  border-color: #d9a093;
+  color: #9a3829;
+}
+.eco-region-list-heading p {
+  color: var(--q-muted);
+}
+.eco-region-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+}
+.eco-scroll-panel .eco-region-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  padding: 13px 14px 12px;
+  border-radius: 14px;
+  background: #fffdf7;
+  text-align: left;
+}
+.eco-scroll-panel .eco-region-card[data-selected="true"] {
+  border-color: #8db49d;
+  box-shadow:
+    inset 4px 0 0 var(--q-green),
+    0 3px 0 #c6d9cd;
+}
+.eco-region-card-name {
+  font-size: 18px;
+  font-weight: 900;
+}
+.eco-region-card-output {
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.eco-region-card-output small {
+  font:
+    400 12px "Source Sans 3",
+    sans-serif;
+  color: var(--q-muted);
+}
+.eco-region-card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font:
+    400 13px "Source Sans 3",
+    sans-serif;
+  color: var(--q-ink);
+  font-variant-numeric: tabular-nums;
+}
+.eco-region-card-weak {
+  margin-top: auto;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: #fff1bf;
+  color: #655022;
+  font:
+    600 12px "Source Sans 3",
+    sans-serif;
+}
+/* Catalog as a game shop: badges, price tags and chips instead of sentences. */
+.eco-legend {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--q-muted);
+}
+.eco-legend > [data-direction] {
+  font-size: 16px;
+  font-weight: 900;
+}
+.eco-legend > [data-direction="up"] {
+  color: var(--q-green);
+}
+.eco-legend > [data-direction="down"] {
+  color: #9a3829;
+}
+.eco-legend .stat-label {
+  margin-left: 4px;
+}
+.eco-limit-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 6px 12px 6px 6px;
+  border: 1px solid #e6cf7d;
+  border-radius: 12px;
+  background: #fff4c9;
+  color: #655022;
+  font-size: 13px;
+}
+.eco-limit-banner > strong {
+  padding: 3px 9px;
+  border-radius: 8px;
+  background: #f2cf5b;
+  color: #3e3010;
+  font-family: var(--q-heading);
+  font-size: 15px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.eco-limit-banner b {
+  font-family: var(--q-heading);
+  font-weight: 900;
+  margin-right: 6px;
+}
+.eco-policy-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-bottom: 4px;
+}
+.eco-policy-title h3 {
+  margin: 0 !important;
+}
+.eco-status {
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-family: var(--q-heading);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.eco-status[data-tone="new"] {
+  background: var(--q-green);
+  color: #fffdf6;
+}
+.eco-status[data-tone="running"] {
+  background: #d8ecdf;
+  color: #1a5a43;
+}
+.eco-status[data-tone="ending"] {
+  background: #f8ddd5;
+  color: #8a3323;
+}
+.eco-policy-meta .eco-price {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  font-size: 20px;
+}
+.eco-policy-meta .eco-price small {
+  font:
+    600 13px "Source Sans 3",
+    sans-serif;
+  color: var(--q-muted);
+}
+.eco-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 5px;
+  margin-top: 4px;
+}
+.eco-policy-meta .eco-chip {
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: #edf3e6;
+  color: var(--q-ink);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.eco-policy-meta .eco-chip[data-tone="cost"] {
+  background: #fbe4dc;
+  color: #8a3323;
+}
+/* Regional spending header: price tag, cost chips and a locked state. */
+.eco-spend-total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.1;
+}
+.eco-spend-total strong {
+  font-family: var(--q-heading);
+  font-size: 20px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.eco-spend-total small {
+  font-size: 12px;
+  color: var(--q-muted);
+}
+.eco-spend-chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
+  color: var(--q-muted);
+  font-weight: 700;
+}
+.eco-spend-chips .eco-chip {
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: #edf3e6;
+  color: var(--q-ink);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.eco-spend-chips .eco-chip[data-tone="cost"] {
+  background: #fbe4dc;
+  color: #8a3323;
+}
+.eco-locked-banner {
+  padding-right: 6px;
+}
+.eco-locked-banner > span {
+  flex: 1;
+}
+.eco-scroll-panel .eco-locked-banner button {
+  flex: none;
+  min-height: 34px;
+  padding: 5px 12px;
+  border-color: #1a694e;
+  color: var(--q-green);
+}
+.eco-goal-target {
+  display: block;
+  max-width: 34rem;
+  margin-top: 0.2rem;
+  color: var(--q-muted, #5a7069);
+  font-weight: 400;
+  line-height: 1.35;
+}

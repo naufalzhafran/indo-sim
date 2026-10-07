@@ -1,0 +1,11 @@
+# Third-party notices
+
+Regional context coastlines use [Natural Earth 1:10m Admin 0 Countries](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-0-countries/), [public domain](https://www.naturalearthdata.com/about/terms-of-use/). `data/region.geojson` retains 15 neighboring/context countries from the Natural Earth vector repository's `geojson/ne_10m_admin_0_countries.geojson`, retrieved 29 September 2026. Properties were reduced to country names. Mapshaper 0.7.70 applies topology-aware weighted simplification at 3% retention with `keep-shapes`, intersection repair, and 0.001-degree coordinate rounding. Small offshore islets may be omitted; all country features remain. Rebuild using `scripts/import-map-context.mjs` (the tool runs only during data preparation, not in the browser). Context countries are not playable provinces; no maritime claims are drawn.
+
+The province geometry is adapted from Ardian Saputra Hasibuan, [GeoJSON Indonesia - 38 Provinsi](https://github.com/ardian28/GeoJson-Indonesia-38-Provinsi), `Provinsi/38 Provinsi Indonesia - Provinsi.json`, retrieved 29 September 2026. The repository's MIT license is included in `data/PROVINCE-MAP-LICENSE.txt`. The publisher attributes its source to Badan Informasi Geospasial. All 22,137 vertices are retained, coordinates rounded to five decimal places, and province codes normalized by name to the game's stable identifiers, including the six Papua provinces. D3 rendering normalizes polygon winding. Rebuild with `scripts/import-province-map.mjs`. The earlier Deny Herianto source has been replaced; its historical license remains in `data/MAP-LICENSE.md`.
+
+Source Sans 3 and Source Serif 4 are Adobe fonts, distributed through Fontsource under SIL Open Font License 1.1. Their license texts are bundled in licenses/.
+
+Economic baseline facts are attributed to Badan Pusat Statistik, Statistical Yearbook of Indonesia 2025. Only extracted statistical facts are bundled, not the publication PDF. The game is independent and does not imply endorsement by BPS, Bank Indonesia or the Indonesian government.
+
+Runtime JavaScript uses React/React DOM (MIT), D3 geographic utilities and dependencies (ISC), and Zod (MIT). License notices are bundled in licenses/.

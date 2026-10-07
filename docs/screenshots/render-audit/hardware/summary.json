@@ -1,0 +1,157 @@
+{
+  "environment": {
+    "browser": "Google Chrome headless, --use-angle=metal",
+    "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1 Max, Unspecified Version)",
+    "mode": "Vite development build",
+    "dpr": 1.5
+  },
+  "results": [
+    {
+      "scenario": "idle-1440-normal",
+      "frames": 121,
+      "durationMs": 4016,
+      "renderCadence": 30.12948207171315,
+      "intervalMedian": 33.30000000074506,
+      "intervalP95": 35.80000000074506,
+      "cpuSubmitMedian": 1.7000000029802322,
+      "cpuSubmitP95": 4.400000002235174,
+      "cpuMs": {
+        "ScriptDuration": 306.031,
+        "TaskDuration": 397.342,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      },
+      "pixelRatio": 1.5,
+      "calls": 114,
+      "triangles": 314448
+    },
+    {
+      "scenario": "idle-1440-dpr1",
+      "frames": 122,
+      "durationMs": 4017,
+      "renderCadence": 30.37092357480707,
+      "intervalMedian": 33.30000000074506,
+      "intervalP95": 36,
+      "cpuSubmitMedian": 1.4000000022351742,
+      "cpuSubmitP95": 4.400000002235174,
+      "cpuMs": {
+        "ScriptDuration": 330.744,
+        "TaskDuration": 426.392,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      },
+      "pixelRatio": 1,
+      "calls": 114,
+      "triangles": 314448
+    },
+    {
+      "scenario": "idle-1280-normal",
+      "frames": 121,
+      "durationMs": 4015,
+      "renderCadence": 30.136986301369863,
+      "intervalMedian": 33.399999998509884,
+      "intervalP95": 35.5,
+      "cpuSubmitMedian": 1.8999999985098839,
+      "cpuSubmitP95": 4.400000002235174,
+      "cpuMs": {
+        "ScriptDuration": 342.2059999999999,
+        "TaskDuration": 447.70799999999997,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      },
+      "pixelRatio": 1.5,
+      "calls": 114,
+      "triangles": 314448
+    },
+    {
+      "scenario": "idle-1366-normal",
+      "frames": 121,
+      "durationMs": 4021,
+      "renderCadence": 30.092016911216117,
+      "intervalMedian": 33.30000000074506,
+      "intervalP95": 36.100000001490116,
+      "cpuSubmitMedian": 1.6000000014901161,
+      "cpuSubmitP95": 3.600000001490116,
+      "cpuMs": {
+        "ScriptDuration": 291.91000000000014,
+        "TaskDuration": 476.5569999999997,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      },
+      "pixelRatio": 1.5,
+      "calls": 114,
+      "triangles": 314448
+    },
+    {
+      "scenario": "idle-1440-reduced",
+      "frames": 0,
+      "durationMs": 4005,
+      "renderCadence": 0,
+      "intervalMedian": null,
+      "intervalP95": null,
+      "cpuSubmitMedian": null,
+      "cpuSubmitP95": null,
+      "cpuMs": {
+        "ScriptDuration": 0,
+        "TaskDuration": 0.6970000000001697,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      },
+      "pixelRatio": 1.5
+    },
+    {
+      "scenario": "pan",
+      "frames": 107,
+      "durationMs": 2549,
+      "renderCadence": 41.97724597881522,
+      "intervalMedian": 18.199999999254942,
+      "intervalP95": 34.399999998509884,
+      "cpuSubmitMedian": 1.5,
+      "cpuSubmitP95": 3.800000000745058,
+      "cpuMs": {
+        "ScriptDuration": 298.08900000000006,
+        "TaskDuration": 410.2589999999999,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      },
+      "pixelRatio": 1.5,
+      "calls": 99,
+      "triangles": 263484
+    },
+    {
+      "scenario": "quarter",
+      "frames": 717,
+      "durationMs": 12129,
+      "renderCadence": 59.114518921592875,
+      "intervalMedian": 16.699999999254942,
+      "intervalP95": 17.599999997764826,
+      "cpuSubmitMedian": 0.5,
+      "cpuSubmitP95": 0.8999999985098839,
+      "cpuMs": {
+        "ScriptDuration": 3429.3210000000004,
+        "TaskDuration": 3920.8299999999995,
+        "LayoutDuration": 38.841,
+        "RecalcStyleDuration": 37.222
+      },
+      "pixelRatio": 1.5,
+      "calls": 118,
+      "triangles": 314546
+    }
+  ],
+  "longTasks": [
+    {
+      "start": 1318.9000000022352,
+      "duration": 5631
+    },
+    {
+      "start": 6950.400000002235,
+      "duration": 1164
+    },
+    {
+      "start": 47645.5,
+      "duration": 99
+    }
+  ],
+  "errors": [],
+  "overflow": false
+}

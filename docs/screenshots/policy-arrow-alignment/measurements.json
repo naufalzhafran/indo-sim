@@ -1,0 +1,734 @@
+[
+  {
+    "lang": "en",
+    "width": 1280,
+    "height": 720,
+    "documentWidth": 1280,
+    "viewportWidth": 1280,
+    "panelClientWidth": 686,
+    "panelScrollWidth": 686,
+    "totalDirections": 50,
+    "limitedBenefits": 20,
+    "correctSpokenDirections": true,
+    "hiddenHeadingAbsent": true,
+    "catalog": [
+      {
+        "name": "Main impacts",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Agriculture ↑ increases",
+            "x": 60,
+            "y": 557.796875,
+            "width": 89.140625,
+            "height": 27,
+            "qualifier": "Delayed",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          },
+          {
+            "text": "Retail ↑ increases",
+            "x": 214.890625,
+            "y": 557.796875,
+            "width": 53.1875,
+            "height": 27,
+            "qualifier": "Delayed",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      },
+      {
+        "name": "Downsides & limits",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Public spending ↑ increases",
+            "x": 60,
+            "y": 596.796875,
+            "width": 120.15625,
+            "height": 27.546875,
+            "qualifier": "Recurring",
+            "color": "rgb(154, 56, 41)",
+            "arrowColor": "rgb(154, 56, 41)"
+          },
+          {
+            "text": "Industry output ↑ increases",
+            "x": 254.5,
+            "y": 596.796875,
+            "width": 119.375,
+            "height": 27.546875,
+            "qualifier": "Limited by demand & roads",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      }
+    ],
+    "detail": [
+      {
+        "name": "Main impacts",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Agriculture ↑ increases",
+            "x": 60,
+            "y": 476.75,
+            "width": 89.140625,
+            "height": 27,
+            "qualifier": "Delayed",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          },
+          {
+            "text": "Retail ↑ increases",
+            "x": 214.890625,
+            "y": 476.75,
+            "width": 53.1875,
+            "height": 27,
+            "qualifier": "Delayed",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      },
+      {
+        "name": "Downsides & limits",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Public spending ↑ increases",
+            "x": 60,
+            "y": 515.75,
+            "width": 120.15625,
+            "height": 27.546875,
+            "qualifier": "Recurring",
+            "color": "rgb(154, 56, 41)",
+            "arrowColor": "rgb(154, 56, 41)"
+          },
+          {
+            "text": "Industry output ↑ increases",
+            "x": 254.5,
+            "y": 515.75,
+            "width": 119.375,
+            "height": 27.546875,
+            "qualifier": "Limited by demand & roads",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 1366,
+    "height": 768,
+    "documentWidth": 1366,
+    "viewportWidth": 1366,
+    "panelClientWidth": 686,
+    "panelScrollWidth": 686,
+    "totalDirections": 50,
+    "limitedBenefits": 20,
+    "correctSpokenDirections": true,
+    "hiddenHeadingAbsent": true,
+    "catalog": [
+      {
+        "name": "Main impacts",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Agriculture ↑ increases",
+            "x": 60,
+            "y": 557.796875,
+            "width": 89.140625,
+            "height": 27,
+            "qualifier": "Delayed",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          },
+          {
+            "text": "Retail ↑ increases",
+            "x": 214.890625,
+            "y": 557.796875,
+            "width": 53.1875,
+            "height": 27,
+            "qualifier": "Delayed",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      },
+      {
+        "name": "Downsides & limits",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Public spending ↑ increases",
+            "x": 60,
+            "y": 596.796875,
+            "width": 120.15625,
+            "height": 27.546875,
+            "qualifier": "Recurring",
+            "color": "rgb(154, 56, 41)",
+            "arrowColor": "rgb(154, 56, 41)"
+          },
+          {
+            "text": "Industry output ↑ increases",
+            "x": 254.5,
+            "y": 596.796875,
+            "width": 119.375,
+            "height": 27.546875,
+            "qualifier": "Limited by demand & roads",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      }
+    ],
+    "detail": [
+      {
+        "name": "Main impacts",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Agriculture ↑ increases",
+            "x": 60,
+            "y": 476.75,
+            "width": 89.140625,
+            "height": 27,
+            "qualifier": "Delayed",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          },
+          {
+            "text": "Retail ↑ increases",
+            "x": 214.890625,
+            "y": 476.75,
+            "width": 53.1875,
+            "height": 27,
+            "qualifier": "Delayed",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      },
+      {
+        "name": "Downsides & limits",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Public spending ↑ increases",
+            "x": 60,
+            "y": 515.75,
+            "width": 120.15625,
+            "height": 27.546875,
+            "qualifier": "Recurring",
+            "color": "rgb(154, 56, 41)",
+            "arrowColor": "rgb(154, 56, 41)"
+          },
+          {
+            "text": "Industry output ↑ increases",
+            "x": 254.5,
+            "y": 515.75,
+            "width": 119.375,
+            "height": 27.546875,
+            "qualifier": "Limited by demand & roads",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "height": 900,
+    "documentWidth": 1440,
+    "viewportWidth": 1440,
+    "panelClientWidth": 686,
+    "panelScrollWidth": 686,
+    "totalDirections": 50,
+    "limitedBenefits": 20,
+    "correctSpokenDirections": true,
+    "hiddenHeadingAbsent": true,
+    "catalog": [
+      {
+        "name": "Main impacts",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Agriculture ↑ increases",
+            "x": 66,
+            "y": 580.796875,
+            "width": 89.140625,
+            "height": 27,
+            "qualifier": "Delayed",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          },
+          {
+            "text": "Retail ↑ increases",
+            "x": 220.890625,
+            "y": 580.796875,
+            "width": 53.1875,
+            "height": 27,
+            "qualifier": "Delayed",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      },
+      {
+        "name": "Downsides & limits",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Public spending ↑ increases",
+            "x": 66,
+            "y": 619.796875,
+            "width": 120.15625,
+            "height": 27.546875,
+            "qualifier": "Recurring",
+            "color": "rgb(154, 56, 41)",
+            "arrowColor": "rgb(154, 56, 41)"
+          },
+          {
+            "text": "Industry output ↑ increases",
+            "x": 66,
+            "y": 654.34375,
+            "width": 119.375,
+            "height": 27.546875,
+            "qualifier": "Limited by demand & roads",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      }
+    ],
+    "detail": [
+      {
+        "name": "Main impacts",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Agriculture ↑ increases",
+            "x": 66,
+            "y": 499.75,
+            "width": 89.140625,
+            "height": 27,
+            "qualifier": "Delayed",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          },
+          {
+            "text": "Retail ↑ increases",
+            "x": 220.890625,
+            "y": 499.75,
+            "width": 53.1875,
+            "height": 27,
+            "qualifier": "Delayed",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      },
+      {
+        "name": "Downsides & limits",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Public spending ↑ increases",
+            "x": 66,
+            "y": 538.75,
+            "width": 120.15625,
+            "height": 27.546875,
+            "qualifier": "Recurring",
+            "color": "rgb(154, 56, 41)",
+            "arrowColor": "rgb(154, 56, 41)"
+          },
+          {
+            "text": "Industry output ↑ increases",
+            "x": 260.5,
+            "y": 538.75,
+            "width": 119.375,
+            "height": 27.546875,
+            "qualifier": "Limited by demand & roads",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  {
+    "lang": "id",
+    "width": 1280,
+    "height": 720,
+    "documentWidth": 1280,
+    "viewportWidth": 1280,
+    "panelClientWidth": 686,
+    "panelScrollWidth": 686,
+    "totalDirections": 50,
+    "limitedBenefits": 20,
+    "correctSpokenDirections": true,
+    "hiddenHeadingAbsent": true,
+    "catalog": [
+      {
+        "name": "Dampak utama",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Pertanian ↑ meningkat",
+            "x": 60,
+            "y": 557.796875,
+            "width": 79.65625,
+            "height": 27,
+            "qualifier": "Bertahap",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          },
+          {
+            "text": "Perdagangan ↑ meningkat",
+            "x": 211.3125,
+            "y": 557.796875,
+            "width": 101.875,
+            "height": 27,
+            "qualifier": "Bertahap",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      },
+      {
+        "name": "Konsekuensi & kendala",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Belanja negara ↑ meningkat",
+            "x": 60,
+            "y": 596.796875,
+            "width": 112.71875,
+            "height": 27.546875,
+            "qualifier": "Rutin",
+            "color": "rgb(154, 56, 41)",
+            "arrowColor": "rgb(154, 56, 41)"
+          },
+          {
+            "text": "Output industri ↑ meningkat",
+            "x": 224.703125,
+            "y": 596.796875,
+            "width": 117.15625,
+            "height": 27.546875,
+            "qualifier": "Dibatasi pasar & jalan",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      }
+    ],
+    "detail": [
+      {
+        "name": "Dampak utama",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Pertanian ↑ meningkat",
+            "x": 60,
+            "y": 476.75,
+            "width": 79.65625,
+            "height": 27,
+            "qualifier": "Bertahap",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          },
+          {
+            "text": "Perdagangan ↑ meningkat",
+            "x": 211.3125,
+            "y": 476.75,
+            "width": 101.875,
+            "height": 27,
+            "qualifier": "Bertahap",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      },
+      {
+        "name": "Konsekuensi & kendala",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Belanja negara ↑ meningkat",
+            "x": 60,
+            "y": 515.75,
+            "width": 112.71875,
+            "height": 27.546875,
+            "qualifier": "Rutin",
+            "color": "rgb(154, 56, 41)",
+            "arrowColor": "rgb(154, 56, 41)"
+          },
+          {
+            "text": "Output industri ↑ meningkat",
+            "x": 224.703125,
+            "y": 515.75,
+            "width": 117.15625,
+            "height": 27.546875,
+            "qualifier": "Dibatasi pasar & jalan",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  {
+    "lang": "id",
+    "width": 1366,
+    "height": 768,
+    "documentWidth": 1366,
+    "viewportWidth": 1366,
+    "panelClientWidth": 686,
+    "panelScrollWidth": 686,
+    "totalDirections": 50,
+    "limitedBenefits": 20,
+    "correctSpokenDirections": true,
+    "hiddenHeadingAbsent": true,
+    "catalog": [
+      {
+        "name": "Dampak utama",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Pertanian ↑ meningkat",
+            "x": 60,
+            "y": 557.796875,
+            "width": 79.65625,
+            "height": 27,
+            "qualifier": "Bertahap",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          },
+          {
+            "text": "Perdagangan ↑ meningkat",
+            "x": 211.3125,
+            "y": 557.796875,
+            "width": 101.875,
+            "height": 27,
+            "qualifier": "Bertahap",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      },
+      {
+        "name": "Konsekuensi & kendala",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Belanja negara ↑ meningkat",
+            "x": 60,
+            "y": 596.796875,
+            "width": 112.71875,
+            "height": 27.546875,
+            "qualifier": "Rutin",
+            "color": "rgb(154, 56, 41)",
+            "arrowColor": "rgb(154, 56, 41)"
+          },
+          {
+            "text": "Output industri ↑ meningkat",
+            "x": 224.703125,
+            "y": 596.796875,
+            "width": 117.15625,
+            "height": 27.546875,
+            "qualifier": "Dibatasi pasar & jalan",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      }
+    ],
+    "detail": [
+      {
+        "name": "Dampak utama",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Pertanian ↑ meningkat",
+            "x": 60,
+            "y": 476.75,
+            "width": 79.65625,
+            "height": 27,
+            "qualifier": "Bertahap",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          },
+          {
+            "text": "Perdagangan ↑ meningkat",
+            "x": 211.3125,
+            "y": 476.75,
+            "width": 101.875,
+            "height": 27,
+            "qualifier": "Bertahap",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      },
+      {
+        "name": "Konsekuensi & kendala",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Belanja negara ↑ meningkat",
+            "x": 60,
+            "y": 515.75,
+            "width": 112.71875,
+            "height": 27.546875,
+            "qualifier": "Rutin",
+            "color": "rgb(154, 56, 41)",
+            "arrowColor": "rgb(154, 56, 41)"
+          },
+          {
+            "text": "Output industri ↑ meningkat",
+            "x": 224.703125,
+            "y": 515.75,
+            "width": 117.15625,
+            "height": 27.546875,
+            "qualifier": "Dibatasi pasar & jalan",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  {
+    "lang": "id",
+    "width": 1440,
+    "height": 900,
+    "documentWidth": 1440,
+    "viewportWidth": 1440,
+    "panelClientWidth": 686,
+    "panelScrollWidth": 686,
+    "totalDirections": 50,
+    "limitedBenefits": 20,
+    "correctSpokenDirections": true,
+    "hiddenHeadingAbsent": true,
+    "catalog": [
+      {
+        "name": "Dampak utama",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Pertanian ↑ meningkat",
+            "x": 66,
+            "y": 580.796875,
+            "width": 79.65625,
+            "height": 27,
+            "qualifier": "Bertahap",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          },
+          {
+            "text": "Perdagangan ↑ meningkat",
+            "x": 217.3125,
+            "y": 580.796875,
+            "width": 101.875,
+            "height": 27,
+            "qualifier": "Bertahap",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      },
+      {
+        "name": "Konsekuensi & kendala",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Belanja negara ↑ meningkat",
+            "x": 66,
+            "y": 619.796875,
+            "width": 112.71875,
+            "height": 27.546875,
+            "qualifier": "Rutin",
+            "color": "rgb(154, 56, 41)",
+            "arrowColor": "rgb(154, 56, 41)"
+          },
+          {
+            "text": "Output industri ↑ meningkat",
+            "x": 230.703125,
+            "y": 619.796875,
+            "width": 117.15625,
+            "height": 27.546875,
+            "qualifier": "Dibatasi pasar & jalan",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      }
+    ],
+    "detail": [
+      {
+        "name": "Dampak utama",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Pertanian ↑ meningkat",
+            "x": 66,
+            "y": 499.75,
+            "width": 79.65625,
+            "height": 27,
+            "qualifier": "Bertahap",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          },
+          {
+            "text": "Perdagangan ↑ meningkat",
+            "x": 217.3125,
+            "y": 499.75,
+            "width": 101.875,
+            "height": 27,
+            "qualifier": "Bertahap",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      },
+      {
+        "name": "Konsekuensi & kendala",
+        "alignment": "baseline",
+        "items": [
+          {
+            "text": "Belanja negara ↑ meningkat",
+            "x": 66,
+            "y": 538.75,
+            "width": 112.71875,
+            "height": 27.546875,
+            "qualifier": "Rutin",
+            "color": "rgb(154, 56, 41)",
+            "arrowColor": "rgb(154, 56, 41)"
+          },
+          {
+            "text": "Output industri ↑ meningkat",
+            "x": 230.703125,
+            "y": 538.75,
+            "width": 117.15625,
+            "height": 27.546875,
+            "qualifier": "Dibatasi pasar & jalan",
+            "color": "rgb(36, 124, 94)",
+            "arrowColor": "rgb(36, 124, 94)"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  }
+]

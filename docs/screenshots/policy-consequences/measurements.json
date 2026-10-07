@@ -1,0 +1,2726 @@
+[
+  {
+    "lang": "en",
+    "width": 1280,
+    "height": 720,
+    "documentWidth": 1280,
+    "viewportWidth": 1280,
+    "panelClientWidth": 686,
+    "panelScrollWidth": 686,
+    "policyCount": 25,
+    "consequenceLists": 25,
+    "consequenceItems": 50,
+    "conditionalItems": 50,
+    "correctSpokenDirections": true,
+    "cards": [
+      {
+        "name": "Makan Bergizi Gratis",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "High"
+          },
+          {
+            "label": "Food ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Kopdes Merah Putih",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Industry output",
+            "qualifier": "Limited by demand & roads"
+          }
+        ]
+      },
+      {
+        "name": "Cek Kesehatan Gratis",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Health ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Badan Penerimaan Negara",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "After-tax income ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "As collection improves"
+          },
+          {
+            "label": "Tax revenue",
+            "qualifier": "Delayed"
+          }
+        ]
+      },
+      {
+        "name": "Program Keluarga Harapan",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Household income ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Bantuan Operasional Sekolah",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Workforce skills",
+            "qualifier": "Years to develop"
+          },
+          {
+            "label": "Education ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Kredit Usaha Rakyat",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Investment growth",
+            "qualifier": "Limited by skills & energy"
+          }
+        ]
+      },
+      {
+        "name": "Jaminan Kesehatan Nasional",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "High"
+          },
+          {
+            "label": "Health ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Dana Desa",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Maintenance costs ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "As assets grow"
+          },
+          {
+            "label": "Infrastructure",
+            "qualifier": "Gradual gains"
+          }
+        ]
+      },
+      {
+        "name": "Tol Laut",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Maintenance costs ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "As assets grow"
+          },
+          {
+            "label": "Industry output",
+            "qualifier": "Long rollout"
+          }
+        ]
+      },
+      {
+        "name": "Kartu Prakerja",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Workforce skills",
+            "qualifier": "Several-quarter delay"
+          },
+          {
+            "label": "Employment",
+            "qualifier": "Limited by demand"
+          }
+        ]
+      },
+      {
+        "name": "Transportasi Publik Terintegrasi",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "High setup & upkeep"
+          },
+          {
+            "label": "Infrastructure",
+            "qualifier": "Long rollout"
+          }
+        ]
+      },
+      {
+        "name": "Pupuk dan Benih Murah",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Agriculture output",
+            "qualifier": "Harvest shocks still apply"
+          }
+        ]
+      },
+      {
+        "name": "1 Desa, 1 Puskesmas/Pustu, 1 Dokter/Nakes",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Ongoing staffing"
+          },
+          {
+            "label": "Health",
+            "qualifier": "Long rollout"
+          }
+        ]
+      },
+      {
+        "name": "1 Keluarga Miskin, 1 Sarjana",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Multi-year funding"
+          },
+          {
+            "label": "Workforce skills",
+            "qualifier": "Years to develop"
+          }
+        ]
+      },
+      {
+        "name": "RUPTL PLN",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Energy",
+            "qualifier": "New supply delayed"
+          },
+          {
+            "label": "Electricity demand ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "As industry grows"
+          }
+        ]
+      },
+      {
+        "name": "Pendidikan Profesi Guru (PPG)",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Workforce skills",
+            "qualifier": "Years to develop"
+          },
+          {
+            "label": "Education",
+            "qualifier": "Diminish with overlap"
+          }
+        ]
+      },
+      {
+        "name": "PAMSIMAS & SANIMAS",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Maintenance costs ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "As assets grow"
+          },
+          {
+            "label": "Health",
+            "qualifier": "Gradual gains"
+          }
+        ]
+      },
+      {
+        "name": "P3-TGAI",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Agriculture output",
+            "qualifier": "Limited by local farming"
+          }
+        ]
+      },
+      {
+        "name": "Palapa Ring",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Industry output",
+            "qualifier": "Limited by skills & power"
+          }
+        ]
+      },
+      {
+        "name": "Sistem Logistik Ikan Nasional (SLIN)",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Fishing output",
+            "qualifier": "Limited by catch & power"
+          }
+        ]
+      },
+      {
+        "name": "Peremajaan Sawit Rakyat (PSR)",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Palm Oil ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "Initially"
+          },
+          {
+            "label": "Palm tax base ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "Initially"
+          }
+        ]
+      },
+      {
+        "name": "Reklamasi dan Pascatambang",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Oil & Mining ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "While funded"
+          },
+          {
+            "label": "Mining earnings ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "While funded"
+          }
+        ]
+      },
+      {
+        "name": "Pengembangan Desa Wisata",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Tourism output",
+            "qualifier": "Limited by demand & health"
+          }
+        ]
+      },
+      {
+        "name": "Lumbung Pangan Masyarakat",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Food",
+            "qualifier": "Limited by production"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 1366,
+    "height": 768,
+    "documentWidth": 1366,
+    "viewportWidth": 1366,
+    "panelClientWidth": 686,
+    "panelScrollWidth": 686,
+    "policyCount": 25,
+    "consequenceLists": 25,
+    "consequenceItems": 50,
+    "conditionalItems": 50,
+    "correctSpokenDirections": true,
+    "cards": [
+      {
+        "name": "Makan Bergizi Gratis",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "High"
+          },
+          {
+            "label": "Food ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Kopdes Merah Putih",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Industry output",
+            "qualifier": "Limited by demand & roads"
+          }
+        ]
+      },
+      {
+        "name": "Cek Kesehatan Gratis",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Health ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Badan Penerimaan Negara",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "After-tax income ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "As collection improves"
+          },
+          {
+            "label": "Tax revenue",
+            "qualifier": "Delayed"
+          }
+        ]
+      },
+      {
+        "name": "Program Keluarga Harapan",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Household income ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Bantuan Operasional Sekolah",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Workforce skills",
+            "qualifier": "Years to develop"
+          },
+          {
+            "label": "Education ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Kredit Usaha Rakyat",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Investment growth",
+            "qualifier": "Limited by skills & energy"
+          }
+        ]
+      },
+      {
+        "name": "Jaminan Kesehatan Nasional",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "High"
+          },
+          {
+            "label": "Health ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Dana Desa",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Maintenance costs ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "As assets grow"
+          },
+          {
+            "label": "Infrastructure",
+            "qualifier": "Gradual gains"
+          }
+        ]
+      },
+      {
+        "name": "Tol Laut",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Maintenance costs ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "As assets grow"
+          },
+          {
+            "label": "Industry output",
+            "qualifier": "Long rollout"
+          }
+        ]
+      },
+      {
+        "name": "Kartu Prakerja",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Workforce skills",
+            "qualifier": "Several-quarter delay"
+          },
+          {
+            "label": "Employment",
+            "qualifier": "Limited by demand"
+          }
+        ]
+      },
+      {
+        "name": "Transportasi Publik Terintegrasi",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "High setup & upkeep"
+          },
+          {
+            "label": "Infrastructure",
+            "qualifier": "Long rollout"
+          }
+        ]
+      },
+      {
+        "name": "Pupuk dan Benih Murah",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Agriculture output",
+            "qualifier": "Harvest shocks still apply"
+          }
+        ]
+      },
+      {
+        "name": "1 Desa, 1 Puskesmas/Pustu, 1 Dokter/Nakes",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Ongoing staffing"
+          },
+          {
+            "label": "Health",
+            "qualifier": "Long rollout"
+          }
+        ]
+      },
+      {
+        "name": "1 Keluarga Miskin, 1 Sarjana",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Multi-year funding"
+          },
+          {
+            "label": "Workforce skills",
+            "qualifier": "Years to develop"
+          }
+        ]
+      },
+      {
+        "name": "RUPTL PLN",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Energy",
+            "qualifier": "New supply delayed"
+          },
+          {
+            "label": "Electricity demand ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "As industry grows"
+          }
+        ]
+      },
+      {
+        "name": "Pendidikan Profesi Guru (PPG)",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Workforce skills",
+            "qualifier": "Years to develop"
+          },
+          {
+            "label": "Education",
+            "qualifier": "Diminish with overlap"
+          }
+        ]
+      },
+      {
+        "name": "PAMSIMAS & SANIMAS",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Maintenance costs ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "As assets grow"
+          },
+          {
+            "label": "Health",
+            "qualifier": "Gradual gains"
+          }
+        ]
+      },
+      {
+        "name": "P3-TGAI",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Agriculture output",
+            "qualifier": "Limited by local farming"
+          }
+        ]
+      },
+      {
+        "name": "Palapa Ring",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Industry output",
+            "qualifier": "Limited by skills & power"
+          }
+        ]
+      },
+      {
+        "name": "Sistem Logistik Ikan Nasional (SLIN)",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Fishing output",
+            "qualifier": "Limited by catch & power"
+          }
+        ]
+      },
+      {
+        "name": "Peremajaan Sawit Rakyat (PSR)",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Palm Oil ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "Initially"
+          },
+          {
+            "label": "Palm tax base ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "Initially"
+          }
+        ]
+      },
+      {
+        "name": "Reklamasi dan Pascatambang",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Oil & Mining ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "While funded"
+          },
+          {
+            "label": "Mining earnings ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "While funded"
+          }
+        ]
+      },
+      {
+        "name": "Pengembangan Desa Wisata",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Tourism output",
+            "qualifier": "Limited by demand & health"
+          }
+        ]
+      },
+      {
+        "name": "Lumbung Pangan Masyarakat",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Food",
+            "qualifier": "Limited by production"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  {
+    "lang": "en",
+    "width": 1440,
+    "height": 900,
+    "documentWidth": 1440,
+    "viewportWidth": 1440,
+    "panelClientWidth": 686,
+    "panelScrollWidth": 686,
+    "policyCount": 25,
+    "consequenceLists": 25,
+    "consequenceItems": 50,
+    "conditionalItems": 50,
+    "correctSpokenDirections": true,
+    "cards": [
+      {
+        "name": "Makan Bergizi Gratis",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "High"
+          },
+          {
+            "label": "Food ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Kopdes Merah Putih",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Industry output",
+            "qualifier": "Limited by demand & roads"
+          }
+        ]
+      },
+      {
+        "name": "Cek Kesehatan Gratis",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Health ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Badan Penerimaan Negara",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "After-tax income ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "As collection improves"
+          },
+          {
+            "label": "Tax revenue",
+            "qualifier": "Delayed"
+          }
+        ]
+      },
+      {
+        "name": "Program Keluarga Harapan",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Household income ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Bantuan Operasional Sekolah",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Workforce skills",
+            "qualifier": "Years to develop"
+          },
+          {
+            "label": "Education ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Kredit Usaha Rakyat",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Investment growth",
+            "qualifier": "Limited by skills & energy"
+          }
+        ]
+      },
+      {
+        "name": "Jaminan Kesehatan Nasional",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "High"
+          },
+          {
+            "label": "Health ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "If funding stops"
+          }
+        ]
+      },
+      {
+        "name": "Dana Desa",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Maintenance costs ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "As assets grow"
+          },
+          {
+            "label": "Infrastructure",
+            "qualifier": "Gradual gains"
+          }
+        ]
+      },
+      {
+        "name": "Tol Laut",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Maintenance costs ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "As assets grow"
+          },
+          {
+            "label": "Industry output",
+            "qualifier": "Long rollout"
+          }
+        ]
+      },
+      {
+        "name": "Kartu Prakerja",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Workforce skills",
+            "qualifier": "Several-quarter delay"
+          },
+          {
+            "label": "Employment",
+            "qualifier": "Limited by demand"
+          }
+        ]
+      },
+      {
+        "name": "Transportasi Publik Terintegrasi",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "High setup & upkeep"
+          },
+          {
+            "label": "Infrastructure",
+            "qualifier": "Long rollout"
+          }
+        ]
+      },
+      {
+        "name": "Pupuk dan Benih Murah",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Agriculture output",
+            "qualifier": "Harvest shocks still apply"
+          }
+        ]
+      },
+      {
+        "name": "1 Desa, 1 Puskesmas/Pustu, 1 Dokter/Nakes",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Ongoing staffing"
+          },
+          {
+            "label": "Health",
+            "qualifier": "Long rollout"
+          }
+        ]
+      },
+      {
+        "name": "1 Keluarga Miskin, 1 Sarjana",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Multi-year funding"
+          },
+          {
+            "label": "Workforce skills",
+            "qualifier": "Years to develop"
+          }
+        ]
+      },
+      {
+        "name": "RUPTL PLN",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Energy",
+            "qualifier": "New supply delayed"
+          },
+          {
+            "label": "Electricity demand ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "As industry grows"
+          }
+        ]
+      },
+      {
+        "name": "Pendidikan Profesi Guru (PPG)",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Workforce skills",
+            "qualifier": "Years to develop"
+          },
+          {
+            "label": "Education",
+            "qualifier": "Diminish with overlap"
+          }
+        ]
+      },
+      {
+        "name": "PAMSIMAS & SANIMAS",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Maintenance costs ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "As assets grow"
+          },
+          {
+            "label": "Health",
+            "qualifier": "Gradual gains"
+          }
+        ]
+      },
+      {
+        "name": "P3-TGAI",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Agriculture output",
+            "qualifier": "Limited by local farming"
+          }
+        ]
+      },
+      {
+        "name": "Palapa Ring",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Industry output",
+            "qualifier": "Limited by skills & power"
+          }
+        ]
+      },
+      {
+        "name": "Sistem Logistik Ikan Nasional (SLIN)",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Fishing output",
+            "qualifier": "Limited by catch & power"
+          }
+        ]
+      },
+      {
+        "name": "Peremajaan Sawit Rakyat (PSR)",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Palm Oil ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "Initially"
+          },
+          {
+            "label": "Palm tax base ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "Initially"
+          }
+        ]
+      },
+      {
+        "name": "Reklamasi dan Pascatambang",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Oil & Mining ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "While funded"
+          },
+          {
+            "label": "Mining earnings ↓ decreases",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " decreases",
+            "qualifier": "While funded"
+          }
+        ]
+      },
+      {
+        "name": "Pengembangan Desa Wisata",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Tourism output",
+            "qualifier": "Limited by demand & health"
+          }
+        ]
+      },
+      {
+        "name": "Lumbung Pangan Masyarakat",
+        "listName": "Downsides & limits",
+        "effects": [
+          {
+            "label": "Public spending ↑ increases",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " increases",
+            "qualifier": "Recurring"
+          },
+          {
+            "label": "Food",
+            "qualifier": "Limited by production"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  {
+    "lang": "id",
+    "width": 1280,
+    "height": 720,
+    "documentWidth": 1280,
+    "viewportWidth": 1280,
+    "panelClientWidth": 686,
+    "panelScrollWidth": 686,
+    "policyCount": 25,
+    "consequenceLists": 25,
+    "consequenceItems": 50,
+    "conditionalItems": 50,
+    "correctSpokenDirections": true,
+    "cards": [
+      {
+        "name": "Makan Bergizi Gratis",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Besar"
+          },
+          {
+            "label": "Pangan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Kopdes Merah Putih",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output industri",
+            "qualifier": "Dibatasi pasar & jalan"
+          }
+        ]
+      },
+      {
+        "name": "Cek Kesehatan Gratis",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Kesehatan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Badan Penerimaan Negara",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Pendapatan setelah pajak ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Saat pemungutan membaik"
+          },
+          {
+            "label": "Penerimaan pajak",
+            "qualifier": "Tertunda"
+          }
+        ]
+      },
+      {
+        "name": "Program Keluarga Harapan",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Pendapatan keluarga ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Bantuan Operasional Sekolah",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Keterampilan pekerja",
+            "qualifier": "Perlu beberapa tahun"
+          },
+          {
+            "label": "Pendidikan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Kredit Usaha Rakyat",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Pertumbuhan investasi",
+            "qualifier": "Dibatasi keterampilan & energi"
+          }
+        ]
+      },
+      {
+        "name": "Jaminan Kesehatan Nasional",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Besar"
+          },
+          {
+            "label": "Kesehatan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Dana Desa",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Biaya perawatan ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Seiring penambahan aset"
+          },
+          {
+            "label": "Infrastruktur",
+            "qualifier": "Manfaat bertahap"
+          }
+        ]
+      },
+      {
+        "name": "Tol Laut",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Biaya perawatan ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Seiring penambahan aset"
+          },
+          {
+            "label": "Output industri",
+            "qualifier": "Pelaksanaan lama"
+          }
+        ]
+      },
+      {
+        "name": "Kartu Prakerja",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Keterampilan pekerja",
+            "qualifier": "Perlu beberapa triwulan"
+          },
+          {
+            "label": "Penyerapan tenaga kerja",
+            "qualifier": "Dibatasi permintaan"
+          }
+        ]
+      },
+      {
+        "name": "Transportasi Publik Terintegrasi",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Biaya awal & rutin besar"
+          },
+          {
+            "label": "Infrastruktur",
+            "qualifier": "Pelaksanaan lama"
+          }
+        ]
+      },
+      {
+        "name": "Pupuk dan Benih Murah",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output pertanian",
+            "qualifier": "Tetap rentan gangguan panen"
+          }
+        ]
+      },
+      {
+        "name": "1 Desa, 1 Puskesmas/Pustu, 1 Dokter/Nakes",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Tenaga layanan rutin"
+          },
+          {
+            "label": "Kesehatan",
+            "qualifier": "Pelaksanaan lama"
+          }
+        ]
+      },
+      {
+        "name": "1 Keluarga Miskin, 1 Sarjana",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Pendanaan beberapa tahun"
+          },
+          {
+            "label": "Keterampilan pekerja",
+            "qualifier": "Perlu beberapa tahun"
+          }
+        ]
+      },
+      {
+        "name": "RUPTL PLN",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Energi",
+            "qualifier": "Pasokan baru tertunda"
+          },
+          {
+            "label": "Kebutuhan listrik ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Seiring pertumbuhan industri"
+          }
+        ]
+      },
+      {
+        "name": "Pendidikan Profesi Guru (PPG)",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Keterampilan pekerja",
+            "qualifier": "Perlu beberapa tahun"
+          },
+          {
+            "label": "Pendidikan",
+            "qualifier": "Mengecil jika tumpang tindih"
+          }
+        ]
+      },
+      {
+        "name": "PAMSIMAS & SANIMAS",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Biaya perawatan ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Seiring penambahan aset"
+          },
+          {
+            "label": "Kesehatan",
+            "qualifier": "Manfaat bertahap"
+          }
+        ]
+      },
+      {
+        "name": "P3-TGAI",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output pertanian",
+            "qualifier": "Dibatasi pertanian setempat"
+          }
+        ]
+      },
+      {
+        "name": "Palapa Ring",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output industri",
+            "qualifier": "Dibatasi keterampilan & listrik"
+          }
+        ]
+      },
+      {
+        "name": "Sistem Logistik Ikan Nasional (SLIN)",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output perikanan",
+            "qualifier": "Dibatasi hasil ikan & listrik"
+          }
+        ]
+      },
+      {
+        "name": "Peremajaan Sawit Rakyat (PSR)",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Kelapa sawit ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Pada awalnya"
+          },
+          {
+            "label": "Basis pajak sawit ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Pada awalnya"
+          }
+        ]
+      },
+      {
+        "name": "Reklamasi dan Pascatambang",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Migas & pertambangan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Selama didanai"
+          },
+          {
+            "label": "Pendapatan tambang ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Selama didanai"
+          }
+        ]
+      },
+      {
+        "name": "Pengembangan Desa Wisata",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output pariwisata",
+            "qualifier": "Dibatasi permintaan & kesehatan"
+          }
+        ]
+      },
+      {
+        "name": "Lumbung Pangan Masyarakat",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Pangan",
+            "qualifier": "Dibatasi produksi"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  {
+    "lang": "id",
+    "width": 1366,
+    "height": 768,
+    "documentWidth": 1366,
+    "viewportWidth": 1366,
+    "panelClientWidth": 686,
+    "panelScrollWidth": 686,
+    "policyCount": 25,
+    "consequenceLists": 25,
+    "consequenceItems": 50,
+    "conditionalItems": 50,
+    "correctSpokenDirections": true,
+    "cards": [
+      {
+        "name": "Makan Bergizi Gratis",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Besar"
+          },
+          {
+            "label": "Pangan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Kopdes Merah Putih",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output industri",
+            "qualifier": "Dibatasi pasar & jalan"
+          }
+        ]
+      },
+      {
+        "name": "Cek Kesehatan Gratis",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Kesehatan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Badan Penerimaan Negara",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Pendapatan setelah pajak ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Saat pemungutan membaik"
+          },
+          {
+            "label": "Penerimaan pajak",
+            "qualifier": "Tertunda"
+          }
+        ]
+      },
+      {
+        "name": "Program Keluarga Harapan",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Pendapatan keluarga ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Bantuan Operasional Sekolah",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Keterampilan pekerja",
+            "qualifier": "Perlu beberapa tahun"
+          },
+          {
+            "label": "Pendidikan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Kredit Usaha Rakyat",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Pertumbuhan investasi",
+            "qualifier": "Dibatasi keterampilan & energi"
+          }
+        ]
+      },
+      {
+        "name": "Jaminan Kesehatan Nasional",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Besar"
+          },
+          {
+            "label": "Kesehatan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Dana Desa",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Biaya perawatan ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Seiring penambahan aset"
+          },
+          {
+            "label": "Infrastruktur",
+            "qualifier": "Manfaat bertahap"
+          }
+        ]
+      },
+      {
+        "name": "Tol Laut",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Biaya perawatan ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Seiring penambahan aset"
+          },
+          {
+            "label": "Output industri",
+            "qualifier": "Pelaksanaan lama"
+          }
+        ]
+      },
+      {
+        "name": "Kartu Prakerja",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Keterampilan pekerja",
+            "qualifier": "Perlu beberapa triwulan"
+          },
+          {
+            "label": "Penyerapan tenaga kerja",
+            "qualifier": "Dibatasi permintaan"
+          }
+        ]
+      },
+      {
+        "name": "Transportasi Publik Terintegrasi",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Biaya awal & rutin besar"
+          },
+          {
+            "label": "Infrastruktur",
+            "qualifier": "Pelaksanaan lama"
+          }
+        ]
+      },
+      {
+        "name": "Pupuk dan Benih Murah",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output pertanian",
+            "qualifier": "Tetap rentan gangguan panen"
+          }
+        ]
+      },
+      {
+        "name": "1 Desa, 1 Puskesmas/Pustu, 1 Dokter/Nakes",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Tenaga layanan rutin"
+          },
+          {
+            "label": "Kesehatan",
+            "qualifier": "Pelaksanaan lama"
+          }
+        ]
+      },
+      {
+        "name": "1 Keluarga Miskin, 1 Sarjana",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Pendanaan beberapa tahun"
+          },
+          {
+            "label": "Keterampilan pekerja",
+            "qualifier": "Perlu beberapa tahun"
+          }
+        ]
+      },
+      {
+        "name": "RUPTL PLN",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Energi",
+            "qualifier": "Pasokan baru tertunda"
+          },
+          {
+            "label": "Kebutuhan listrik ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Seiring pertumbuhan industri"
+          }
+        ]
+      },
+      {
+        "name": "Pendidikan Profesi Guru (PPG)",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Keterampilan pekerja",
+            "qualifier": "Perlu beberapa tahun"
+          },
+          {
+            "label": "Pendidikan",
+            "qualifier": "Mengecil jika tumpang tindih"
+          }
+        ]
+      },
+      {
+        "name": "PAMSIMAS & SANIMAS",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Biaya perawatan ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Seiring penambahan aset"
+          },
+          {
+            "label": "Kesehatan",
+            "qualifier": "Manfaat bertahap"
+          }
+        ]
+      },
+      {
+        "name": "P3-TGAI",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output pertanian",
+            "qualifier": "Dibatasi pertanian setempat"
+          }
+        ]
+      },
+      {
+        "name": "Palapa Ring",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output industri",
+            "qualifier": "Dibatasi keterampilan & listrik"
+          }
+        ]
+      },
+      {
+        "name": "Sistem Logistik Ikan Nasional (SLIN)",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output perikanan",
+            "qualifier": "Dibatasi hasil ikan & listrik"
+          }
+        ]
+      },
+      {
+        "name": "Peremajaan Sawit Rakyat (PSR)",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Kelapa sawit ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Pada awalnya"
+          },
+          {
+            "label": "Basis pajak sawit ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Pada awalnya"
+          }
+        ]
+      },
+      {
+        "name": "Reklamasi dan Pascatambang",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Migas & pertambangan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Selama didanai"
+          },
+          {
+            "label": "Pendapatan tambang ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Selama didanai"
+          }
+        ]
+      },
+      {
+        "name": "Pengembangan Desa Wisata",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output pariwisata",
+            "qualifier": "Dibatasi permintaan & kesehatan"
+          }
+        ]
+      },
+      {
+        "name": "Lumbung Pangan Masyarakat",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Pangan",
+            "qualifier": "Dibatasi produksi"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  {
+    "lang": "id",
+    "width": 1440,
+    "height": 900,
+    "documentWidth": 1440,
+    "viewportWidth": 1440,
+    "panelClientWidth": 686,
+    "panelScrollWidth": 686,
+    "policyCount": 25,
+    "consequenceLists": 25,
+    "consequenceItems": 50,
+    "conditionalItems": 50,
+    "correctSpokenDirections": true,
+    "cards": [
+      {
+        "name": "Makan Bergizi Gratis",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Besar"
+          },
+          {
+            "label": "Pangan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Kopdes Merah Putih",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output industri",
+            "qualifier": "Dibatasi pasar & jalan"
+          }
+        ]
+      },
+      {
+        "name": "Cek Kesehatan Gratis",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Kesehatan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Badan Penerimaan Negara",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Pendapatan setelah pajak ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Saat pemungutan membaik"
+          },
+          {
+            "label": "Penerimaan pajak",
+            "qualifier": "Tertunda"
+          }
+        ]
+      },
+      {
+        "name": "Program Keluarga Harapan",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Pendapatan keluarga ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Bantuan Operasional Sekolah",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Keterampilan pekerja",
+            "qualifier": "Perlu beberapa tahun"
+          },
+          {
+            "label": "Pendidikan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Kredit Usaha Rakyat",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Pertumbuhan investasi",
+            "qualifier": "Dibatasi keterampilan & energi"
+          }
+        ]
+      },
+      {
+        "name": "Jaminan Kesehatan Nasional",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Besar"
+          },
+          {
+            "label": "Kesehatan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Jika dana dihentikan"
+          }
+        ]
+      },
+      {
+        "name": "Dana Desa",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Biaya perawatan ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Seiring penambahan aset"
+          },
+          {
+            "label": "Infrastruktur",
+            "qualifier": "Manfaat bertahap"
+          }
+        ]
+      },
+      {
+        "name": "Tol Laut",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Biaya perawatan ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Seiring penambahan aset"
+          },
+          {
+            "label": "Output industri",
+            "qualifier": "Pelaksanaan lama"
+          }
+        ]
+      },
+      {
+        "name": "Kartu Prakerja",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Keterampilan pekerja",
+            "qualifier": "Perlu beberapa triwulan"
+          },
+          {
+            "label": "Penyerapan tenaga kerja",
+            "qualifier": "Dibatasi permintaan"
+          }
+        ]
+      },
+      {
+        "name": "Transportasi Publik Terintegrasi",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Biaya awal & rutin besar"
+          },
+          {
+            "label": "Infrastruktur",
+            "qualifier": "Pelaksanaan lama"
+          }
+        ]
+      },
+      {
+        "name": "Pupuk dan Benih Murah",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output pertanian",
+            "qualifier": "Tetap rentan gangguan panen"
+          }
+        ]
+      },
+      {
+        "name": "1 Desa, 1 Puskesmas/Pustu, 1 Dokter/Nakes",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Tenaga layanan rutin"
+          },
+          {
+            "label": "Kesehatan",
+            "qualifier": "Pelaksanaan lama"
+          }
+        ]
+      },
+      {
+        "name": "1 Keluarga Miskin, 1 Sarjana",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Pendanaan beberapa tahun"
+          },
+          {
+            "label": "Keterampilan pekerja",
+            "qualifier": "Perlu beberapa tahun"
+          }
+        ]
+      },
+      {
+        "name": "RUPTL PLN",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Energi",
+            "qualifier": "Pasokan baru tertunda"
+          },
+          {
+            "label": "Kebutuhan listrik ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Seiring pertumbuhan industri"
+          }
+        ]
+      },
+      {
+        "name": "Pendidikan Profesi Guru (PPG)",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Keterampilan pekerja",
+            "qualifier": "Perlu beberapa tahun"
+          },
+          {
+            "label": "Pendidikan",
+            "qualifier": "Mengecil jika tumpang tindih"
+          }
+        ]
+      },
+      {
+        "name": "PAMSIMAS & SANIMAS",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Biaya perawatan ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Seiring penambahan aset"
+          },
+          {
+            "label": "Kesehatan",
+            "qualifier": "Manfaat bertahap"
+          }
+        ]
+      },
+      {
+        "name": "P3-TGAI",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output pertanian",
+            "qualifier": "Dibatasi pertanian setempat"
+          }
+        ]
+      },
+      {
+        "name": "Palapa Ring",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output industri",
+            "qualifier": "Dibatasi keterampilan & listrik"
+          }
+        ]
+      },
+      {
+        "name": "Sistem Logistik Ikan Nasional (SLIN)",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output perikanan",
+            "qualifier": "Dibatasi hasil ikan & listrik"
+          }
+        ]
+      },
+      {
+        "name": "Peremajaan Sawit Rakyat (PSR)",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Kelapa sawit ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Pada awalnya"
+          },
+          {
+            "label": "Basis pajak sawit ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Pada awalnya"
+          }
+        ]
+      },
+      {
+        "name": "Reklamasi dan Pascatambang",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Migas & pertambangan ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Selama didanai"
+          },
+          {
+            "label": "Pendapatan tambang ↓ menurun",
+            "arrow": "↓",
+            "arrowHidden": "true",
+            "spoken": " menurun",
+            "qualifier": "Selama didanai"
+          }
+        ]
+      },
+      {
+        "name": "Pengembangan Desa Wisata",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Output pariwisata",
+            "qualifier": "Dibatasi permintaan & kesehatan"
+          }
+        ]
+      },
+      {
+        "name": "Lumbung Pangan Masyarakat",
+        "listName": "Konsekuensi & kendala",
+        "effects": [
+          {
+            "label": "Belanja negara ↑ meningkat",
+            "arrow": "↑",
+            "arrowHidden": "true",
+            "spoken": " meningkat",
+            "qualifier": "Rutin"
+          },
+          {
+            "label": "Pangan",
+            "qualifier": "Dibatasi produksi"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  }
+]

@@ -1,0 +1,136 @@
+{
+  "environment": {
+    "node": "v24.14.1",
+    "platform": "darwin",
+    "arch": "arm64",
+    "method": "single cold run; GC before/after world build, local CPU only"
+  },
+  "timingsMs": {
+    "world": 5316.060208,
+    "cache": 0.0015830000002097222,
+    "roads": 502.49204199999986,
+    "emptyStructureLayout": 120.6680409999999,
+    "neighbour": 48.130333000000064
+  },
+  "counts": {
+    "vertices": 155971,
+    "triangles": 297334,
+    "outlineVertices": 29020,
+    "bufferBytes": 7747200,
+    "neighbourTriangles": 1350,
+    "roads": 35,
+    "cities": 46
+  },
+  "retainedWorldMemory": {
+    "heapBytes": 199156968,
+    "arrayBufferBytes": 7747884
+  },
+  "structureResults": {
+    "mbg": {
+      "triangles": 96
+    },
+    "kopdes": {
+      "triangles": 132
+    },
+    "ckg": {
+      "triangles": 72
+    },
+    "bpn": {
+      "triangles": 156
+    },
+    "pkh": {
+      "triangles": 132
+    },
+    "bos": {
+      "triangles": 104
+    },
+    "kur": {
+      "triangles": 192
+    },
+    "jkn": {
+      "triangles": 84
+    },
+    "jalan-desa": {
+      "triangles": 124
+    },
+    "embung-desa": {
+      "triangles": 172
+    },
+    "pasar-desa": {
+      "triangles": 108
+    },
+    "tol-laut": {
+      "triangles": 120
+    },
+    "prakerja": {
+      "triangles": 116
+    },
+    "brt": {
+      "triangles": 116
+    },
+    "krl": {
+      "triangles": 224
+    },
+    "mrt-lrt": {
+      "triangles": 224
+    },
+    "kereta-antarkota": {
+      "triangles": 264
+    },
+    "pupuk": {
+      "triangles": 248
+    },
+    "klinik": {
+      "triangles": 68
+    },
+    "sarjana": {
+      "triangles": 100
+    },
+    "plts": {
+      "triangles": 192
+    },
+    "plta": {
+      "triangles": 108
+    },
+    "pltp": {
+      "triangles": 204
+    },
+    "pltu": {
+      "triangles": 132
+    },
+    "teachers": {
+      "triangles": 92
+    },
+    "water": {
+      "triangles": 188
+    },
+    "irrigation": {
+      "triangles": 120
+    },
+    "broadband": {
+      "triangles": 256
+    },
+    "cold-chain": {
+      "triangles": 84
+    },
+    "palm-replanting": null,
+    "mining-rehabilitation": {
+      "triangles": 228
+    },
+    "tourism-access": {
+      "triangles": 172
+    },
+    "food-reserves": {
+      "triangles": 144
+    },
+    "crane": {
+      "triangles": 48
+    },
+    "ship": {
+      "triangles": 92
+    }
+  },
+  "structureErrors": [
+    "THREE.BufferGeometryUtils: .mergeGeometries() failed with geometry at index 1. All geometries must have compatible attributes; make sure index attribute exists among all geometries, or in none of them."
+  ]
+}

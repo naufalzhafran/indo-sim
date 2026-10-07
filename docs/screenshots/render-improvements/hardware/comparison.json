@@ -1,0 +1,191 @@
+{
+  "environment": "Chrome headless / Apple M1 Max Metal / Vite development / DPR 1.5",
+  "before": {
+    "results": [
+      {
+        "name": "idle-1440-normal",
+        "frames": 121,
+        "elapsedMs": 4016,
+        "renderCadence": 30.12948207171315,
+        "heapBytes": 164906423,
+        "scriptMs": 306.031,
+        "taskMs": 397.342,
+        "calls": 114,
+        "triangles": 314448
+      },
+      {
+        "name": "idle-1440-dpr1",
+        "frames": 122,
+        "elapsedMs": 4017,
+        "renderCadence": 30.37092357480707,
+        "heapBytes": 171505413,
+        "scriptMs": 330.744,
+        "taskMs": 426.392,
+        "calls": 114,
+        "triangles": 314448
+      },
+      {
+        "name": "idle-1280-normal",
+        "frames": 121,
+        "elapsedMs": 4015,
+        "renderCadence": 30.136986301369863,
+        "heapBytes": 180484319,
+        "scriptMs": 342.2059999999999,
+        "taskMs": 447.70799999999997,
+        "calls": 114,
+        "triangles": 314448
+      },
+      {
+        "name": "idle-1366-normal",
+        "frames": 121,
+        "elapsedMs": 4021,
+        "renderCadence": 30.092016911216117,
+        "heapBytes": 148419413,
+        "scriptMs": 291.91000000000014,
+        "taskMs": 476.5569999999997,
+        "calls": 114,
+        "triangles": 314448
+      },
+      {
+        "name": "idle-1440-reduced",
+        "frames": 0,
+        "elapsedMs": 4005,
+        "renderCadence": 0,
+        "heapBytes": 152138703,
+        "scriptMs": 0,
+        "taskMs": 0.6970000000001697
+      },
+      {
+        "name": "pan",
+        "frames": 107,
+        "elapsedMs": 2549,
+        "renderCadence": 41.97724597881522,
+        "heapBytes": 152622311,
+        "scriptMs": 298.08900000000006,
+        "taskMs": 410.2589999999999,
+        "calls": 99,
+        "triangles": 263484
+      },
+      {
+        "name": "quarter",
+        "frames": 717,
+        "elapsedMs": 12129,
+        "renderCadence": 59.114518921592875,
+        "heapBytes": 166445298,
+        "scriptMs": 3429.3210000000004,
+        "taskMs": 3920.8299999999995,
+        "calls": 118,
+        "triangles": 314546
+      }
+    ],
+    "longTasks": [
+      {
+        "start": 1318.9000000022352,
+        "duration": 5631
+      },
+      {
+        "start": 6950.400000002235,
+        "duration": 1164
+      },
+      {
+        "start": 47645.5,
+        "duration": 99
+      }
+    ],
+    "errors": []
+  },
+  "after": {
+    "results": [
+      {
+        "name": "idle-1440-normal",
+        "frames": 121,
+        "elapsedMs": 4011,
+        "renderCadence": 30.167040638244828,
+        "heapBytes": 57464877,
+        "scriptMs": 171.00199999999998,
+        "taskMs": 223.511,
+        "calls": 114,
+        "triangles": 314448
+      },
+      {
+        "name": "idle-1440-dpr1",
+        "frames": 121,
+        "elapsedMs": 4007,
+        "renderCadence": 30.197154978787122,
+        "heapBytes": 50004667,
+        "scriptMs": 196.18200000000002,
+        "taskMs": 256.07399999999996,
+        "calls": 114,
+        "triangles": 314448
+      },
+      {
+        "name": "idle-1280-normal",
+        "frames": 122,
+        "elapsedMs": 4014,
+        "renderCadence": 30.393622321873444,
+        "heapBytes": 57034581,
+        "scriptMs": 114.40600000000006,
+        "taskMs": 157.94999999999993,
+        "calls": 114,
+        "triangles": 314448
+      },
+      {
+        "name": "idle-1366-normal",
+        "frames": 121,
+        "elapsedMs": 4011,
+        "renderCadence": 30.167040638244828,
+        "heapBytes": 51601885,
+        "scriptMs": 242.37399999999997,
+        "taskMs": 319.23100000000005,
+        "calls": 114,
+        "triangles": 314448
+      },
+      {
+        "name": "idle-1440-reduced",
+        "frames": 0,
+        "elapsedMs": 4010,
+        "renderCadence": 0,
+        "heapBytes": 54600414,
+        "scriptMs": 0,
+        "taskMs": 0.19900000000006024
+      },
+      {
+        "name": "pan",
+        "frames": 106,
+        "elapsedMs": 2552,
+        "renderCadence": 41.53605015673981,
+        "heapBytes": 54483527,
+        "scriptMs": 180.03599999999986,
+        "taskMs": 263.741,
+        "calls": 99,
+        "triangles": 263484
+      },
+      {
+        "name": "quarter",
+        "frames": 722,
+        "elapsedMs": 12120,
+        "renderCadence": 59.57095709570957,
+        "heapBytes": 72396294,
+        "scriptMs": 3144.445,
+        "taskMs": 3575.487,
+        "calls": 118,
+        "triangles": 314546
+      }
+    ],
+    "longTasks": [
+      {
+        "start": 6548.199999999255,
+        "duration": 227
+      },
+      {
+        "start": 6775.199999999255,
+        "duration": 75
+      },
+      {
+        "start": 38174,
+        "duration": 52
+      }
+    ],
+    "errors": []
+  }
+}

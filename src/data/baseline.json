@@ -1,0 +1,666 @@
+{
+  "version": "2024.2",
+  "national": {
+    "gdp": 22139,
+    "debt": 8811.322
+  },
+  "provenance": {
+    "source": "https://www.bps.go.id/en/publication/2025/02/28/8cfe1a589ad3693396d3db9f/statistik-indonesia-2025.html",
+    "year": 2024,
+    "population": "Table 3.1.1 p133: mid-year projection, thousand persons /1000 to millions.",
+    "gdp": "Table 15.2.1 p785: preliminary current-price billion IDR /1000 to trillion; province totals scaled by 1.00537902 to GDP 22139T. Original GRDP preserved.",
+    "poverty": "Table 4.6.2 p315: September 2024 percent.",
+    "unemployment": "Table 3.2.11 p160: August 2024 percent.",
+    "inferred": "Urban shares, household weights/incomes, capacity, infrastructure, service indices and political variables are synthetic gameplay assumptions. Debt uses an illustrative 39.8% starting ratio.",
+    "papua": "2024 split-province observations are available. Historical evaluation excludes six Papua divisions to avoid unharmonized 2020\u20132022 boundaries.",
+    "sectors": "https://www.bps.go.id/id/publication/2025/04/11/95c729ee8c6fb5e2cb86b00f/gross-regional-domestic-product-of-provinces-in-indonesia-by-industry-2020-2024.html Table 89, 2024 observed industry percentages; aggregation and rounding documented in sectors.json."
+  },
+  "provinces": [
+    {
+      "id": "11",
+      "name": "Aceh",
+      "population": 5.5548,
+      "gdp": 244.5101885960983,
+      "observedGrdp": 243.202,
+      "poverty": 12.64,
+      "unemployment": 5.75,
+      "urban": 0.48,
+      "sectors": [
+        0.30973097309730974,
+        0.0705070507050705,
+        0.047104710471047105,
+        0.42544254425442546,
+        0.14721472147214723
+      ]
+    },
+    {
+      "id": "12",
+      "name": "Sumatera Utara",
+      "population": 15.5885,
+      "gdp": 1153.0893064392442,
+      "observedGrdp": 1146.92,
+      "poverty": 7.19,
+      "unemployment": 5.6,
+      "urban": 0.48,
+      "sectors": [
+        0.2444,
+        0.0116,
+        0.18359999999999999,
+        0.5039,
+        0.0565
+      ]
+    },
+    {
+      "id": "13",
+      "name": "Sumatera Barat",
+      "population": 5.8362,
+      "gdp": 334.72686964100035,
+      "observedGrdp": 332.936,
+      "poverty": 5.42,
+      "unemployment": 5.75,
+      "urban": 0.48,
+      "sectors": [
+        0.2137,
+        0.0388,
+        0.0837,
+        0.5377,
+        0.1261
+      ]
+    },
+    {
+      "id": "14",
+      "name": "Riau",
+      "population": 6.7281,
+      "gdp": 1118.466063723837,
+      "observedGrdp": 1112.482,
+      "poverty": 6.36,
+      "unemployment": 3.7,
+      "urban": 0.48,
+      "sectors": [
+        0.2711271127112711,
+        0.185018501850185,
+        0.2812281228122812,
+        0.24222422242224223,
+        0.0204020402040204
+      ]
+    },
+    {
+      "id": "15",
+      "name": "Jambi",
+      "population": 3.7243000000000004,
+      "gdp": 324.7132945946721,
+      "observedGrdp": 322.976,
+      "poverty": 7.26,
+      "unemployment": 4.48,
+      "urban": 0.48,
+      "sectors": [
+        0.33926607339266074,
+        0.1340865913408659,
+        0.0976902309769023,
+        0.3488651134886511,
+        0.0800919908009199
+      ]
+    },
+    {
+      "id": "16",
+      "name": "Sumatera Selatan",
+      "population": 8.837299999999999,
+      "gdp": 667.5334653524338,
+      "observedGrdp": 663.962,
+      "poverty": 10.51,
+      "unemployment": 3.86,
+      "urban": 0.48,
+      "sectors": [
+        0.13561356135613561,
+        0.24602460246024602,
+        0.1827182718271827,
+        0.38273827382738274,
+        0.0529052905290529
+      ]
+    },
+    {
+      "id": "17",
+      "name": "Bengkulu",
+      "population": 2.1121999999999996,
+      "gdp": 104.55137512226649,
+      "observedGrdp": 103.992,
+      "poverty": 12.52,
+      "unemployment": 3.11,
+      "urban": 0.48,
+      "sectors": [
+        0.29827017298270175,
+        0.04199580041995801,
+        0.05189481051894811,
+        0.43785621437856215,
+        0.16998300169983002
+      ]
+    },
+    {
+      "id": "18",
+      "name": "Lampung",
+      "population": 9.4196,
+      "gdp": 486.4858166809723,
+      "observedGrdp": 483.883,
+      "poverty": 10.62,
+      "unemployment": 4.19,
+      "urban": 0.48,
+      "sectors": [
+        0.2621,
+        0.051100000000000007,
+        0.1893,
+        0.4282,
+        0.0693
+      ]
+    },
+    {
+      "id": "19",
+      "name": "Kepulauan Bangka Belitung",
+      "population": 1.5315,
+      "gdp": 108.08327162204071,
+      "observedGrdp": 107.505,
+      "poverty": 5.08,
+      "unemployment": 4.63,
+      "urban": 0.48,
+      "sectors": [
+        0.2027,
+        0.0755,
+        0.20600000000000002,
+        0.41609999999999997,
+        0.09970000000000001
+      ]
+    },
+    {
+      "id": "21",
+      "name": "Kepulauan Riau",
+      "population": 2.1833,
+      "gdp": 354.3317605449564,
+      "observedGrdp": 352.436,
+      "poverty": 4.78,
+      "unemployment": 6.39,
+      "urban": 0.72,
+      "sectors": [
+        0.0293970602939706,
+        0.09719028097190281,
+        0.41035896410358963,
+        0.4146585341465853,
+        0.0483951604839516
+      ]
+    },
+    {
+      "id": "31",
+      "name": "DKI Jakarta",
+      "population": 10.684899999999999,
+      "gdp": 3699.150348281476,
+      "observedGrdp": 3679.359,
+      "poverty": 4.14,
+      "unemployment": 6.21,
+      "urban": 1,
+      "sectors": [
+        0.0007998400319936012,
+        0.0015996800639872025,
+        0.11487702459508098,
+        0.7744451109778044,
+        0.10827834433113376
+      ]
+    },
+    {
+      "id": "32",
+      "name": "Jawa Barat",
+      "population": 50.3452,
+      "gdp": 2838.5257989684274,
+      "observedGrdp": 2823.339,
+      "poverty": 7.08,
+      "unemployment": 6.75,
+      "urban": 0.72,
+      "sectors": [
+        0.0842,
+        0.0097,
+        0.4139,
+        0.43349999999999994,
+        0.0587
+      ]
+    },
+    {
+      "id": "33",
+      "name": "Jawa Tengah",
+      "population": 37.892300000000006,
+      "gdp": 1827.5548601395126,
+      "observedGrdp": 1817.777,
+      "poverty": 9.58,
+      "unemployment": 4.78,
+      "urban": 0.72,
+      "sectors": [
+        0.1302869713028697,
+        0.021597840215978402,
+        0.33836616338366166,
+        0.4333566643335667,
+        0.0763923607639236
+      ]
+    },
+    {
+      "id": "34",
+      "name": "DI Yogyakarta",
+      "population": 3.7595,
+      "gdp": 194.55592119379756,
+      "observedGrdp": 193.515,
+      "poverty": 10.4,
+      "unemployment": 3.48,
+      "urban": 0.72,
+      "sectors": [
+        0.09920992099209922,
+        0.004500450045004501,
+        0.11831183118311832,
+        0.5872587258725873,
+        0.19071907190719073
+      ]
+    },
+    {
+      "id": "35",
+      "name": "Jawa Timur",
+      "population": 41.8145,
+      "gdp": 3185.3383298174513,
+      "observedGrdp": 3168.296,
+      "poverty": 9.56,
+      "unemployment": 4.19,
+      "urban": 0.72,
+      "sectors": [
+        0.1066106610661066,
+        0.035803580358035804,
+        0.30853085308530853,
+        0.4964496449644964,
+        0.0526052605260526
+      ]
+    },
+    {
+      "id": "36",
+      "name": "Banten",
+      "population": 12.4314,
+      "gdp": 878.3252523517691,
+      "observedGrdp": 873.626,
+      "poverty": 5.7,
+      "unemployment": 6.68,
+      "urban": 0.72,
+      "sectors": [
+        0.0565,
+        0.0038,
+        0.3035,
+        0.5654,
+        0.0708
+      ]
+    },
+    {
+      "id": "51",
+      "name": "Bali",
+      "population": 4.4333,
+      "gdp": 300.04732570043325,
+      "observedGrdp": 298.442,
+      "poverty": 3.8,
+      "unemployment": 1.79,
+      "urban": 0.48,
+      "sectors": [
+        0.13419999999999999,
+        0.0085,
+        0.062400000000000004,
+        0.6735,
+        0.12140000000000001
+      ]
+    },
+    {
+      "id": "52",
+      "name": "Nusa Tenggara Barat",
+      "population": 5.646,
+      "gdp": 183.245407210746,
+      "observedGrdp": 182.265,
+      "poverty": 11.91,
+      "unemployment": 2.73,
+      "urban": 0.48,
+      "sectors": [
+        0.2145,
+        0.20120000000000002,
+        0.0387,
+        0.4204,
+        0.1252
+      ]
+    },
+    {
+      "id": "53",
+      "name": "Nusa Tenggara Timur",
+      "population": 5.656,
+      "gdp": 138.02044272189195,
+      "observedGrdp": 137.282,
+      "poverty": 19.02,
+      "unemployment": 3.02,
+      "urban": 0.25,
+      "sectors": [
+        0.2886711328867113,
+        0.0101989801019898,
+        0.013998600139986,
+        0.44415558444155584,
+        0.24297570242975702
+      ]
+    },
+    {
+      "id": "61",
+      "name": "Kalimantan Barat",
+      "population": 5.6955,
+      "gdp": 301.78160451116776,
+      "observedGrdp": 300.167,
+      "poverty": 6.25,
+      "unemployment": 4.86,
+      "urban": 0.48,
+      "sectors": [
+        0.2173,
+        0.051100000000000007,
+        0.1561,
+        0.4487,
+        0.1268
+      ]
+    },
+    {
+      "id": "62",
+      "name": "Kalimantan Tengah",
+      "population": 2.8097,
+      "gdp": 224.06379545180323,
+      "observedGrdp": 222.865,
+      "poverty": 5.26,
+      "unemployment": 4.01,
+      "urban": 0.48,
+      "sectors": [
+        0.22362236223622362,
+        0.10681068106810682,
+        0.15751575157515751,
+        0.3791379137913791,
+        0.1329132913291329
+      ]
+    },
+    {
+      "id": "63",
+      "name": "Kalimantan Selatan",
+      "population": 4.2734,
+      "gdp": 288.36180534265475,
+      "observedGrdp": 286.819,
+      "poverty": 4.02,
+      "unemployment": 4.2,
+      "urban": 0.48,
+      "sectors": [
+        0.11548845115488453,
+        0.29467053294670537,
+        0.10948905109489052,
+        0.37036296370362964,
+        0.10998900109989002
+      ]
+    },
+    {
+      "id": "64",
+      "name": "Kalimantan Timur",
+      "population": 4.0459000000000005,
+      "gdp": 863.0485181319942,
+      "observedGrdp": 858.431,
+      "poverty": 5.51,
+      "unemployment": 5.14,
+      "urban": 0.48,
+      "sectors": [
+        0.0866,
+        0.38380000000000003,
+        0.1826,
+        0.2976,
+        0.049400000000000006
+      ]
+    },
+    {
+      "id": "65",
+      "name": "Kalimantan Utara",
+      "population": 0.7397999999999999,
+      "gdp": 147.58260258791893,
+      "observedGrdp": 146.793,
+      "poverty": 5.38,
+      "unemployment": 3.9,
+      "urban": 0.48,
+      "sectors": [
+        0.1478,
+        0.2872,
+        0.0815,
+        0.4065,
+        0.077
+      ]
+    },
+    {
+      "id": "71",
+      "name": "Sulawesi Utara",
+      "population": 2.7018,
+      "gdp": 188.3818886275825,
+      "observedGrdp": 187.374,
+      "poverty": 6.7,
+      "unemployment": 5.85,
+      "urban": 0.48,
+      "sectors": [
+        0.2059,
+        0.0489,
+        0.10619999999999999,
+        0.5012000000000001,
+        0.1378
+      ]
+    },
+    {
+      "id": "72",
+      "name": "Sulawesi Tengah",
+      "population": 3.1218000000000004,
+      "gdp": 378.97762185878094,
+      "observedGrdp": 376.95,
+      "poverty": 11.04,
+      "unemployment": 2.94,
+      "urban": 0.48,
+      "sectors": [
+        0.158,
+        0.1464,
+        0.4118,
+        0.2186,
+        0.0652
+      ]
+    },
+    {
+      "id": "73",
+      "name": "Sulawesi Selatan",
+      "population": 9.4634,
+      "gdp": 699.9981593103644,
+      "observedGrdp": 696.253,
+      "poverty": 7.77,
+      "unemployment": 4.19,
+      "urban": 0.48,
+      "sectors": [
+        0.2184218421842184,
+        0.0455045504550455,
+        0.1302130213021302,
+        0.4898489848984898,
+        0.116011601160116
+      ]
+    },
+    {
+      "id": "74",
+      "name": "Sulawesi Tenggara",
+      "population": 2.7931,
+      "gdp": 190.50122760325118,
+      "observedGrdp": 189.482,
+      "poverty": 10.63,
+      "unemployment": 3.09,
+      "urban": 0.48,
+      "sectors": [
+        0.23477652234776522,
+        0.2112788721127887,
+        0.09399060093990601,
+        0.36096390360963904,
+        0.098990100989901
+      ]
+    },
+    {
+      "id": "75",
+      "name": "Gorontalo",
+      "population": 1.2278,
+      "gdp": 54.848452475144704,
+      "observedGrdp": 54.555,
+      "poverty": 13.87,
+      "unemployment": 3.13,
+      "urban": 0.48,
+      "sectors": [
+        0.3729372937293729,
+        0.0112011201120112,
+        0.0439043904390439,
+        0.43514351435143517,
+        0.1368136813681368
+      ]
+    },
+    {
+      "id": "76",
+      "name": "Sulawesi Barat",
+      "population": 1.5032,
+      "gdp": 64.56041381525831,
+      "observedGrdp": 64.215,
+      "poverty": 10.71,
+      "unemployment": 2.68,
+      "urban": 0.25,
+      "sectors": [
+        0.4611,
+        0.022099999999999998,
+        0.1041,
+        0.28900000000000003,
+        0.12369999999999999
+      ]
+    },
+    {
+      "id": "81",
+      "name": "Maluku",
+      "population": 1.9456,
+      "gdp": 62.982974131755384,
+      "observedGrdp": 62.646,
+      "poverty": 15.78,
+      "unemployment": 6.11,
+      "urban": 0.48,
+      "sectors": [
+        0.2359528094381124,
+        0.016796640671865627,
+        0.0630873825234953,
+        0.390621875624875,
+        0.29354129174165167
+      ]
+    },
+    {
+      "id": "82",
+      "name": "Maluku Utara",
+      "population": 1.3556,
+      "gdp": 96.30324563631493,
+      "observedGrdp": 95.788,
+      "poverty": 6.03,
+      "unemployment": 4.03,
+      "urban": 0.48,
+      "sectors": [
+        0.12441244124412441,
+        0.18521852185218524,
+        0.33923392339233926,
+        0.23332333233323332,
+        0.11781178117811782
+      ]
+    },
+    {
+      "id": "92",
+      "name": "Papua Barat",
+      "population": 0.5787,
+      "gdp": 76.58675766105945,
+      "observedGrdp": 76.177,
+      "poverty": 21.09,
+      "unemployment": 4.13,
+      "urban": 0.48,
+      "sectors": [
+        0.0673,
+        0.25379999999999997,
+        0.3893,
+        0.1818,
+        0.10779999999999999
+      ]
+    },
+    {
+      "id": "96",
+      "name": "Papua Barat Daya",
+      "population": 0.6271,
+      "gdp": 37.239238927309316,
+      "observedGrdp": 37.04,
+      "poverty": 16.95,
+      "unemployment": 6.48,
+      "urban": 0.48,
+      "sectors": [
+        0.1215,
+        0.1001,
+        0.17739999999999997,
+        0.42969999999999997,
+        0.17129999999999998
+      ]
+    },
+    {
+      "id": "91",
+      "name": "Papua",
+      "population": 1.0606,
+      "gdp": 86.37613318576815,
+      "observedGrdp": 85.914,
+      "poverty": 18.09,
+      "unemployment": 6.48,
+      "urban": 0.48,
+      "sectors": [
+        0.1409140914091409,
+        0.0083008300830083,
+        0.0298029802980298,
+        0.645964596459646,
+        0.175017501750175
+      ]
+    },
+    {
+      "id": "93",
+      "name": "Papua Selatan",
+      "population": 0.5421,
+      "gdp": 33.56256784855203,
+      "observedGrdp": 33.383,
+      "poverty": 19.35,
+      "unemployment": 4.05,
+      "urban": 0.25,
+      "sectors": [
+        0.2151,
+        0.0121,
+        0.0562,
+        0.5524,
+        0.16419999999999998
+      ]
+    },
+    {
+      "id": "94",
+      "name": "Papua Tengah",
+      "population": 1.4729,
+      "gdp": 175.88402202106573,
+      "observedGrdp": 174.943,
+      "poverty": 27.6,
+      "unemployment": 2.75,
+      "urban": 0.48,
+      "sectors": [
+        0.036896310368963105,
+        0.768023197680232,
+        0.0022997700229977,
+        0.1526847315268473,
+        0.0400959904009599
+      ]
+    },
+    {
+      "id": "95",
+      "name": "Papua Pegunungan",
+      "population": 1.467,
+      "gdp": 26.703872169229555,
+      "observedGrdp": 26.561,
+      "poverty": 29.66,
+      "unemployment": 1.32,
+      "urban": 0.25,
+      "sectors": [
+        0.16368363163683633,
+        0.011398860113988602,
+        0.007599240075992402,
+        0.5554444555544445,
+        0.2618738126187381
+      ]
+    }
+  ]
+}

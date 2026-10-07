@@ -1,0 +1,24 @@
+{
+  "errors": [],
+  "workers": [
+    "http://127.0.0.1:5175/assets/world.worker-BITDqciG.js",
+    "http://127.0.0.1:5175/assets/worker-bKJYyXis.js"
+  ],
+  "overflow": false,
+  "longTasks": [
+    {
+      "start": 175.70000000298023,
+      "duration": 91
+    },
+    {
+      "start": 5827.70000000298,
+      "duration": 107
+    },
+    {
+      "start": 5935.5,
+      "duration": 75
+    }
+  ],
+  "ready": true,
+  "hasNativeSelect": false
+}

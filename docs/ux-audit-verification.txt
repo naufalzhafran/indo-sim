@@ -1,0 +1,93 @@
+Presidency UX audit implementation
+Verified 5 October 2026
+
+Scope: all eight supplied UX findings, applied to the current Policy & tax UI.
+The separate terrain work was not implemented as part of this audit.
+
+Validation
+- Production build: PASS (npm run build).
+- Unit tests: PASS, 245 tests across 23 files (npm test).
+- Browser coverage: PASS, 37 quarterly/tax cases, 10 world cases, 12 audit cases.
+  Browser cases include targeted reruns after fixes.
+- Desktop sizes: 1280x720, 1366x768, 1440x900, English and Indonesian.
+- Visual review: map, Desk, Programs, selected programs, Regions, Government,
+  report and comparison dialog; first program card and fixed forecast contained.
+- Screenshots: docs/screenshots/ux-audit-programs-1280-id.png and
+  docs/screenshots/ux-audit-regions-1440-id.png.
+- Vite reports the existing large-chunk advisory; the production build succeeds.
+
+Interaction record
+- Map and four panel destinations update active navigation; Return to map and
+  Escape restore focus after map controls reappear, including WebGL fallback.
+- Search, sector and status filters update the catalog and persist across panels.
+- Add/remove, end/keep running, program detail and ending-slot actions work.
+  Slot and launch limits show associated explanations.
+- Undo/reset update the plan; preview tiles update with program/tax edits;
+  failed-vote and validation messages appear beside Advance quarter.
+- Quarter progression, final outcome, saving, import/export, reload, recap,
+  replay, reduced motion and WebGL context loss pass existing regression cases.
+- Region selection reveals and focuses details; priority buttons and all three
+  distribution rules update the plan; the three-priority limit is explained.
+- Political answers update the navigation badge, vote meter and forecast.
+- Reports and program comparisons display signed changes with correct polarity.
+- GameSelect and StatHelp keyboard, focus, containment and Escape behavior pass.
+- New presidency returns to setup. Forecast hint opens and dismisses with Escape.
+
+Design reasons
+- Palette: existing cream/teal/emerald/coral tokens preserve the approved game.
+- Layout: pin consequences above the turn action; scroll only the editable plan.
+- Typography: retain Nunito controls and Source Sans 3 for dense numeric content.
+- Spacing: compact repeated headings to expose a complete program at 1280x720.
+- Cards: slots express capacity; selected-region details explain the map click.
+- Markers: signed arrows and vote/priority chips expose actual state, without
+  relying on color alone. Spending changes are neutral rather than judged good.
+- Art: the archipelago remains the background focus; this work adds no scenery.
+- Design read: desktop island-game decisions, ENERGY 2 / RHYTHM 2 / MOTION 1.
+
+Antislop delivery gate (changed UI scope)
+R-01 PASS: existing game palette; forecast tints distinguish pass/warning states.
+R-02 PASS: new UI copy uses plain punctuation, with no em dashes.
+R-03 PASS: all three supported desktop sizes and both locales contained;
+  mobile is excluded by the user's project instructions.
+R-04 PASS: arrows convey numeric direction; no new decorative icon set.
+R-05 PASS: plan slots, region detail and seat meter follow game decisions.
+R-06 PASS: established Nunito/Source Sans 3 typography retained.
+R-07 PASS: no decorative grid or unrelated background added.
+R-08 PASS: arrows occur in change markers, not decorative button labels.
+R-09 PASS: selection, request and vote chips represent actual engine/plan state.
+R-10 PASS: no new glass surfaces or backdrop filters.
+R-11 PASS: established panel, control, slot and chip radius hierarchy retained.
+R-12 PASS: existing restrained control shadows; selected slots use no extra lift.
+R-13 PASS: no glow added.
+R-14 PASS: slots show capacity; catalog cards retain comparable decision data.
+R-15 PASS: specific actions include Add to plan, Keep running and Review taxes.
+R-16 PASS: no marketing buzzwords introduced.
+R-17 PASS: values come from engine receipts, region summaries and preview ledger.
+R-18 PASS: no testimonials or invented people introduced.
+R-19 PASS: no animation added; reduced-motion and recap regression checks pass.
+R-20 PASS: island-game identity, palette and tactile controls preserved visually.
+R-21 PASS: existing light presentation retained; no theme system added.
+R-22 PASS: no new illustration assets introduced.
+R-23 PASS: navigation/layout changes explicitly follow the supplied audit.
+R-24 PASS: Map and all four panel destinations operate in browser tests.
+R-25 PASS: desktop bilingual axe checks pass; selected-region contrast corrected.
+R-26 PASS: changed controls exercised as recorded above, with no placeholder actions.
+R-27 PASS: empty catalogs/projects/requests, forecast loading and plan warnings handled.
+R-28 PASS: no generic FAQ added.
+R-29 PASS: shared --q-* palette retained, with existing semantic status colors.
+R-30 PASS: no third-party product design copied.
+R-31 PASS: layout, color, typography, spacing, cards and markers justified above.
+R-32 PASS: keyboard filters, tabs, region selection, hints and deferred focus pass.
+R-33 PASS: features edited directly in source; no source-rewriting helper scripts.
+R-34 PASS: no new theme toggle; established presentation verified.
+R-35 PASS: production build, browser journeys and rendered screenshots reviewed.
+R-36 PASS: no invented performance, security or compliance claims introduced.
+R-37 PASS: explicit approved project art direction governs these UI changes.
+R-38 PASS: status labels and metrics derive from real simulation state.
+Liveliness PASS: declared dials retained, coral turn action, emerald selections,
+  structural spacing and the established Indonesian island identity.
+C-1 PASS: each major design decision has its purpose recorded above.
+C-2 PASS: changed actions have working handlers and browser evidence.
+C-3 PASS: sections support decisions, state comparison or quarter feedback.
+C-4 PASS: desktop/language, empty/loading/warning, keyboard and fallback checks pass.
+C-5 PASS: UI numbers and outcomes are grounded in the simulation.

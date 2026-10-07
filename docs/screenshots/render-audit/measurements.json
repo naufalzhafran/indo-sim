@@ -1,0 +1,5468 @@
+{
+  "results": [
+    {
+      "name": "idle-1440-normal",
+      "elapsedMs": 4295,
+      "cpuMs": {
+        "ScriptDuration": 16.136000000000003,
+        "TaskDuration": 4058.953,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      },
+      "frames": [
+        {
+          "t": 13540.79999999702,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 13724.099999997765,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 13904.199999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 14079.5,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 14252.79999999702,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 14428.099999997765,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 14602,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 14779.79999999702,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 14956.89999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 15140.699999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 15324.099999997765,
+          "ms": 0.4000000022351742,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 15507.39999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 15684.89999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 15864.099999997765,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 16036.79999999702,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 16224,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 16407.39999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 16590.699999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 16773.29999999702,
+          "ms": 0.4000000022351742,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 16952.099999997765,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 17125.699999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 17299,
+          "ms": 0.3999999985098839,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 17474.29999999702,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 17650.699999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        }
+      ],
+      "gpu": {
+        "vendor": "Google Inc. (Google)",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "gl": {
+        "pixelRatio": 1.5,
+        "width": 1695,
+        "height": 1140
+      },
+      "heap": 167000000
+    },
+    {
+      "name": "idle-1280-normal",
+      "elapsedMs": 4004,
+      "cpuMs": {
+        "ScriptDuration": 16.936,
+        "TaskDuration": 3878.430999999999,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      },
+      "frames": [
+        {
+          "t": 20860.29999999702,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 21020.099999997765,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 21178,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 21337.699999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 21506.79999999702,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 21673.89999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 21839.79999999702,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 22007.199999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 22173.79999999702,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 22340.29999999702,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 22506.5,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 22664.79999999702,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 22844.89999999851,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 23003.5,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 23162.199999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 23321.699999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 23479.89999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 23641.199999999255,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 23807,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 23973.199999999255,
+          "ms": 0.3999999985098839,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 24140.39999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 24322.89999999851,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 24523.699999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 24690.099999997765,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 24857,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        }
+      ],
+      "gpu": {
+        "vendor": "Google Inc. (Google)",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "gl": {
+        "pixelRatio": 1.5,
+        "width": 1492,
+        "height": 898
+      },
+      "heap": 167000000
+    },
+    {
+      "name": "idle-1366-normal",
+      "elapsedMs": 4243,
+      "cpuMs": {
+        "ScriptDuration": 17.111,
+        "TaskDuration": 4075.9279999999994,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      },
+      "frames": [
+        {
+          "t": 27229,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 27387.199999999255,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 27552.39999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 27718.39999999851,
+          "ms": 0.3999999985098839,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 27878.099999997765,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 28038.29999999702,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 28202.699999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 28361.199999999255,
+          "ms": 0.3999999985098839,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 28520.5,
+          "ms": 0.3999999985098839,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 28680.599999997765,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 28842.199999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 29007,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 29165.29999999702,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 29347.199999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 29513.39999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 29673.199999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 29836,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 29995,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 30156.5,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 30316.099999997765,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 30480.599999997765,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 30641.39999999851,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 30807.199999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 30977.099999997765,
+          "ms": 0.4000000022351742,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 31140.39999999851,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 31300.79999999702,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 31463.5,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        }
+      ],
+      "gpu": {
+        "vendor": "Google Inc. (Google)",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "gl": {
+        "pixelRatio": 1.5,
+        "width": 1584,
+        "height": 970
+      },
+      "heap": 167000000
+    },
+    {
+      "name": "idle-1440-reduced",
+      "elapsedMs": 4003,
+      "cpuMs": {
+        "ScriptDuration": 0,
+        "TaskDuration": 1.5450000000001296,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      },
+      "frames": [],
+      "gpu": {
+        "vendor": "Google Inc. (Google)",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "gl": {
+        "pixelRatio": 1.5,
+        "width": 1695,
+        "height": 1140
+      },
+      "heap": 167000000
+    },
+    {
+      "name": "pan",
+      "elapsedMs": 21714,
+      "cpuMs": {
+        "ScriptDuration": 109.11299999999999,
+        "TaskDuration": 21213.405,
+        "LayoutDuration": 0,
+        "RecalcStyleDuration": 0
+      },
+      "frames": [
+        {
+          "t": 40693.099999997765,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 40860.89999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 41044.099999997765,
+          "ms": 0.9000000022351742,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 41224.5,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 41405.699999999255,
+          "ms": 0.3999999985098839,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 41575.099999997765,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 41756.599999997765,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 41924.89999999851,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 42092,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 42304.39999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 42471.099999997765,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 42633.699999999255,
+          "ms": 0.3999999985098839,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 42795,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 42956.79999999702,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 43116.599999997765,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 43276.39999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 43435.5,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 43597.199999999255,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 43762.199999999255,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 43987.29999999702,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 44352,
+          "ms": 0.3999999985098839,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 44690.29999999702,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 44885.599999997765,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 45046.89999999851,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 45207.5,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 45367.79999999702,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 45529.39999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 45688.5,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 45847.79999999702,
+          "ms": 0.4000000022351742,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 46010,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 46248,
+          "ms": 0.5999999977648258,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 46417.5,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 46575,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 46733.29999999702,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 46897.29999999702,
+          "ms": 0.6000000014901161,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 47055.29999999702,
+          "ms": 0.4000000022351742,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 47223,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 47406.39999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 47572.29999999702,
+          "ms": 0.4000000022351742,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 47739.599999997765,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 47905.599999997765,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 48072.699999999255,
+          "ms": 0.3999999985098839,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 48239.599999997765,
+          "ms": 0.4000000022351742,
+          "calls": 112,
+          "triangles": 305500,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 48406.199999999255,
+          "ms": 0.5,
+          "calls": 112,
+          "triangles": 305500,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 48572.89999999851,
+          "ms": 0.3999999985098839,
+          "calls": 112,
+          "triangles": 305500,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 48739.5,
+          "ms": 0.5,
+          "calls": 112,
+          "triangles": 305500,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 48906.099999997765,
+          "ms": 0.5,
+          "calls": 112,
+          "triangles": 305500,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 49071.89999999851,
+          "ms": 0.5,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 49218.39999999851,
+          "ms": 0.6000000014901161,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 49368.5,
+          "ms": 0.3999999985098839,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 49514.29999999702,
+          "ms": 0.6000000014901161,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 49664.39999999851,
+          "ms": 0.3999999985098839,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 49811.699999999255,
+          "ms": 0.5,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 49960.39999999851,
+          "ms": 0.5,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 50105.199999999255,
+          "ms": 0.8000000007450581,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 50254,
+          "ms": 0.5,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 50404.599999997765,
+          "ms": 0.4000000022351742,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 50551.39999999851,
+          "ms": 0.3999999985098839,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 50700.89999999851,
+          "ms": 0.6000000014901161,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 50848.199999999255,
+          "ms": 0.5999999977648258,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 50998.199999999255,
+          "ms": 0.3999999985098839,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 51147.79999999702,
+          "ms": 0.4000000022351742,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 51294.599999997765,
+          "ms": 0.4000000022351742,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 51443.5,
+          "ms": 0.3999999985098839,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 51594,
+          "ms": 0.5,
+          "calls": 110,
+          "triangles": 286324,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 51743.199999999255,
+          "ms": 0.5,
+          "calls": 108,
+          "triangles": 273789,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 51886.699999999255,
+          "ms": 0.5,
+          "calls": 108,
+          "triangles": 273789,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 52029.79999999702,
+          "ms": 0.4000000022351742,
+          "calls": 108,
+          "triangles": 273789,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 52174.29999999702,
+          "ms": 0.5,
+          "calls": 108,
+          "triangles": 273789,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 52318.199999999255,
+          "ms": 0.3999999985098839,
+          "calls": 108,
+          "triangles": 273789,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 52461.099999997765,
+          "ms": 0.4000000022351742,
+          "calls": 108,
+          "triangles": 273789,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 52605,
+          "ms": 0.5,
+          "calls": 108,
+          "triangles": 273789,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 52748,
+          "ms": 0.5,
+          "calls": 108,
+          "triangles": 273789,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 52890.5,
+          "ms": 0.5,
+          "calls": 108,
+          "triangles": 273789,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 53034.29999999702,
+          "ms": 0.5,
+          "calls": 108,
+          "triangles": 273789,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 53178.099999997765,
+          "ms": 0.5,
+          "calls": 108,
+          "triangles": 273789,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 53324.099999997765,
+          "ms": 0.6000000014901161,
+          "calls": 108,
+          "triangles": 273789,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 53467,
+          "ms": 0.5,
+          "calls": 107,
+          "triangles": 273777,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 53610.699999999255,
+          "ms": 0.8000000007450581,
+          "calls": 107,
+          "triangles": 273777,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 53752.39999999851,
+          "ms": 0.3999999985098839,
+          "calls": 106,
+          "triangles": 273765,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 53897.599999997765,
+          "ms": 0.4000000022351742,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 54042.699999999255,
+          "ms": 0.3999999985098839,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 54191.699999999255,
+          "ms": 0.3999999985098839,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 54336.099999997765,
+          "ms": 0.5,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 54477.699999999255,
+          "ms": 0.3999999985098839,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 54619.5,
+          "ms": 0.5,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 54764.099999997765,
+          "ms": 0.6000000014901161,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 54905.29999999702,
+          "ms": 0.6000000014901161,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 55050.599999997765,
+          "ms": 0.4000000022351742,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 55194.699999999255,
+          "ms": 0.3999999985098839,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 55341.89999999851,
+          "ms": 0.5,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 55487.199999999255,
+          "ms": 0.5,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 55632.199999999255,
+          "ms": 0.3999999985098839,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 55773.5,
+          "ms": 0.5,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 55916.599999997765,
+          "ms": 0.5,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 56059,
+          "ms": 0.3999999985098839,
+          "calls": 101,
+          "triangles": 273653,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 56205.29999999702,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 56345.79999999702,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 56487.199999999255,
+          "ms": 0.3999999985098839,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 56627.099999997765,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 56770.29999999702,
+          "ms": 0.4000000022351742,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 56910.29999999702,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 57050.79999999702,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 57189.599999997765,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 57331.599999997765,
+          "ms": 0.6999999992549419,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 57475.79999999702,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 57615.099999997765,
+          "ms": 0.4000000022351742,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 57757.199999999255,
+          "ms": 0.3999999985098839,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 57899.699999999255,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 58041.89999999851,
+          "ms": 0.3999999985098839,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 58184.89999999851,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 58325.79999999702,
+          "ms": 0.4000000022351742,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 58466.099999997765,
+          "ms": 0.4000000022351742,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 58608.599999997765,
+          "ms": 0.4000000022351742,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 58753,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 58905.599999997765,
+          "ms": 0.4000000022351742,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 59055.79999999702,
+          "ms": 0.4000000022351742,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 59205.699999999255,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 59355.79999999702,
+          "ms": 0.4000000022351742,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 59505.699999999255,
+          "ms": 0.3999999985098839,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 59655.699999999255,
+          "ms": 0.3999999985098839,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 59805.599999997765,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 59955.39999999851,
+          "ms": 0.3999999985098839,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 60105.699999999255,
+          "ms": 0.3999999985098839,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 60244.29999999702,
+          "ms": 0.4000000022351742,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 60382.199999999255,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 60519.599999997765,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 60658.699999999255,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 60805,
+          "ms": 0.29999999701976776,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 60955.39999999851,
+          "ms": 0.3999999985098839,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 61105.5,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 61255,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 61405.5,
+          "ms": 0.3999999985098839,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 61555.5,
+          "ms": 0.3999999985098839,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 61705.39999999851,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 61855.5,
+          "ms": 0.3999999985098839,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 62005.29999999702,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 62155.599999997765,
+          "ms": 0.4000000022351742,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 62292.89999999851,
+          "ms": 0.3999999985098839,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 62429.199999999255,
+          "ms": 0.5,
+          "calls": 99,
+          "triangles": 263484,
+          "geometries": 110,
+          "textures": 3
+        }
+      ],
+      "gpu": {
+        "vendor": "Google Inc. (Google)",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "gl": {
+        "pixelRatio": 1.5,
+        "width": 1695,
+        "height": 1140
+      },
+      "heap": 167000000
+    },
+    {
+      "name": "quarter",
+      "elapsedMs": 12631,
+      "cpuMs": {
+        "ScriptDuration": 493.804,
+        "TaskDuration": 12576.589999999997,
+        "LayoutDuration": 8.629,
+        "RecalcStyleDuration": 6.2700000000000005
+      },
+      "frames": [
+        {
+          "t": 64661.29999999702,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 64821.29999999702,
+          "ms": 0.4000000022351742,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 64988.599999997765,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 65173.29999999702,
+          "ms": 0.4000000022351742,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 65355.5,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 65522.099999997765,
+          "ms": 0.4000000022351742,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 65712.39999999851,
+          "ms": 0.5,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 65889.59999999776,
+          "ms": 0.30000000074505806,
+          "calls": 114,
+          "triangles": 314448,
+          "geometries": 110,
+          "textures": 3
+        },
+        {
+          "t": 66092.29999999702,
+          "ms": 8.600000001490116,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 119,
+          "textures": 4
+        },
+        {
+          "t": 66640.29999999702,
+          "ms": 4.700000002980232,
+          "calls": 125,
+          "triangles": 323798,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 67185.59999999776,
+          "ms": 0.6999999992549419,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 67439,
+          "ms": 0.7999999970197678,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 67617.89999999851,
+          "ms": 0.6999999992549419,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 67793.19999999925,
+          "ms": 0.8000000007450581,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 67990.19999999925,
+          "ms": 0.8000000007450581,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 68182.39999999851,
+          "ms": 0.6999999992549419,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 68356.09999999776,
+          "ms": 0.6000000014901161,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 68530,
+          "ms": 0.5999999977648258,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 68705.5,
+          "ms": 0.5999999977648258,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 68881.79999999702,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 69053.29999999702,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 69220.89999999851,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 69385,
+          "ms": 0.3999999985098839,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 69551.89999999851,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 69714.59999999776,
+          "ms": 0.4000000022351742,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 69889.29999999702,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 70067.39999999851,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 70233.59999999776,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 70403.79999999702,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 70572,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 70737.69999999925,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 70901.69999999925,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 71074.59999999776,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 71239.39999999851,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 71403.89999999851,
+          "ms": 0.3999999985098839,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 71564.19999999925,
+          "ms": 0.30000000074505806,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 71723.29999999702,
+          "ms": 0.4000000022351742,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 71883.19999999925,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 72043.29999999702,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 72202.79999999702,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 72361.59999999776,
+          "ms": 0.4000000022351742,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 72521.69999999925,
+          "ms": 0.5,
+          "calls": 116,
+          "triangles": 314480,
+          "geometries": 114,
+          "textures": 4
+        },
+        {
+          "t": 72680.59999999776,
+          "ms": 0.6000000014901161,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 72848.59999999776,
+          "ms": 0.4000000022351742,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 73011,
+          "ms": 0.5,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 73238.89999999851,
+          "ms": 0.6000000014901161,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 73521.89999999851,
+          "ms": 0.6000000014901161,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 73685.19999999925,
+          "ms": 0.5,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 73846.59999999776,
+          "ms": 0.6000000014901161,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 74007.79999999702,
+          "ms": 0.4000000022351742,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 74172,
+          "ms": 0.5,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 74332.69999999925,
+          "ms": 0.5,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 74492.79999999702,
+          "ms": 0.7000000029802322,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 74655.09999999776,
+          "ms": 0.5,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 74820.5,
+          "ms": 0.5999999977648258,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 74981.69999999925,
+          "ms": 0.30000000074505806,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 75144.79999999702,
+          "ms": 0.4000000022351742,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 75306.89999999851,
+          "ms": 0.5,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 75471.69999999925,
+          "ms": 0.5,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 75634.39999999851,
+          "ms": 0.5,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 75796.89999999851,
+          "ms": 0.6000000014901161,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 75958.69999999925,
+          "ms": 0.5,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 76124.29999999702,
+          "ms": 0.4000000022351742,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 76288.09999999776,
+          "ms": 0.6000000014901161,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 76451.5,
+          "ms": 0.5,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 76621.89999999851,
+          "ms": 0.5,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 76788.39999999851,
+          "ms": 0.5,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 76954,
+          "ms": 0.5,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 77115.89999999851,
+          "ms": 0.6000000014901161,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        },
+        {
+          "t": 77288.09999999776,
+          "ms": 0.6000000014901161,
+          "calls": 118,
+          "triangles": 314546,
+          "geometries": 114,
+          "textures": 5
+        }
+      ],
+      "gpu": {
+        "vendor": "Google Inc. (Google)",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "gl": {
+        "pixelRatio": 1.5,
+        "width": 1695,
+        "height": 780
+      },
+      "heap": 167000000
+    }
+  ],
+  "errors": [],
+  "tree": {
+    "items": [
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 4,
+        "index": 6,
+        "instances": 1,
+        "material": "MeshBasicMaterial",
+        "geometryId": 95,
+        "materialId": 7
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 4050,
+        "instances": 1,
+        "material": "MeshBasicMaterial",
+        "geometryId": 82,
+        "materialId": 9
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 5240,
+        "index": 29052,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 5,
+        "materialId": 11
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 1588,
+        "material": "LineBasicMaterial",
+        "geometryId": 6,
+        "materialId": 13
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 1502,
+        "index": 8307,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 7,
+        "materialId": 15
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 466,
+        "material": "LineBasicMaterial",
+        "geometryId": 8,
+        "materialId": 17
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 3879,
+        "index": 22032,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 9,
+        "materialId": 19
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 824,
+        "material": "LineBasicMaterial",
+        "geometryId": 10,
+        "materialId": 21
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 5308,
+        "index": 30507,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 11,
+        "materialId": 23
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 890,
+        "material": "LineBasicMaterial",
+        "geometryId": 12,
+        "materialId": 25
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 5146,
+        "index": 28980,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 13,
+        "materialId": 27
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 1260,
+        "material": "LineBasicMaterial",
+        "geometryId": 14,
+        "materialId": 29
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 1105,
+        "index": 6066,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 15,
+        "materialId": 31
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 372,
+        "material": "LineBasicMaterial",
+        "geometryId": 16,
+        "materialId": 33
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 7059,
+        "index": 41025,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 17,
+        "materialId": 35
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 882,
+        "material": "LineBasicMaterial",
+        "geometryId": 18,
+        "materialId": 37
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 9898,
+        "index": 57528,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 19,
+        "materialId": 39
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 1232,
+        "material": "LineBasicMaterial",
+        "geometryId": 20,
+        "materialId": 41
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 319,
+        "index": 1677,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 21,
+        "materialId": 43
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 154,
+        "material": "LineBasicMaterial",
+        "geometryId": 22,
+        "materialId": 45
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 3536,
+        "index": 19926,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 23,
+        "materialId": 47
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 852,
+        "material": "LineBasicMaterial",
+        "geometryId": 24,
+        "materialId": 49
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 72,
+        "index": 336,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 25,
+        "materialId": 51
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 60,
+        "material": "LineBasicMaterial",
+        "geometryId": 26,
+        "materialId": 53
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 2690,
+        "index": 14748,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 27,
+        "materialId": 55
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 916,
+        "material": "LineBasicMaterial",
+        "geometryId": 28,
+        "materialId": 57
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 1823,
+        "index": 10053,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 29,
+        "materialId": 59
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 586,
+        "material": "LineBasicMaterial",
+        "geometryId": 30,
+        "materialId": 61
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 2934,
+        "index": 16728,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 31,
+        "materialId": 63
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 580,
+        "material": "LineBasicMaterial",
+        "geometryId": 32,
+        "materialId": 65
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 6533,
+        "index": 37605,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 33,
+        "materialId": 67
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 1054,
+        "material": "LineBasicMaterial",
+        "geometryId": 34,
+        "materialId": 69
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 176,
+        "index": 888,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 35,
+        "materialId": 71
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 108,
+        "material": "LineBasicMaterial",
+        "geometryId": 36,
+        "materialId": 73
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 1786,
+        "index": 9654,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 37,
+        "materialId": 75
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 700,
+        "material": "LineBasicMaterial",
+        "geometryId": 38,
+        "materialId": 77
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 4202,
+        "index": 24240,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 39,
+        "materialId": 79
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 644,
+        "material": "LineBasicMaterial",
+        "geometryId": 40,
+        "materialId": 81
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 529,
+        "index": 2835,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 41,
+        "materialId": 83
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 222,
+        "material": "LineBasicMaterial",
+        "geometryId": 42,
+        "materialId": 85
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 4210,
+        "index": 23907,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 43,
+        "materialId": 87
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 894,
+        "material": "LineBasicMaterial",
+        "geometryId": 44,
+        "materialId": 89
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 2671,
+        "index": 15291,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 45,
+        "materialId": 91
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 486,
+        "material": "LineBasicMaterial",
+        "geometryId": 46,
+        "materialId": 93
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 6021,
+        "index": 34404,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 47,
+        "materialId": 95
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 1140,
+        "material": "LineBasicMaterial",
+        "geometryId": 48,
+        "materialId": 97
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 2747,
+        "index": 15351,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 49,
+        "materialId": 99
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 746,
+        "material": "LineBasicMaterial",
+        "geometryId": 50,
+        "materialId": 101
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 3615,
+        "index": 19839,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 51,
+        "materialId": 103
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 1222,
+        "material": "LineBasicMaterial",
+        "geometryId": 52,
+        "materialId": 105
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 3025,
+        "index": 17268,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 53,
+        "materialId": 107
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 584,
+        "material": "LineBasicMaterial",
+        "geometryId": 54,
+        "materialId": 109
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 4714,
+        "index": 27171,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 55,
+        "materialId": 111
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 738,
+        "material": "LineBasicMaterial",
+        "geometryId": 56,
+        "materialId": 113
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 12866,
+        "index": 75306,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 57,
+        "materialId": 115
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 1256,
+        "material": "LineBasicMaterial",
+        "geometryId": 58,
+        "materialId": 117
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 4683,
+        "index": 26844,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 59,
+        "materialId": 119
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 836,
+        "material": "LineBasicMaterial",
+        "geometryId": 60,
+        "materialId": 121
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 1522,
+        "index": 8292,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 61,
+        "materialId": 123
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 552,
+        "material": "LineBasicMaterial",
+        "geometryId": 62,
+        "materialId": 125
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 7356,
+        "index": 42765,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 63,
+        "materialId": 127
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 910,
+        "material": "LineBasicMaterial",
+        "geometryId": 64,
+        "materialId": 129
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 870,
+        "index": 4731,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 65,
+        "materialId": 131
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 322,
+        "material": "LineBasicMaterial",
+        "geometryId": 66,
+        "materialId": 133
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 1156,
+        "index": 6348,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 67,
+        "materialId": 135
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 388,
+        "material": "LineBasicMaterial",
+        "geometryId": 68,
+        "materialId": 137
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 5868,
+        "index": 33873,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 69,
+        "materialId": 139
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 886,
+        "material": "LineBasicMaterial",
+        "geometryId": 70,
+        "materialId": 141
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 10662,
+        "index": 61842,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 71,
+        "materialId": 143
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 1416,
+        "material": "LineBasicMaterial",
+        "geometryId": 72,
+        "materialId": 145
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 3054,
+        "index": 17382,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 73,
+        "materialId": 147
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 624,
+        "material": "LineBasicMaterial",
+        "geometryId": 74,
+        "materialId": 149
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 1743,
+        "index": 9324,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 75,
+        "materialId": 151
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 752,
+        "material": "LineBasicMaterial",
+        "geometryId": 76,
+        "materialId": 153
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 12214,
+        "index": 71277,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 77,
+        "materialId": 155
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 1334,
+        "material": "LineBasicMaterial",
+        "geometryId": 78,
+        "materialId": 157
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 3237,
+        "index": 18600,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 79,
+        "materialId": 159
+      },
+      {
+        "type": "LineSegments",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 544,
+        "material": "LineBasicMaterial",
+        "geometryId": 80,
+        "materialId": 161
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 4,
+        "index": 6,
+        "instances": 1,
+        "material": "MeshBasicMaterial",
+        "geometryId": 174,
+        "materialId": 163
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": true,
+        "vertices": 18,
+        "index": 54,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 81,
+        "materialId": 165
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": true,
+        "receiveShadow": true,
+        "vertices": 34,
+        "index": 60,
+        "instances": 84,
+        "material": "MeshLambertMaterial",
+        "geometryId": 177,
+        "materialId": 167
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": true,
+        "receiveShadow": true,
+        "vertices": 60,
+        "instances": 84,
+        "material": "MeshLambertMaterial",
+        "geometryId": 179,
+        "materialId": 169
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": true,
+        "receiveShadow": true,
+        "vertices": 60,
+        "instances": 84,
+        "material": "MeshLambertMaterial",
+        "geometryId": 181,
+        "materialId": 171
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": true,
+        "receiveShadow": true,
+        "vertices": 24,
+        "index": 36,
+        "instances": 18,
+        "material": "MeshLambertMaterial",
+        "geometryId": 183,
+        "materialId": 173
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": true,
+        "receiveShadow": true,
+        "vertices": 19,
+        "index": 24,
+        "instances": 18,
+        "material": "MeshLambertMaterial",
+        "geometryId": 185,
+        "materialId": 175
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": true,
+        "receiveShadow": true,
+        "vertices": 4,
+        "index": 6,
+        "instances": 18,
+        "material": "MeshLambertMaterial",
+        "geometryId": 187,
+        "materialId": 177
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 690,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 233,
+        "materialId": 179
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 7674,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 234,
+        "materialId": 181
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 12,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 235,
+        "materialId": 183
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 7698,
+        "instances": 1,
+        "material": "MeshBasicMaterial",
+        "geometryId": 236,
+        "materialId": 185
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 12,
+        "instances": 1,
+        "material": "MeshBasicMaterial",
+        "geometryId": 237,
+        "materialId": 187
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": true,
+        "receiveShadow": true,
+        "vertices": 24,
+        "index": 36,
+        "instances": 318,
+        "material": "MeshLambertMaterial",
+        "geometryId": 194,
+        "materialId": 189
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 60,
+        "material": "MeshLambertMaterial",
+        "geometryId": 196,
+        "materialId": 191
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 96,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 2,
+        "materialId": 193
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 96,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 3,
+        "materialId": 195
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 200,
+        "materialId": 197
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 202,
+        "materialId": 199
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 204,
+        "materialId": 201
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 40,
+        "index": 72,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 206,
+        "materialId": 203
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 208,
+        "materialId": 205
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 96,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 2,
+        "materialId": 207
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 96,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 3,
+        "materialId": 209
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 212,
+        "materialId": 211
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 214,
+        "materialId": 213
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 216,
+        "materialId": 215
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 40,
+        "index": 72,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 218,
+        "materialId": 217
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 220,
+        "materialId": 219
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 96,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 2,
+        "materialId": 221
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 96,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 3,
+        "materialId": 223
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 224,
+        "materialId": 225
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 226,
+        "materialId": 227
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 228,
+        "materialId": 229
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 40,
+        "index": 72,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 230,
+        "materialId": 231
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 232,
+        "materialId": 233
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 66,
+        "index": 192,
+        "instances": 1,
+        "material": "MeshBasicMaterial",
+        "geometryId": 244,
+        "materialId": 235
+      },
+      {
+        "type": "Sprite",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 4,
+        "index": 6,
+        "instances": 1,
+        "material": "SpriteMaterial",
+        "geometryId": 245,
+        "materialId": 237
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 28,
+        "index": 48,
+        "instances": 1,
+        "material": "MeshBasicMaterial",
+        "geometryId": 247,
+        "materialId": 239
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 15,
+        "index": 18,
+        "instances": 1,
+        "material": "MeshBasicMaterial",
+        "geometryId": 249,
+        "materialId": 241
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": false,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "index": 36,
+        "instances": 6,
+        "material": "MeshBasicMaterial",
+        "geometryId": 251,
+        "materialId": 243
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 40,
+        "index": 72,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 253,
+        "materialId": 245
+      },
+      {
+        "type": "Mesh",
+        "name": "",
+        "visible": true,
+        "castShadow": false,
+        "receiveShadow": false,
+        "vertices": 24,
+        "instances": 1,
+        "material": "MeshLambertMaterial",
+        "geometryId": 255,
+        "materialId": 247
+      }
+    ],
+    "sceneChildren": 57,
+    "interaction": 46,
+    "longTasks": [
+      {
+        "start": 431.5,
+        "duration": 5531
+      },
+      {
+        "start": 5971.89999999851,
+        "duration": 1713
+      },
+      {
+        "start": 7694.199999999255,
+        "duration": 447
+      },
+      {
+        "start": 8157.199999999255,
+        "duration": 242
+      },
+      {
+        "start": 8407.199999999255,
+        "duration": 177
+      },
+      {
+        "start": 8598.29999999702,
+        "duration": 172
+      },
+      {
+        "start": 8777.599999997765,
+        "duration": 185
+      },
+      {
+        "start": 8963.699999999255,
+        "duration": 172
+      },
+      {
+        "start": 9136.39999999851,
+        "duration": 177
+      },
+      {
+        "start": 9314.099999997765,
+        "duration": 176
+      },
+      {
+        "start": 9490.79999999702,
+        "duration": 176
+      },
+      {
+        "start": 9667.099999997765,
+        "duration": 177
+      },
+      {
+        "start": 9844.79999999702,
+        "duration": 174
+      },
+      {
+        "start": 10019.29999999702,
+        "duration": 171
+      },
+      {
+        "start": 10190.39999999851,
+        "duration": 176
+      },
+      {
+        "start": 10373.89999999851,
+        "duration": 174
+      },
+      {
+        "start": 10557.29999999702,
+        "duration": 175
+      },
+      {
+        "start": 10740.599999997765,
+        "duration": 178
+      },
+      {
+        "start": 10923.89999999851,
+        "duration": 175
+      },
+      {
+        "start": 11107.29999999702,
+        "duration": 179
+      },
+      {
+        "start": 11286.29999999702,
+        "duration": 171
+      },
+      {
+        "start": 11458,
+        "duration": 177
+      },
+      {
+        "start": 11635.39999999851,
+        "duration": 178
+      },
+      {
+        "start": 11824,
+        "duration": 175
+      },
+      {
+        "start": 12007.199999999255,
+        "duration": 170
+      },
+      {
+        "start": 12190.699999999255,
+        "duration": 175
+      },
+      {
+        "start": 12374,
+        "duration": 179
+      },
+      {
+        "start": 12557.29999999702,
+        "duration": 199
+      },
+      {
+        "start": 12757.29999999702,
+        "duration": 175
+      },
+      {
+        "start": 12940.599999997765,
+        "duration": 175
+      },
+      {
+        "start": 13123.89999999851,
+        "duration": 199
+      },
+      {
+        "start": 13340.699999999255,
+        "duration": 190
+      },
+      {
+        "start": 13540.599999997765,
+        "duration": 176
+      },
+      {
+        "start": 13724,
+        "duration": 180
+      },
+      {
+        "start": 13904.099999997765,
+        "duration": 175
+      },
+      {
+        "start": 14079.39999999851,
+        "duration": 173
+      },
+      {
+        "start": 14252.699999999255,
+        "duration": 175
+      },
+      {
+        "start": 14427.89999999851,
+        "duration": 173
+      },
+      {
+        "start": 14601.79999999702,
+        "duration": 177
+      },
+      {
+        "start": 14779.699999999255,
+        "duration": 173
+      },
+      {
+        "start": 14956.699999999255,
+        "duration": 180
+      },
+      {
+        "start": 15140.5,
+        "duration": 177
+      },
+      {
+        "start": 15323.89999999851,
+        "duration": 175
+      },
+      {
+        "start": 15507.199999999255,
+        "duration": 177
+      },
+      {
+        "start": 15684.699999999255,
+        "duration": 179
+      },
+      {
+        "start": 15863.89999999851,
+        "duration": 172
+      },
+      {
+        "start": 16036.699999999255,
+        "duration": 181
+      },
+      {
+        "start": 16223.79999999702,
+        "duration": 178
+      },
+      {
+        "start": 16407.199999999255,
+        "duration": 174
+      },
+      {
+        "start": 16590.5,
+        "duration": 176
+      },
+      {
+        "start": 16773.099999997765,
+        "duration": 178
+      },
+      {
+        "start": 16951.89999999851,
+        "duration": 173
+      },
+      {
+        "start": 17125.5,
+        "duration": 173
+      },
+      {
+        "start": 17298.79999999702,
+        "duration": 175
+      },
+      {
+        "start": 17474.199999999255,
+        "duration": 176
+      },
+      {
+        "start": 17650.5,
+        "duration": 175
+      },
+      {
+        "start": 17826.29999999702,
+        "duration": 172
+      },
+      {
+        "start": 18001,
+        "duration": 173
+      },
+      {
+        "start": 18174.89999999851,
+        "duration": 178
+      },
+      {
+        "start": 18353.199999999255,
+        "duration": 190
+      },
+      {
+        "start": 18544.79999999702,
+        "duration": 178
+      },
+      {
+        "start": 18722.89999999851,
+        "duration": 179
+      },
+      {
+        "start": 18903.5,
+        "duration": 188
+      },
+      {
+        "start": 19106.099999997765,
+        "duration": 171
+      },
+      {
+        "start": 19289.599999997765,
+        "duration": 250
+      },
+      {
+        "start": 19549.599999997765,
+        "duration": 167
+      },
+      {
+        "start": 19717.199999999255,
+        "duration": 161
+      },
+      {
+        "start": 19890.5,
+        "duration": 162
+      },
+      {
+        "start": 20057,
+        "duration": 164
+      },
+      {
+        "start": 20221.29999999702,
+        "duration": 160
+      },
+      {
+        "start": 20382.099999997765,
+        "duration": 158
+      },
+      {
+        "start": 20540.5,
+        "duration": 158
+      },
+      {
+        "start": 20698.599999997765,
+        "duration": 161
+      },
+      {
+        "start": 20860.199999999255,
+        "duration": 159
+      },
+      {
+        "start": 21020,
+        "duration": 157
+      },
+      {
+        "start": 21177.89999999851,
+        "duration": 159
+      },
+      {
+        "start": 21337.5,
+        "duration": 160
+      },
+      {
+        "start": 21506.599999997765,
+        "duration": 157
+      },
+      {
+        "start": 21673.699999999255,
+        "duration": 160
+      },
+      {
+        "start": 21839.599999997765,
+        "duration": 157
+      },
+      {
+        "start": 22007,
+        "duration": 160
+      },
+      {
+        "start": 22173.699999999255,
+        "duration": 160
+      },
+      {
+        "start": 22340.099999997765,
+        "duration": 161
+      },
+      {
+        "start": 22506.39999999851,
+        "duration": 158
+      },
+      {
+        "start": 22664.599999997765,
+        "duration": 180
+      },
+      {
+        "start": 22844.699999999255,
+        "duration": 158
+      },
+      {
+        "start": 23003.29999999702,
+        "duration": 158
+      },
+      {
+        "start": 23162,
+        "duration": 159
+      },
+      {
+        "start": 23321.599999997765,
+        "duration": 158
+      },
+      {
+        "start": 23479.89999999851,
+        "duration": 158
+      },
+      {
+        "start": 23641.099999997765,
+        "duration": 157
+      },
+      {
+        "start": 23806.79999999702,
+        "duration": 157
+      },
+      {
+        "start": 23973,
+        "duration": 157
+      },
+      {
+        "start": 24140.29999999702,
+        "duration": 167
+      },
+      {
+        "start": 24322.699999999255,
+        "duration": 191
+      },
+      {
+        "start": 24523.5,
+        "duration": 157
+      },
+      {
+        "start": 24689.89999999851,
+        "duration": 159
+      },
+      {
+        "start": 24856.89999999851,
+        "duration": 158
+      },
+      {
+        "start": 25023.099999997765,
+        "duration": 158
+      },
+      {
+        "start": 25190.099999997765,
+        "duration": 160
+      },
+      {
+        "start": 25360.5,
+        "duration": 158
+      },
+      {
+        "start": 25540.199999999255,
+        "duration": 163
+      },
+      {
+        "start": 25723.5,
+        "duration": 174
+      },
+      {
+        "start": 25908.39999999851,
+        "duration": 189
+      },
+      {
+        "start": 26098.599999997765,
+        "duration": 165
+      },
+      {
+        "start": 26272.699999999255,
+        "duration": 165
+      },
+      {
+        "start": 26438.199999999255,
+        "duration": 159
+      },
+      {
+        "start": 26598.29999999702,
+        "duration": 159
+      },
+      {
+        "start": 26757.699999999255,
+        "duration": 157
+      },
+      {
+        "start": 26915,
+        "duration": 156
+      },
+      {
+        "start": 27071.199999999255,
+        "duration": 157
+      },
+      {
+        "start": 27228.79999999702,
+        "duration": 158
+      },
+      {
+        "start": 27387,
+        "duration": 165
+      },
+      {
+        "start": 27552.199999999255,
+        "duration": 165
+      },
+      {
+        "start": 27718.199999999255,
+        "duration": 159
+      },
+      {
+        "start": 27878,
+        "duration": 160
+      },
+      {
+        "start": 28038.099999997765,
+        "duration": 164
+      },
+      {
+        "start": 28202.599999997765,
+        "duration": 158
+      },
+      {
+        "start": 28361,
+        "duration": 159
+      },
+      {
+        "start": 28520.29999999702,
+        "duration": 160
+      },
+      {
+        "start": 28680.39999999851,
+        "duration": 161
+      },
+      {
+        "start": 28842.099999997765,
+        "duration": 164
+      },
+      {
+        "start": 29006.89999999851,
+        "duration": 158
+      },
+      {
+        "start": 29165.099999997765,
+        "duration": 181
+      },
+      {
+        "start": 29347.099999997765,
+        "duration": 166
+      },
+      {
+        "start": 29513.199999999255,
+        "duration": 159
+      },
+      {
+        "start": 29673.099999997765,
+        "duration": 162
+      },
+      {
+        "start": 29835.89999999851,
+        "duration": 158
+      },
+      {
+        "start": 29995,
+        "duration": 161
+      },
+      {
+        "start": 30156.29999999702,
+        "duration": 159
+      },
+      {
+        "start": 30315.89999999851,
+        "duration": 164
+      },
+      {
+        "start": 30480.39999999851,
+        "duration": 160
+      },
+      {
+        "start": 30641.29999999702,
+        "duration": 165
+      },
+      {
+        "start": 30807,
+        "duration": 169
+      },
+      {
+        "start": 30976.89999999851,
+        "duration": 163
+      },
+      {
+        "start": 31140.29999999702,
+        "duration": 160
+      },
+      {
+        "start": 31300.599999997765,
+        "duration": 162
+      },
+      {
+        "start": 31463.29999999702,
+        "duration": 164
+      },
+      {
+        "start": 31628.699999999255,
+        "duration": 160
+      },
+      {
+        "start": 31790.099999997765,
+        "duration": 165
+      },
+      {
+        "start": 31955.5,
+        "duration": 167
+      },
+      {
+        "start": 32123.099999997765,
+        "duration": 163
+      },
+      {
+        "start": 32286.39999999851,
+        "duration": 168
+      },
+      {
+        "start": 32454.599999997765,
+        "duration": 165
+      },
+      {
+        "start": 32620.29999999702,
+        "duration": 166
+      },
+      {
+        "start": 32786.699999999255,
+        "duration": 166
+      },
+      {
+        "start": 32957.099999997765,
+        "duration": 192
+      },
+      {
+        "start": 33180.099999997765,
+        "duration": 190
+      },
+      {
+        "start": 33374.79999999702,
+        "duration": 202
+      },
+      {
+        "start": 33589.099999997765,
+        "duration": 168
+      },
+      {
+        "start": 33757.79999999702,
+        "duration": 166
+      },
+      {
+        "start": 33924.5,
+        "duration": 161
+      },
+      {
+        "start": 34085.89999999851,
+        "duration": 162
+      },
+      {
+        "start": 34248.199999999255,
+        "duration": 193
+      },
+      {
+        "start": 39455.29999999702,
+        "duration": 217
+      },
+      {
+        "start": 39689.599999997765,
+        "duration": 166
+      },
+      {
+        "start": 39872.39999999851,
+        "duration": 164
+      },
+      {
+        "start": 40040.29999999702,
+        "duration": 164
+      },
+      {
+        "start": 40205,
+        "duration": 161
+      },
+      {
+        "start": 40366.5,
+        "duration": 163
+      },
+      {
+        "start": 40530,
+        "duration": 162
+      },
+      {
+        "start": 40693,
+        "duration": 167
+      },
+      {
+        "start": 40860.699999999255,
+        "duration": 172
+      },
+      {
+        "start": 41044,
+        "duration": 164
+      },
+      {
+        "start": 41222.89999999851,
+        "duration": 172
+      },
+      {
+        "start": 41405.29999999702,
+        "duration": 165
+      },
+      {
+        "start": 41574.699999999255,
+        "duration": 167
+      },
+      {
+        "start": 41756.199999999255,
+        "duration": 164
+      },
+      {
+        "start": 41924.39999999851,
+        "duration": 163
+      },
+      {
+        "start": 42091.699999999255,
+        "duration": 212
+      },
+      {
+        "start": 42304.199999999255,
+        "duration": 166
+      },
+      {
+        "start": 42471,
+        "duration": 162
+      },
+      {
+        "start": 42633.29999999702,
+        "duration": 161
+      },
+      {
+        "start": 42794.79999999702,
+        "duration": 161
+      },
+      {
+        "start": 42956.699999999255,
+        "duration": 159
+      },
+      {
+        "start": 43116.199999999255,
+        "duration": 159
+      },
+      {
+        "start": 43276.29999999702,
+        "duration": 158
+      },
+      {
+        "start": 43435.39999999851,
+        "duration": 161
+      },
+      {
+        "start": 43596.79999999702,
+        "duration": 165
+      },
+      {
+        "start": 43762.099999997765,
+        "duration": 224
+      },
+      {
+        "start": 43987.099999997765,
+        "duration": 364
+      },
+      {
+        "start": 44351.599999997765,
+        "duration": 338
+      },
+      {
+        "start": 44690.199999999255,
+        "duration": 195
+      },
+      {
+        "start": 44885.5,
+        "duration": 161
+      },
+      {
+        "start": 45046.599999997765,
+        "duration": 160
+      },
+      {
+        "start": 45207.29999999702,
+        "duration": 160
+      },
+      {
+        "start": 45367.599999997765,
+        "duration": 161
+      },
+      {
+        "start": 45529.099999997765,
+        "duration": 159
+      },
+      {
+        "start": 45688.29999999702,
+        "duration": 159
+      },
+      {
+        "start": 45847.5,
+        "duration": 162
+      },
+      {
+        "start": 46009.699999999255,
+        "duration": 237
+      },
+      {
+        "start": 46247.79999999702,
+        "duration": 169
+      },
+      {
+        "start": 46417.39999999851,
+        "duration": 157
+      },
+      {
+        "start": 46574.599999997765,
+        "duration": 158
+      },
+      {
+        "start": 46733.199999999255,
+        "duration": 163
+      },
+      {
+        "start": 46897.29999999702,
+        "duration": 157
+      },
+      {
+        "start": 47054.79999999702,
+        "duration": 160
+      },
+      {
+        "start": 47222.599999997765,
+        "duration": 171
+      },
+      {
+        "start": 47405.89999999851,
+        "duration": 157
+      },
+      {
+        "start": 47571.89999999851,
+        "duration": 157
+      },
+      {
+        "start": 47739.199999999255,
+        "duration": 157
+      },
+      {
+        "start": 47905.29999999702,
+        "duration": 155
+      },
+      {
+        "start": 48072.39999999851,
+        "duration": 158
+      },
+      {
+        "start": 48239.199999999255,
+        "duration": 154
+      },
+      {
+        "start": 48405.89999999851,
+        "duration": 151
+      },
+      {
+        "start": 48572.5,
+        "duration": 155
+      },
+      {
+        "start": 48739.199999999255,
+        "duration": 153
+      },
+      {
+        "start": 48905.79999999702,
+        "duration": 154
+      },
+      {
+        "start": 49071.5,
+        "duration": 146
+      },
+      {
+        "start": 49218.199999999255,
+        "duration": 149
+      },
+      {
+        "start": 49368.29999999702,
+        "duration": 145
+      },
+      {
+        "start": 49514.099999997765,
+        "duration": 149
+      },
+      {
+        "start": 49664.199999999255,
+        "duration": 147
+      },
+      {
+        "start": 49811.599999997765,
+        "duration": 148
+      },
+      {
+        "start": 49960,
+        "duration": 144
+      },
+      {
+        "start": 50105.099999997765,
+        "duration": 148
+      },
+      {
+        "start": 50253.79999999702,
+        "duration": 150
+      },
+      {
+        "start": 50404.199999999255,
+        "duration": 146
+      },
+      {
+        "start": 50551.199999999255,
+        "duration": 149
+      },
+      {
+        "start": 50700.79999999702,
+        "duration": 147
+      },
+      {
+        "start": 50847.89999999851,
+        "duration": 149
+      },
+      {
+        "start": 50998.099999997765,
+        "duration": 149
+      },
+      {
+        "start": 51147.599999997765,
+        "duration": 146
+      },
+      {
+        "start": 51294.199999999255,
+        "duration": 148
+      },
+      {
+        "start": 51443.39999999851,
+        "duration": 150
+      },
+      {
+        "start": 51593.79999999702,
+        "duration": 149
+      },
+      {
+        "start": 51742.79999999702,
+        "duration": 143
+      },
+      {
+        "start": 51886.5,
+        "duration": 142
+      },
+      {
+        "start": 52029.599999997765,
+        "duration": 144
+      },
+      {
+        "start": 52174,
+        "duration": 143
+      },
+      {
+        "start": 52317.89999999851,
+        "duration": 142
+      },
+      {
+        "start": 52460.89999999851,
+        "duration": 143
+      },
+      {
+        "start": 52604.599999997765,
+        "duration": 143
+      },
+      {
+        "start": 52747.89999999851,
+        "duration": 142
+      },
+      {
+        "start": 52890.29999999702,
+        "duration": 143
+      },
+      {
+        "start": 53033.89999999851,
+        "duration": 143
+      },
+      {
+        "start": 53177.89999999851,
+        "duration": 145
+      },
+      {
+        "start": 53324,
+        "duration": 142
+      },
+      {
+        "start": 53466.699999999255,
+        "duration": 143
+      },
+      {
+        "start": 53610.5,
+        "duration": 141
+      },
+      {
+        "start": 53752.199999999255,
+        "duration": 144
+      },
+      {
+        "start": 53897.29999999702,
+        "duration": 145
+      },
+      {
+        "start": 54042.5,
+        "duration": 148
+      },
+      {
+        "start": 54191.5,
+        "duration": 144
+      },
+      {
+        "start": 54335.699999999255,
+        "duration": 141
+      },
+      {
+        "start": 54477.599999997765,
+        "duration": 141
+      },
+      {
+        "start": 54619.29999999702,
+        "duration": 144
+      },
+      {
+        "start": 54763.79999999702,
+        "duration": 141
+      },
+      {
+        "start": 54905.199999999255,
+        "duration": 145
+      },
+      {
+        "start": 55050.5,
+        "duration": 143
+      },
+      {
+        "start": 55194.39999999851,
+        "duration": 147
+      },
+      {
+        "start": 55341.79999999702,
+        "duration": 145
+      },
+      {
+        "start": 55487.199999999255,
+        "duration": 144
+      },
+      {
+        "start": 55631.89999999851,
+        "duration": 141
+      },
+      {
+        "start": 55773.39999999851,
+        "duration": 142
+      },
+      {
+        "start": 55916.5,
+        "duration": 142
+      },
+      {
+        "start": 56058.599999997765,
+        "duration": 142
+      },
+      {
+        "start": 56205,
+        "duration": 140
+      },
+      {
+        "start": 56345.699999999255,
+        "duration": 141
+      },
+      {
+        "start": 56487,
+        "duration": 139
+      },
+      {
+        "start": 56626.89999999851,
+        "duration": 142
+      },
+      {
+        "start": 56770,
+        "duration": 139
+      },
+      {
+        "start": 56910.199999999255,
+        "duration": 140
+      },
+      {
+        "start": 57050.599999997765,
+        "duration": 138
+      },
+      {
+        "start": 57189.5,
+        "duration": 141
+      },
+      {
+        "start": 57331.39999999851,
+        "duration": 144
+      },
+      {
+        "start": 57475.5,
+        "duration": 139
+      },
+      {
+        "start": 57614.89999999851,
+        "duration": 141
+      },
+      {
+        "start": 57756.89999999851,
+        "duration": 142
+      },
+      {
+        "start": 57899.39999999851,
+        "duration": 142
+      },
+      {
+        "start": 58041.699999999255,
+        "duration": 142
+      },
+      {
+        "start": 58184.699999999255,
+        "duration": 140
+      },
+      {
+        "start": 58325.39999999851,
+        "duration": 140
+      },
+      {
+        "start": 58465.89999999851,
+        "duration": 142
+      },
+      {
+        "start": 58608.5,
+        "duration": 144
+      },
+      {
+        "start": 58752.699999999255,
+        "duration": 140
+      },
+      {
+        "start": 58905.29999999702,
+        "duration": 139
+      },
+      {
+        "start": 59055.39999999851,
+        "duration": 139
+      },
+      {
+        "start": 59205.39999999851,
+        "duration": 140
+      },
+      {
+        "start": 59355.5,
+        "duration": 140
+      },
+      {
+        "start": 59505.29999999702,
+        "duration": 138
+      },
+      {
+        "start": 59655.5,
+        "duration": 140
+      },
+      {
+        "start": 59805.29999999702,
+        "duration": 135
+      },
+      {
+        "start": 59955.099999997765,
+        "duration": 139
+      },
+      {
+        "start": 60105.39999999851,
+        "duration": 138
+      },
+      {
+        "start": 60244.099999997765,
+        "duration": 137
+      },
+      {
+        "start": 60382.199999999255,
+        "duration": 137
+      },
+      {
+        "start": 60519.29999999702,
+        "duration": 139
+      },
+      {
+        "start": 60658.5,
+        "duration": 141
+      },
+      {
+        "start": 60804.79999999702,
+        "duration": 137
+      },
+      {
+        "start": 60955.29999999702,
+        "duration": 140
+      },
+      {
+        "start": 61105.39999999851,
+        "duration": 140
+      },
+      {
+        "start": 61254.89999999851,
+        "duration": 139
+      },
+      {
+        "start": 61405.29999999702,
+        "duration": 138
+      },
+      {
+        "start": 61555.39999999851,
+        "duration": 138
+      },
+      {
+        "start": 61705.29999999702,
+        "duration": 136
+      },
+      {
+        "start": 61855.29999999702,
+        "duration": 138
+      },
+      {
+        "start": 62005.199999999255,
+        "duration": 141
+      },
+      {
+        "start": 62155.39999999851,
+        "duration": 137
+      },
+      {
+        "start": 62292.79999999702,
+        "duration": 136
+      },
+      {
+        "start": 62429.099999997765,
+        "duration": 138
+      },
+      {
+        "start": 62569.79999999702,
+        "duration": 138
+      },
+      {
+        "start": 62710.099999997765,
+        "duration": 135
+      },
+      {
+        "start": 62846.29999999702,
+        "duration": 139
+      },
+      {
+        "start": 62986.39999999851,
+        "duration": 136
+      },
+      {
+        "start": 63123.699999999255,
+        "duration": 137
+      },
+      {
+        "start": 63274.29999999702,
+        "duration": 162
+      },
+      {
+        "start": 63438,
+        "duration": 163
+      },
+      {
+        "start": 63604.699999999255,
+        "duration": 162
+      },
+      {
+        "start": 63771.099999997765,
+        "duration": 160
+      },
+      {
+        "start": 63932,
+        "duration": 241
+      },
+      {
+        "start": 64173.79999999702,
+        "duration": 163
+      },
+      {
+        "start": 64337.29999999702,
+        "duration": 163
+      },
+      {
+        "start": 64500.89999999851,
+        "duration": 160
+      },
+      {
+        "start": 64661.099999997765,
+        "duration": 159
+      },
+      {
+        "start": 64821.099999997765,
+        "duration": 163
+      },
+      {
+        "start": 64988.5,
+        "duration": 160
+      },
+      {
+        "start": 65173.099999997765,
+        "duration": 161
+      },
+      {
+        "start": 65355.199999999255,
+        "duration": 163
+      },
+      {
+        "start": 65521.79999999702,
+        "duration": 164
+      },
+      {
+        "start": 65709.79999999702,
+        "duration": 172
+      },
+      {
+        "start": 65889.39999999851,
+        "duration": 186
+      },
+      {
+        "start": 66091.5,
+        "duration": 525
+      },
+      {
+        "start": 66639.5,
+        "duration": 543
+      },
+      {
+        "start": 67185.19999999925,
+        "duration": 251
+      },
+      {
+        "start": 67438.79999999702,
+        "duration": 169
+      },
+      {
+        "start": 67615.69999999925,
+        "duration": 162
+      },
+      {
+        "start": 67792.19999999925,
+        "duration": 189
+      },
+      {
+        "start": 67989.89999999851,
+        "duration": 176
+      },
+      {
+        "start": 68181.59999999776,
+        "duration": 162
+      },
+      {
+        "start": 68355.39999999851,
+        "duration": 157
+      },
+      {
+        "start": 68529.29999999702,
+        "duration": 167
+      },
+      {
+        "start": 68705.29999999702,
+        "duration": 158
+      },
+      {
+        "start": 68880.79999999702,
+        "duration": 164
+      },
+      {
+        "start": 69053.19999999925,
+        "duration": 162
+      },
+      {
+        "start": 69220.19999999925,
+        "duration": 159
+      },
+      {
+        "start": 69384.29999999702,
+        "duration": 162
+      },
+      {
+        "start": 69551.19999999925,
+        "duration": 158
+      },
+      {
+        "start": 69713.89999999851,
+        "duration": 170
+      },
+      {
+        "start": 69888.79999999702,
+        "duration": 173
+      },
+      {
+        "start": 70066.79999999702,
+        "duration": 161
+      },
+      {
+        "start": 70233,
+        "duration": 165
+      },
+      {
+        "start": 70403.19999999925,
+        "duration": 164
+      },
+      {
+        "start": 70571.39999999851,
+        "duration": 161
+      },
+      {
+        "start": 70737.5,
+        "duration": 159
+      },
+      {
+        "start": 70901.59999999776,
+        "duration": 168
+      },
+      {
+        "start": 71074.29999999702,
+        "duration": 160
+      },
+      {
+        "start": 71239.19999999925,
+        "duration": 160
+      },
+      {
+        "start": 71403.59999999776,
+        "duration": 156
+      },
+      {
+        "start": 71563.89999999851,
+        "duration": 154
+      },
+      {
+        "start": 71723.09999999776,
+        "duration": 155
+      },
+      {
+        "start": 71883,
+        "duration": 156
+      },
+      {
+        "start": 72043.19999999925,
+        "duration": 154
+      },
+      {
+        "start": 72202.59999999776,
+        "duration": 154
+      },
+      {
+        "start": 72361.39999999851,
+        "duration": 156
+      },
+      {
+        "start": 72521.39999999851,
+        "duration": 154
+      },
+      {
+        "start": 72680.19999999925,
+        "duration": 159
+      },
+      {
+        "start": 72846.59999999776,
+        "duration": 158
+      },
+      {
+        "start": 73010.79999999702,
+        "duration": 215
+      },
+      {
+        "start": 73238.39999999851,
+        "duration": 269
+      },
+      {
+        "start": 73521.5,
+        "duration": 158
+      },
+      {
+        "start": 73684.29999999702,
+        "duration": 157
+      },
+      {
+        "start": 73846.29999999702,
+        "duration": 156
+      },
+      {
+        "start": 74007.5,
+        "duration": 156
+      },
+      {
+        "start": 74171.09999999776,
+        "duration": 156
+      },
+      {
+        "start": 74332.29999999702,
+        "duration": 155
+      },
+      {
+        "start": 74492.5,
+        "duration": 157
+      },
+      {
+        "start": 74654.79999999702,
+        "duration": 160
+      },
+      {
+        "start": 74820.19999999925,
+        "duration": 155
+      },
+      {
+        "start": 74980.69999999925,
+        "duration": 158
+      },
+      {
+        "start": 75144.5,
+        "duration": 157
+      },
+      {
+        "start": 75306.69999999925,
+        "duration": 154
+      },
+      {
+        "start": 75471.39999999851,
+        "duration": 157
+      },
+      {
+        "start": 75633.59999999776,
+        "duration": 157
+      },
+      {
+        "start": 75796.69999999925,
+        "duration": 156
+      },
+      {
+        "start": 75958.5,
+        "duration": 160
+      },
+      {
+        "start": 76124.09999999776,
+        "duration": 158
+      },
+      {
+        "start": 76287.19999999925,
+        "duration": 159
+      },
+      {
+        "start": 76451.19999999925,
+        "duration": 158
+      },
+      {
+        "start": 76621.5,
+        "duration": 154
+      },
+      {
+        "start": 76788.19999999925,
+        "duration": 160
+      },
+      {
+        "start": 76953,
+        "duration": 157
+      },
+      {
+        "start": 77115.69999999925,
+        "duration": 158
+      },
+      {
+        "start": 77287.69999999925,
+        "duration": 156
+      },
+      {
+        "start": 77453.69999999925,
+        "duration": 156
+      },
+      {
+        "start": 77615.29999999702,
+        "duration": 156
+      },
+      {
+        "start": 77776.29999999702,
+        "duration": 155
+      },
+      {
+        "start": 77936.79999999702,
+        "duration": 161
+      }
+    ],
+    "bodyText": "Indonesia\nBuild shared prosperity\nQ2 2025 · Turn 2/20\nLanguage\nEnglish\n⌄\nNew campaign\nEconomy\nPolicies & taxes\nRegions\nQ1 2025\nQuarter summary\n1\nWhat happened\n2\nNational impact\n3\nRegions\nRead report\nSkip animation\nContinue\nRegions · Maluku\nMaluku\nMixed\nOpen region\nOutput\n+0.76%\nPoverty\n11.8% (-0.00)\nUnemployment\n5.4% (+0.18)\nProgramme spending\nRp 0.0T\nEducation -0.00\nInfrastructure -0.10\nEnergy +0.01\nFood +0.00\nHealth -0.01\n\nNo programme spending reached this region.\n\nSumatra\n+0.8%\nJava\n+0.7%\nKalimantan\n+0.8%\nBali\n+0.7%\nNTB\n+0.8%\nNTT\n+0.7%\nSulawesi\n+0.8%\nMaluku\n+0.8%\nPapua\n+0.7%\n, needs attention\nState finances\nGovernment debt\nRp 8,825.8T\n39.3% of GDP\nTreasury cash\nRp 0.0T\nAnnual output\nRp 22,442.7T\nLast quarter balance\n−Rp 4.8T\nUnemployment\n5.1%\nPoverty\n8.7%\nNext-quarter forecast\n?\nTax revenue\tRp 648.4T\nOther revenue\tRp 73.3T\nPolicy spending\t−Rp 0.0T\nOther spending\t−Rp 627.2T\nDebt interest\t−Rp 110.4T\nBalance\t−Rp 15.9T\nNew borrowing\tRp 15.9T\nFunding delivered\t100%\nUndo\nReset\nReport\nAdvance quarter\n\nGame saved",
+    "overflow": false
+  }
+}

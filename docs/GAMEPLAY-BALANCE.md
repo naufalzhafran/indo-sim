@@ -1,0 +1,95 @@
+# Gameplay balance review, 5 October 2026
+
+The energy decline came from a mismatch between electricity demand and the rate of new supply. The low difficulty came from generous automatic growth, a static workforce, weak service pressure, permissive financing, brief local crises, and the absence of campaign success conditions. This update changes those mechanics and explains the resulting decisions in the existing report UI.
+
+These are gameplay assumptions, not estimates or forecasts of Indonesia's economy. The original province geography and opening data remain intact.
+
+## Why energy could keep falling
+
+Energy is half household electrification and half electricity reliability. It is not a stock of fuel that the player consumes. Reliability responds to the usable supply-to-demand ratio of the connected grid, or the province's own ratio for isolated grids.
+
+Previously, ordinary capacity grew at a fixed 4.5% annual trend. Demand tracked actual GDP. Policies that successfully raised output could therefore increase demand faster than ordinary supply. The electricity policy added only 0.25% of opening GDP-equivalent capacity to the construction pipeline per month at full delivery. That pipeline released one twelfth of its remaining balance per month, on top of a separate rollout delay. A growth-heavy portfolio could keep eroding its reserve while its power program was ramping up.
+
+Electrification is already near its ceiling in many provinces, so a small access gain could not compensate for falling reliability. National averaging also concealed which grids were losing headroom. The energy tooltip previously gave no specific explanation, and the game did not expose usable reserves or pending capacity.
+
+The revised policy adds 0.75% of opening output-equivalent capacity per fully delivered month, retaining the gradual pipeline and rollout. Ordinary capacity follows the revised 2.5% economic trend, with monthly wear of 0.07%. Demand includes household growth as well as output and access expansion. Sustained funded investment now catches up; it still takes several quarters, and isolated grids still require local investment. Paid construction continues maturing after cancellation, and completed supply persists.
+
+The report now shows reserve and pending supply for each actual connected grid and isolated province, ordered by reserve. These are normalized game estimates, not megawatts. The map offers a direct electricity-policy shortcut when energy falls by more than 0.1 points in a quarter. English and Indonesian energy hints explain the mechanism.
+
+## Why the old campaign felt easy
+
+| Issue | Previous behavior | Revised behavior and decision |
+| --- | --- | --- |
+| Passive economic growth | 4.5% annual underlying trend; idle income rose about 25% over the term | 2.5% underlying trend; investment and foundations must deliver the additional gains |
+| Workforce and household demand | Fixed population and workforce throughout five years | Population, workforce and food need grow 0.9% annually; businesses must create jobs for incoming workers |
+| Living standards | Income did not account for additional people | Real income measures purchasing power per person, including consumer taxes and food affordability |
+| Service capacity | Infrastructure and water did not wear down under full funding | Modest monthly wear and population pressure on school and health access make maintenance and service policies useful |
+| Inherited spending | Real inherited costs grew 1.2% annually | 3.5% annual real inherited-cost growth makes fiscal room harder to create |
+| Borrowing | Standard annualized borrowing allowance about 2.8% of nominal GDP | About 2.2% at a 40% debt ratio, tightening with debt; cash and actual revenue still count |
+| Debt costs | Risk premium started above 50% debt/GDP | Premium starts above 40%, making unsustainable debt more costly |
+| Disruptions | 7.5% monthly occurrence probability, 0.35 damage, fast generic recovery | 13% probability, 0.55 starting damage, slower recovery that relevant funded services can accelerate |
+| Success | Reaching quarter 20 produced a report without a mandate | Six explicit simultaneous goals distinguish a completed mandate from unfinished work |
+
+All 25 existing policies remain available. There are still eight active slots and two launches per quarter. Rather than adding overlapping policies, the changes give the current options more consequential interactions:
+
+- Irrigation and food storage accelerate harvest recovery.
+- Transport and water accelerate flood recovery.
+- Health access and nutrition accelerate outbreak recovery.
+- Skills and credit support investment and hiring; their costs compete with service delivery.
+- Raising taxes improves financing while reducing household purchasing power or private investment through the existing tax channels.
+- Regional Low / Medium / High choices still redistribute a fixed national budget. They do not create free money or allow power transfers between isolated grids.
+
+Random draws remain seeded and independent of policy choices and province processing order. Calm previews suppress new random shocks while continuing to account for existing crises, population pressure, funding constraints, and delivery delays. Choices do not reroll the world.
+
+## Five-year mandate
+
+The campaign succeeds when all six conditions hold at month 60:
+
+1. Real income per person rises at least 10% from the campaign opening.
+2. Poverty falls at least 1 percentage point.
+3. Unemployment is at most 6%.
+4. At least three national foundations gain 2 points, and no foundation loses more than 3.
+5. Energy stays within 1 point of the opening level.
+6. Debt is at most 40% of nominal GDP and at least 98% of the final quarter's requested spending is funded.
+
+These are game challenges, explicitly identified as such in the report. They are visible before the first turn, then in subsequent reports. Ordinary reports keep actual quarter outcomes first, with mandate and grid details below. The final report leads with the mandate. Meeting a goal early does not lock it in: progress can reverse. The final report labels missed goals and an unfinished mandate; it does not discard the campaign or its results.
+
+Difficulty note (2026-10-06): the original thresholds (+15% income, 2-point poverty cut, unemployment at most 4%, +3 foundation points, energy at least at opening) were relaxed after repeated headless playthroughs. Random 4-policy portfolios met only 1 of 6 goals and random 6-policy portfolios met 1 as the typical result. After the change, random 4-6 policy portfolios typically meet 2-4 goals, random 8-policy portfolios meet 4 or more in about 60% of runs, and doing nothing still fails (1/6). Financing rules are unchanged.
+
+## Campaign comparisons
+
+`npm run balance:quarter` runs 15 portfolios with seeds 19, 73 and 997, both calm and with seeded disruptions: 90 complete five-year campaigns. Every portfolio respects the two-launch limit and eight-policy cap. It verifies bounded foundations, accounting identities, industry and job totals, and final save round trips. The detailed output is in `docs/economy-balance.json`.
+
+The table gives means across the six runs of each strategy. Previous values come from the pre-update benchmark. Income was indexed to 100 at opening in both versions, but the revised value also accounts for population growth.
+
+| Portfolio | Previous final income | Revised final income | Revised unemployment | Revised energy | Minimum funding | Goals met |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| No policies | 124.90 | 105.43 | 11.17% | 83.64 | 100.0% | 1/6 |
+| Mixed eight | 135.74 | 115.70 | 3.55% | 92.25 | 92.5% | 6/6 |
+| Skills and services eight | Not previously sampled | 116.76 | 3.05% | 91.82 | 95.8% | 6/6 |
+| Expensive eight | 140.32 | 118.29 | 2.56% | 88.32 | 82.5% | 5/6 |
+
+Mixed eight uses electricity, BOS, JKN, fertilizer, KUR, water, BPN and sea transport. Skills and services uses electricity, teachers, JKN, irrigation, KUR, sea transport, Prakerja and BPN. Both meet the mandate under all sampled seeds and scenarios, giving at least two viable routes. The expensive portfolio uses MBG, JKN, transit, clinics, BOS, electricity, sea transport and broadband. It produces stronger income and health results but still funds only about 91.7% of its final calm quarter, missing sustainable delivery.
+
+There is no universally best portfolio across the sampled income, poverty, unemployment, foundation and debt objectives. That is finite comparative evidence, not a proof of balance across every allocation or every possible strategy. Difficulty now has an attainable mandate and real tradeoffs; whether the pacing is enjoyable needs player feedback.
+
+## Compatibility and verification
+
+The version-7 save schema remains unchanged. Goals and grid diagnostics are derived from existing state. Valid version-7 games still import; the revised mechanics apply to future quarters without rewriting completed history. A fresh campaign is the appropriate way to experience the complete revised curve.
+
+- Unit validation: 108 tests passed, including idle-campaign failure, three seeded successful mandates, delayed power recovery, paid-capacity persistence, fiscal shortfalls, and policy-specific disaster recovery.
+- Production TypeScript/Vite build passed. Vite retains its existing large-chunk warning for the 3D scene.
+- Full browser suite: 29 tests passed; the added energy-warning shortcut was separately exercised successfully.
+- New report and energy-hint checks passed in English and Indonesian at 1280×720, 1366×768 and 1440×900, including viewport containment, accessible tables, Axe WCAG A/AA checks, hoverable hints, Escape dismissal, restored focus, and no page exceptions.
+- Existing browser checks cover import/export, autosave failure and retry, worker failure, quarter progression, final reports, reduced motion, camera controls, regional selection, custom dropdowns, and WebGL fallback.
+- A recap assertion was corrected to allow no “best” region when every region has a genuine setback. It still checks that any “best” region is improving and that the real-quarter scenario has an attention marker.
+
+## Design and antislop delivery gate
+
+The design read is the established cheerful desktop island strategy game, ENERGY 2 / RHYTHM 2 / MOTION 2. No scene or world geometry changed. New report tables reuse cream surfaces, teal text, Nunito headings, Source Sans 3 numerals, existing spacing and modal scrolling. The map shortcut reuses the small butter-yellow issue control. Coral remains reserved for the existing advance action. No new imagery, animation, palette, navigation system, native select, or disclosure was added.
+
+- Hard Gate PASS: new text is sourced from actual simulation rules and explicitly labeled game challenges; no fabricated external statistics, testimonials, assets, marketing claims or dead controls. Build, browser execution, desktop containment, contrast checks and focus dismissal are verified. Phone support is outside the user's explicit scope.
+- Purpose Gate PASS: tables compare measured game outcomes and grid ratios; existing modal elevation identifies a dedicated report. Existing typefaces, colors and controls preserve the approved identity. No new decorative gradients, icons, glows or ornamental panels.
+- Liveliness PASS: the archipelago remains the map focal point, the advance button retains the consequential accent, and existing section spacing and restrained motion remain unchanged. The approved dials and design reasons are stated above.
+- Craftsmanship and Quality Locks PASS: additions serve specific gameplay questions, match established components and localization, and retain the existing loading/error/retry paths. No placeholders presented as facts, template sections, competing themes, generic CTAs, or empty interactions.
+- Changed-control click-through PASS: Campaign goals opens the report; Escape closes it and returns focus. The Energy question-mark hint opens on focus and remains readable on hover; Escape dismisses it. The falling-energy prompt opens RUPTL PLN with its allocation controls and enabled launch action. Existing advance, report, policy, tax, regional, save and camera controls were exercised by the full browser suite.

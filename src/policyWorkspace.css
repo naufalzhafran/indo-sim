@@ -1,0 +1,1723 @@
+/* Same tabletop frame as Ekonomi. Policy tiles compare choices; the quieter
+   right-hand board keeps launch limits and funding visible while browsing. */
+dialog.policy-workspace-dialog .dialog-content {
+  padding: 12px 20px 18px;
+}
+.policy-workspace {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  font-variant-numeric: tabular-nums;
+}
+.policy-back {
+  margin-left: auto;
+}
+.policy-workspace-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 282px;
+  gap: 18px;
+  flex: 1;
+  min-height: 0;
+}
+.policy-workspace-board > .economy-panel-body {
+  border: 2px solid #bed3b9;
+  border-radius: 18px;
+  background: #edf3e6;
+  padding: 12px 14px 0;
+  overflow: hidden;
+}
+.policy-workspace .q-policy-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 0;
+  flex: none;
+}
+.policy-workspace .q-policy-tabs [role="tab"] {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  min-height: 62px;
+  text-align: left;
+  border: 2px solid #b3ccb5;
+  border-radius: 12px;
+  box-shadow: 0 3px 0 #a9c3a9;
+}
+.policy-workspace .q-policy-tabs [aria-selected="true"] {
+  color: #fffdf6;
+  background: var(--q-green);
+  border-color: #15573e;
+  box-shadow: 0 3px 0 #15573e;
+}
+.policy-workspace .q-policy-tabs [aria-selected="true"]:hover {
+  background: #1d6a4f;
+}
+.policy-workspace .q-policy-tabs [role="tab"] > span {
+  display: flex;
+  flex-direction: column;
+  font-size: 17px;
+  line-height: 1.25;
+}
+.policy-workspace .q-policy-tabs small {
+  display: block;
+  margin-top: 3px;
+  color: var(--q-muted);
+  font:
+    600 13px "Source Sans 3",
+    sans-serif;
+}
+.policy-workspace .q-policy-tabs [aria-selected="true"] small {
+  color: #fffdf6;
+}
+.policy-workspace .q-policy-tabs .economy-emblem {
+  width: 40px;
+  height: 40px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--q-cream);
+  flex: none;
+}
+.policy-workspace-tools {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: none;
+  margin-bottom: 12px;
+}
+.policy-plan-effects {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  min-height: 62px;
+}
+.policy-effects-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.policy-effects-heading > strong {
+  font-family: var(--q-heading);
+  font-weight: 900;
+}
+.policy-effects-heading .stat-label {
+  color: var(--q-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+.policy-plan-effects dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 0;
+}
+.policy-plan-effects dl > div {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  gap: 2px;
+  font-size: 12px;
+}
+.policy-plan-effects dd {
+  margin: 0;
+  font-weight: 700;
+  font-size: 14px;
+}
+.policy-plan-effects [data-tone="warn"] dd {
+  color: #a1422e;
+}
+.policy-plan-effects p {
+  margin: 0;
+  font-size: 13px;
+}
+.policy-workspace .eco-policy-panel {
+  background: transparent;
+  padding-top: 0;
+}
+.policy-workspace .eco-policy-panel[data-policy-detail] {
+  scroll-padding-top: var(--eco-detail-scroll-top, 66px);
+  scroll-padding-bottom: 12px;
+}
+.eco-policy-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  gap: 12px;
+  padding-bottom: 12px;
+}
+.policy-workspace .eco-policy-layout > .eco-policy-panel {
+  flex: 1;
+  height: auto;
+  padding-bottom: 12px;
+}
+.policy-workspace .eco-policy-layout > .eco-policy-action {
+  position: static;
+  flex: none;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--q-line);
+  border-radius: 12px;
+  box-shadow: none;
+  flex-wrap: nowrap;
+}
+.policy-workspace .eco-policy-layout > .eco-policy-action > div {
+  flex: 1;
+  min-width: 0;
+}
+.policy-workspace .eco-policy-layout > .eco-policy-action > button {
+  flex: none;
+}
+.policy-workspace .eco-catalog-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.policy-workspace .eco-catalog-controls {
+  gap: 8px;
+  /* Search, category and policy type share one row. */
+  grid-template-columns: minmax(120px, 1fr) 150px 142px;
+  flex: 1;
+  margin-bottom: 0;
+}
+.policy-workspace .eco-filter-row {
+  margin-bottom: 0;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+.policy-workspace .eco-filter-row button {
+  padding: 7px 9px;
+  min-height: 40px;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.policy-workspace .eco-filter-row .eco-legend {
+  margin-left: 2px;
+}
+.policy-workspace .eco-filter-row .stat-help {
+  flex: none;
+  min-height: 22px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+}
+.policy-workspace .eco-filter-row button[aria-pressed="true"] small {
+  background: #15573e;
+  color: #fffdf6;
+}
+.policy-workspace .eco-policy-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding-bottom: 5px;
+}
+.policy-workspace .eco-policy-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 2px solid #bdceb4;
+  border-radius: 15px;
+  background: #fffdf6;
+  box-shadow: 0 4px 0 #b4c7a9;
+}
+.policy-workspace .eco-policy-row[data-planned="true"] {
+  background: #f0f7ec;
+  border-color: var(--q-green);
+  box-shadow: 0 4px 0 #1b654b;
+}
+.eco-policy-identity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--q-muted);
+  font-size: 12px;
+  font-weight: 600;
+  min-height: 48px;
+}
+.eco-policy-identity .economy-emblem {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #edf3e6;
+  padding: 4px;
+}
+.eco-policy-identity .eco-policy-selected {
+  margin-left: auto;
+  color: var(--q-green);
+  font-weight: 700;
+  text-align: right;
+}
+.policy-workspace .eco-policy-title {
+  align-items: flex-start;
+}
+.policy-workspace .eco-policy-title h3 {
+  font: 900 18px/1.25 var(--q-heading);
+}
+.policy-workspace .eco-policy-summary p {
+  font-size: 14px;
+  line-height: 1.4;
+  margin: 0 0 10px;
+}
+.policy-workspace .eco-policy-summary {
+  flex: 1;
+}
+.policy-workspace .eco-impacts {
+  gap: 5px;
+}
+.policy-workspace .eco-impacts li {
+  font-size: 12px;
+  line-height: 1.3;
+}
+.policy-workspace .eco-policy-meta {
+  align-items: stretch;
+  text-align: left;
+  padding-top: 10px;
+  border-top: 1px solid var(--q-line);
+  gap: 6px;
+}
+.policy-workspace .eco-policy-meta .eco-price {
+  font-size: 20px;
+  line-height: 1.2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 3px 6px;
+}
+.policy-workspace .eco-policy-meta .eco-price small {
+  font:
+    400 12px/1.3 "Source Sans 3",
+    sans-serif;
+  color: var(--q-muted);
+}
+.eco-cost-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 6px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+.eco-policy-rollout {
+  font-size: 12px;
+  color: var(--q-muted);
+}
+.eco-regional-rule {
+  margin: 8px 0 12px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.policy-workspace .eco-chips {
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.policy-workspace .eco-policy-meta .eco-chip {
+  font-size: 11px;
+  white-space: normal;
+}
+.policy-workspace .eco-row-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-top: 5px;
+  gap: 8px;
+}
+.policy-workspace .eco-row-actions button {
+  min-height: 40px;
+  padding: 7px 10px;
+  font-size: 13px;
+}
+.policy-workspace .eco-row-actions [data-planned="true"]:not(:disabled) {
+  background: var(--q-green);
+  color: #fffdf6;
+  border-color: #15573e;
+  box-shadow: 0 2px 0 #15573e;
+}
+.policy-workspace .eco-detail-header {
+  padding: 16px;
+  background: #fffdf6;
+  border: 2px solid #bdceb4;
+  border-radius: 16px;
+  gap: 14px;
+}
+.policy-workspace .eco-detail-header > .economy-emblem {
+  width: 64px;
+  height: 64px;
+  flex: none;
+  background: #edf3e6;
+  border-radius: 14px;
+  padding: 5px;
+}
+.policy-workspace .eco-detail-header > div:first-of-type {
+  flex: 1;
+  min-width: 0;
+}
+.policy-workspace .eco-detail-header h2 {
+  font: 900 26px/1.2 var(--q-heading);
+}
+.policy-workspace .eco-explanation,
+.policy-workspace .eco-spending-section {
+  border: 2px solid #bdceb4;
+  background: #fffdf6;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.policy-workspace .eco-policy-facts > div {
+  background: #fffdf6;
+  border-radius: 12px;
+  border: 1px solid #bdceb4;
+  padding: 12px;
+}
+.eco-policy-projects .eco-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+}
+.eco-policy-projects .eco-section-heading h3 {
+  margin-top: 0;
+}
+.eco-policy-projects .eco-section-heading > strong {
+  color: var(--q-green);
+  font-size: 14px;
+}
+.eco-detail-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 16px;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #edf3e6;
+  padding: 6px 0 10px;
+}
+.eco-detail-tabs button {
+  padding: 9px 18px;
+}
+.eco-detail-tabs button[aria-selected="true"] {
+  background: var(--q-green);
+  color: #fffaf0;
+  border-color: var(--q-green);
+  box-shadow: 0 3px 0 #15573e;
+}
+.policy-workspace .eco-detail-tabs button[aria-selected="true"]:hover {
+  background: #1d6a4f;
+  color: var(--q-cream);
+}
+.eco-briefing-effects {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  margin-bottom: 18px;
+}
+.eco-briefing-effects section {
+  min-width: 0;
+}
+.eco-briefing-effects h3 {
+  margin: 0 0 10px;
+}
+.eco-briefing-effects p {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.eco-briefing-effects .eco-impacts {
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+.policy-workspace .eco-briefing-effects .eco-impacts li {
+  font-size: 15px;
+  gap: 8px;
+  align-items: center;
+}
+.eco-policy-projects {
+  border-top: 1px solid var(--q-line);
+  padding: 16px 0 0;
+}
+.eco-project-reward {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.eco-project-reward-visual {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.eco-project-reward-visual > .eco-policy-picture {
+  width: 100px;
+  height: 66px;
+  flex: none;
+}
+.eco-project-reward-visual > div:last-child {
+  min-width: 0;
+}
+.eco-project-reward-visual h3 {
+  margin: 0 0 5px;
+  font: 900 17px/1.3 var(--q-heading);
+}
+.eco-policy-picture {
+  position: relative;
+  width: 130px;
+  height: 84px;
+  flex: none;
+}
+.eco-policy-islet {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.eco-policy-picture > .economy-emblem {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  left: 35%;
+  top: 14%;
+}
+.eco-briefing-effects .eco-impacts .economy-emblem {
+  width: 36px;
+  height: 36px;
+  flex: none;
+}
+.eco-project-briefing {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+.eco-project-briefing > div {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--q-line);
+  border-radius: 10px;
+  background: var(--q-cream);
+}
+.eco-project-briefing dt {
+  font: 800 15px/1.35 var(--q-heading);
+}
+.eco-project-briefing dd {
+  margin: 7px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.eco-project-retained p {
+  margin: 0;
+}
+.eco-project-retained p + p {
+  margin-top: 8px;
+  color: var(--q-muted);
+}
+.eco-project-rewards-title {
+  display: block;
+  margin-bottom: 6px;
+  font: 800 13px/1.35 var(--q-heading);
+}
+.eco-project-rewards ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 5px;
+}
+.eco-project-rewards li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 14px;
+}
+.eco-project-rewards li > strong {
+  flex: none;
+  color: var(--q-green);
+  font: 900 16px/1.35 var(--q-heading);
+  font-variant-numeric: tabular-nums;
+}
+.eco-project-rewards .eco-project-reward-scope {
+  margin: 7px 0 0;
+  color: var(--q-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.eco-project-briefing .eco-project-upkeep {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.eco-project-grid .eco-project-rewards,
+.eco-project-empty .eco-project-rewards {
+  border-top: 1px solid var(--q-line);
+  margin-top: 12px;
+  padding-top: 10px;
+}
+.eco-project-empty .eco-project-rewards {
+  max-width: 450px;
+}
+.eco-project-counts {
+  display: flex;
+  gap: 20px;
+  color: var(--q-muted);
+  margin: 0 0 12px;
+}
+.eco-project-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.eco-project-grid > li {
+  background: var(--q-cream);
+  border: 1px solid var(--q-line);
+  border-radius: 12px;
+  padding: 12px;
+  min-width: 0;
+}
+.eco-project-card-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+}
+.eco-project-card-heading > strong {
+  font-family: var(--q-heading);
+  font-weight: 900;
+}
+.eco-project-card-heading > span {
+  color: var(--q-muted);
+  font-size: 13px;
+}
+.eco-project-grid
+  > li[data-status="completed"]
+  .eco-project-card-heading
+  > span {
+  color: var(--q-green);
+  font-weight: 700;
+}
+.eco-project-grid > li[data-status="paused"] progress::-webkit-progress-value {
+  background: var(--q-muted);
+}
+.eco-project-grid > li[data-status="paused"] progress::-moz-progress-bar {
+  background: var(--q-muted);
+}
+.eco-project-grid p {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.eco-project-grid p span {
+  color: var(--q-muted);
+}
+.eco-project-empty {
+  padding: 20px 0;
+}
+.eco-project-empty p {
+  max-width: 520px;
+  margin: 6px 0;
+}
+.eco-funding-empty {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+.eco-funding-empty > span {
+  display: grid;
+  gap: 4px;
+  flex: 1;
+}
+.eco-funding-empty > strong {
+  display: none;
+}
+.policy-workspace .eco-policy-facts {
+  gap: 10px;
+  margin: 12px 0 14px;
+  padding: 0;
+  border: 0;
+}
+.policy-workspace .eco-policy-facts > div {
+  padding: 8px 12px;
+}
+.policy-workspace .eco-policy-facts span.stat-label {
+  font-size: inherit;
+}
+.policy-workspace [role="tabpanel"][hidden] {
+  display: none;
+}
+.policy-workspace .q-tax-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 0;
+  padding: 3px 0 5px;
+}
+.policy-workspace .q-tax-card {
+  border: 2px solid #bdceb4;
+  border-radius: 15px;
+  box-shadow: 0 4px 0 #b4c7a9;
+  padding: 14px;
+}
+.policy-workspace .q-tax-card[data-changed="true"] {
+  border-color: var(--q-green);
+  background: #f0f7ec;
+  box-shadow: 0 4px 0 #1b654b;
+}
+.q-tax-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.q-tax-card-heading .economy-emblem {
+  width: 48px;
+  height: 48px;
+  padding: 4px;
+  background: #edf3e6;
+  border-radius: 12px;
+  flex: none;
+}
+.q-tax-card-heading h2 {
+  margin: 0;
+}
+.policy-workspace .q-tax-card h2 {
+  font: 900 17px/1.3 var(--q-heading);
+}
+.policy-workspace .q-tax-tradeoff {
+  font-size: 14px;
+}
+.policy-workspace .q-tax-levels {
+  gap: 5px;
+}
+.policy-workspace .q-tax-choice {
+  min-height: 64px;
+}
+.policy-plan-board {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  min-height: 0;
+  padding: 14px;
+  background: #e5efdc;
+  border: 2px solid #bed3b9;
+  border-radius: 18px;
+  overflow: hidden;
+}
+.policy-workspace .policy-plan-board h2 {
+  margin: 0 0 10px;
+  font: 900 20px/1.2 var(--q-heading);
+}
+.policy-workspace .policy-plan-board h3 {
+  margin: 0 0 8px;
+  font: 900 16px/1.2 var(--q-heading);
+}
+.policy-capacity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.policy-capacity-grid > div {
+  padding: 8px 10px;
+  border: 1px solid #bdceb4;
+  background: #fffdf6;
+  border-radius: 12px;
+}
+.policy-capacity-grid strong {
+  font: 900 28px/1 var(--q-heading);
+  display: block;
+}
+.policy-capacity-grid small {
+  font-size: 16px;
+  color: var(--q-muted);
+}
+.policy-capacity-grid span {
+  display: block;
+  margin: 4px 0;
+  font-size: 12px;
+  color: var(--q-muted);
+}
+.policy-capacity-grid meter {
+  width: 100%;
+  height: 10px;
+  display: block;
+  accent-color: var(--q-green);
+}
+.policy-plan-capacity p,
+.policy-plan-empty,
+.policy-budget > p {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--q-muted);
+}
+.policy-plan-roster {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.policy-plan-roster h3 {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.policy-plan-roster h3 small {
+  font:
+    700 14px "Source Sans 3",
+    sans-serif;
+}
+.policy-plan-picks {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  overflow: auto;
+  padding: 6px 6px 8px;
+  margin: -3px 0 0;
+  scrollbar-width: thin;
+}
+.policy-plan-picks button {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  justify-content: start;
+  justify-items: start;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  padding: 7px 8px;
+  font-size: 13px;
+  flex: none;
+  width: 100%;
+  min-height: 52px;
+}
+.policy-plan-picks button > span {
+  min-width: 0;
+  width: 100%;
+}
+.policy-plan-picks button[aria-pressed="true"] {
+  border-color: #15573e;
+  background: var(--q-green);
+  color: #fffdf6;
+  box-shadow: 0 3px 0 #15573e;
+}
+.policy-plan-picks button[aria-pressed="true"] small {
+  color: #fffdf6;
+}
+.policy-plan-picks button[aria-pressed="true"] .economy-emblem {
+  background: var(--q-cream);
+  border-radius: 7px;
+}
+.policy-plan-picks .economy-emblem {
+  width: 32px;
+  height: 32px;
+  flex: none;
+}
+.policy-plan-picks small {
+  display: block;
+  font:
+    400 12px "Source Sans 3",
+    sans-serif;
+  color: var(--q-muted);
+  margin-top: 2px;
+}
+.policy-budget {
+  padding: 12px;
+  background: #fffdf6;
+  border: 1px solid #bdceb4;
+  border-radius: 12px;
+  flex: none;
+}
+.policy-budget h3 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.policy-budget h3 > .economy-emblem {
+  width: 32px;
+  height: 32px;
+  flex: none;
+}
+.policy-budget .stat-label {
+  font: inherit;
+}
+.policy-budget dl {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 0;
+}
+.policy-budget dl > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+.policy-budget dt {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.policy-budget dd {
+  margin: 0;
+  font-weight: 700;
+  white-space: nowrap;
+  text-align: right;
+}
+.policy-budget [data-tone="warn"] dd {
+  color: #a1422e;
+}
+.policy-budget dl > .policy-budget-part {
+  color: var(--q-muted);
+  padding-left: 8px;
+}
+.policy-budget .policy-funding-warning {
+  color: #a1422e;
+  font-weight: 600;
+}
+.policy-budget-balance {
+  border-block: 1px solid var(--q-line);
+  padding-block: 7px;
+  font-weight: 700;
+}
+.policy-plan-actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 2px 4px 0;
+}
+.policy-plan-save {
+  flex: 1;
+  min-width: 0;
+}
+.policy-plan-actions .button-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.policy-plan-actions .button-row button {
+  padding: 7px 8px;
+  font-size: 14px;
+  min-width: 90px;
+}
+.policy-plan-actions p {
+  margin: 3px 0 0;
+  color: var(--q-ink);
+  font-size: 12px;
+}
+.policy-plan-actions .policy-commit-rule {
+  margin: 0;
+  font-size: 13px;
+}
+.policy-workspace .policy-return-map {
+  flex: none;
+  min-height: 44px;
+  padding: 8px 16px;
+  color: var(--q-cream);
+  background: var(--q-green);
+  border-color: #15573e;
+  box-shadow: 0 3px 0 #15573e;
+}
+.policy-workspace .policy-return-map:hover {
+  background: #1d6a4f;
+}
+.q-tax-plan {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 10px;
+}
+.policy-workspace .q-tax-plan .q-tax-current {
+  flex: 1;
+  margin: 0;
+}
+.policy-workspace .q-tax-restore {
+  padding: 6px 9px;
+  min-height: 32px;
+  font-size: 12px;
+  align-self: flex-start;
+}
+.q-tax-card:focus-visible {
+  outline: 3px solid var(--q-green);
+  outline-offset: 3px;
+}
+.policy-plan-capacity p,
+.policy-plan-empty {
+  color: var(--q-ink);
+}
+.policy-workspace button:disabled {
+  cursor: default;
+  opacity: 0.6;
+  box-shadow: none;
+}
+/* Game-card treatment: the detail view reads as one policy card with a
+   price tag, fact tokens, benefit/risk panels and a clear commit bar. */
+.policy-workspace .policy-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.policy-workspace .policy-back > span {
+  font-weight: 900;
+  font-size: 18px;
+  line-height: 1;
+}
+.policy-workspace .eco-detail-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "emblem body cost"
+    "facts facts facts";
+  align-items: start;
+  gap: 12px 16px;
+  padding: 16px 18px 14px;
+  box-shadow: 0 4px 0 #b4c7a9;
+  margin-bottom: 14px;
+}
+.policy-workspace .eco-detail-header[data-status="new"],
+.policy-workspace .eco-detail-header[data-status="continuing"] {
+  background: #f0f7ec;
+  border-color: var(--q-green);
+  box-shadow: 0 4px 0 #1b654b;
+}
+.policy-workspace .eco-detail-header > .economy-emblem {
+  grid-area: emblem;
+  width: 72px;
+  height: 72px;
+  padding: 6px;
+  border: 2px solid var(--q-line);
+  border-radius: 16px;
+}
+.policy-workspace .eco-detail-header > div:first-of-type {
+  grid-area: body;
+}
+.policy-workspace .eco-detail-header h2 {
+  margin: 4px 0 4px;
+}
+.policy-workspace .eco-detail-header > div:first-of-type > p:last-child {
+  margin: 0;
+  font-size: 15px;
+}
+.policy-workspace .eco-detail-header .eco-kicker {
+  display: inline-flex;
+  margin: 0 !important;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #edf3e6;
+  color: var(--q-muted);
+  font: 800 12px/1.3 var(--q-heading);
+}
+.policy-workspace .eco-detail-header[data-status="new"] .eco-kicker,
+.policy-workspace .eco-detail-header[data-status="continuing"] .eco-kicker {
+  background: var(--q-green);
+  color: #fffdf6;
+}
+.policy-workspace .eco-detail-header[data-status="ending"] .eco-kicker {
+  background: #fbe3dc;
+  color: #9a3829;
+}
+.policy-workspace .eco-detail-header .eco-policy-cost {
+  grid-area: cost;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 2px solid #bdceb4;
+  border-radius: 14px;
+  background: #fffdf6;
+}
+.policy-workspace .eco-detail-header .eco-policy-cost span {
+  font:
+    700 12px/1.3 "Source Sans 3",
+    sans-serif;
+}
+.policy-workspace .eco-detail-header .eco-policy-cost strong {
+  font-size: 26px;
+  line-height: 1.1;
+}
+.policy-workspace .eco-detail-header .eco-policy-facts {
+  grid-area: facts;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin: 0;
+  padding: 12px 0 0;
+  border: 0;
+  border-top: 2px dashed var(--q-line);
+}
+.policy-workspace .eco-detail-header .eco-policy-facts > div {
+  display: grid;
+  grid-template-columns: 36px auto;
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  row-gap: 1px;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+.eco-fact-icon {
+  grid-row: 1 / 3;
+  width: 36px;
+  height: 36px;
+  padding: 7px;
+  border-radius: 50%;
+  background: #e3efe0;
+  color: var(--q-green);
+}
+.eco-fact-icon[data-icon="startup"] {
+  background: #fdeee0;
+  color: #b4572f;
+}
+.policy-workspace .eco-detail-header .eco-policy-facts span {
+  font-size: 12px;
+  line-height: 1.25;
+}
+.policy-workspace .eco-detail-header .eco-policy-facts strong {
+  font: 900 16px/1.2 var(--q-heading);
+}
+.policy-workspace .eco-briefing-effects {
+  gap: 14px;
+}
+.policy-workspace .eco-briefing-effects section {
+  border: 2px solid #bdceb4;
+  border-radius: 16px;
+  background: #fffdf6;
+  overflow: hidden;
+}
+.policy-workspace .eco-briefing-effects h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 9px 14px;
+  background: #e3f1e6;
+  border-bottom: 2px solid #c7dfcc;
+  font: 900 16px/1.3 var(--q-heading);
+}
+.policy-workspace .eco-briefing-effects [data-tone="risk"] h3 {
+  background: #fbe8e1;
+  border-bottom-color: #f0cfc4;
+}
+.eco-effects-glyph {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--q-green);
+  color: #fffdf6;
+  font: 900 14px/1 var(--q-heading);
+}
+[data-tone="risk"] > h3 > .eco-effects-glyph {
+  background: #b04a35;
+}
+.policy-workspace .eco-briefing-effects .eco-impacts {
+  padding: 12px 14px 0;
+  gap: 8px;
+}
+.policy-workspace .eco-briefing-effects .eco-impacts li {
+  min-height: 36px;
+}
+.policy-workspace .eco-briefing-effects .eco-consequences li::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  margin-right: 2px;
+  border-radius: 3px;
+  background: #e59a84;
+  align-self: center;
+  flex: none;
+}
+.policy-workspace .eco-briefing-effects .eco-impacts li small {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #edf3e6;
+}
+.policy-workspace .eco-briefing-effects .eco-tradeoff {
+  margin: 10px 14px 0;
+  padding-top: 10px;
+  border-top: 2px dashed var(--q-line);
+}
+.policy-workspace .eco-briefing-effects section > :last-child {
+  margin-bottom: 14px;
+}
+.policy-workspace .eco-briefing-effects .eco-no-impact {
+  margin: 12px 14px;
+}
+.policy-workspace .eco-policy-layout > .eco-policy-action {
+  gap: 14px;
+  padding: 12px 14px;
+  border: 2px solid #bdceb4;
+  border-radius: 16px;
+  background: #fffdf6;
+  box-shadow: 0 4px 0 #b4c7a9;
+}
+.policy-workspace .eco-policy-action strong {
+  font: 900 16px/1.3 var(--q-heading);
+}
+.eco-action-badge {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px dashed #9fbfa5;
+  background: #edf3e6;
+  color: var(--q-green);
+  font: 900 20px/1 var(--q-heading);
+}
+.eco-policy-action[data-state="new"] .eco-action-badge,
+.eco-policy-action[data-state="continuing"] .eco-action-badge {
+  border: 2px solid #15573e;
+  background: var(--q-green);
+  color: #fffdf6;
+}
+.eco-policy-action[data-state="ending"] .eco-action-badge {
+  border: 2px solid #e2b3a5;
+  background: #fbe3dc;
+  color: #9a3829;
+  font-size: 14px;
+}
+.policy-workspace .eco-policy-action [data-testid="policy-start"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+.policy-workspace .eco-policy-action [data-testid="policy-start"]::before {
+  content: "−" / "";
+  font-weight: 900;
+  font-size: 20px;
+  line-height: 1;
+}
+.policy-workspace .eco-policy-action [data-intent="add"]::before {
+  content: "+" / "";
+}
+.policy-workspace .eco-policy-action [data-intent="add"] {
+  color: #fffdf6;
+  background: var(--q-green);
+  border-color: #15573e;
+  box-shadow: 0 4px 0 #15573e;
+}
+.policy-workspace .eco-policy-action [data-intent="add"]:not(:disabled):hover {
+  background: #1d6a4f;
+}
+.policy-workspace .eco-policy-action [data-intent="add"]:not(:disabled):active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #15573e;
+}
+.policy-plan-effects dl > div {
+  padding: 3px 10px 4px;
+  border: 1px solid #bdceb4;
+  border-radius: 10px;
+  background: #fffdf6;
+  gap: 0;
+}
+.policy-plan-effects dt {
+  color: var(--q-muted);
+}
+.policy-plan-effects dd {
+  font: 900 15px/1.25 var(--q-heading);
+}
+.policy-slot-gauge {
+  padding: 8px 10px 10px;
+  border: 1px solid #bdceb4;
+  background: #fffdf6;
+  border-radius: 12px;
+}
+.policy-slot-pips {
+  display: flex;
+  gap: 3px;
+}
+.policy-slot-pips i {
+  flex: 1;
+  height: 12px;
+  border-radius: 4px;
+  border: 2px solid #c9dacb;
+  background: #f4f8ef;
+}
+.policy-slot-pips i[data-filled="true"] {
+  border-color: #15573e;
+  background: var(--q-green);
+}
+.policy-slot-pips i[data-fresh="true"] {
+  border-color: var(--q-green);
+  background: #6fbf95;
+}
+.policy-plan-roster .policy-plan-empty {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 14px 12px;
+  border: 2px dashed #bdceb4;
+  border-radius: 14px;
+  background: #f4f8ef;
+  text-align: center;
+}
+.policy-plan-empty strong {
+  font: 800 14px/1.3 var(--q-heading);
+}
+.policy-plan-empty span {
+  color: var(--q-muted);
+}
+.policy-workspace .policy-budget h3 {
+  font-size: 16px;
+}
+.policy-budget dl > .policy-budget-balance {
+  align-items: center;
+  margin-bottom: 2px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: #e3f1e6;
+  font-size: 13px;
+}
+.policy-budget dl > .policy-budget-balance[data-tone="warn"] {
+  background: #fbe8e1;
+}
+.policy-budget-balance dd {
+  font: 900 18px/1.2 var(--q-heading);
+  color: var(--q-green);
+}
+.policy-plan-actions .button-row button,
+.policy-workspace .policy-return-map {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.policy-tool-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.policy-workspace .policy-return-map {
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 20px;
+  font-size: 17px;
+}
+.policy-workspace .policy-return-map > span {
+  font-weight: 900;
+}
+.policy-plan-actions .policy-save-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 2px 10px 2px 3px;
+  border-radius: 999px;
+  background: #e3f1e6;
+  font-weight: 700;
+}
+.policy-save-pill > span {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--q-green);
+  color: #fffdf6;
+  font-size: 11px;
+  line-height: 1;
+}
+.policy-plan-actions .policy-save-pill[data-status="failed"] {
+  background: #fbe3dc;
+  color: #9a3829;
+}
+.policy-save-pill[data-status="failed"] > span {
+  background: #b04a35;
+}
+/* Project lifecycle as a three-stage track: build → complete → stop. */
+.policy-workspace .eco-policy-projects {
+  border-top: 0;
+  padding-top: 4px;
+}
+.policy-workspace .eco-project-reward-visual {
+  gap: 16px;
+  margin-bottom: 14px;
+  padding: 10px 16px 10px 10px;
+  border: 2px solid #bdceb4;
+  border-radius: 16px;
+  background: #fffdf6;
+  box-shadow: 0 4px 0 #b4c7a9;
+}
+.policy-workspace .eco-project-reward-visual > .eco-policy-picture {
+  width: 120px;
+  height: 72px;
+  border-radius: 12px;
+  background: #d9f1ee;
+}
+.policy-workspace .eco-project-reward-visual h3 {
+  font-size: 18px;
+}
+.policy-workspace .eco-project-briefing {
+  position: relative;
+  counter-reset: stage;
+  gap: 18px;
+}
+.policy-workspace .eco-project-briefing::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 27px;
+  border-top: 3px dashed #bdceb4;
+}
+.policy-workspace .eco-project-briefing > div {
+  --stage: #d99a2b;
+  --stage-soft: #fdf0d5;
+  position: relative;
+  padding: 0 0 14px;
+  border: 2px solid #bdceb4;
+  border-radius: 16px;
+  background: #fffdf6;
+  box-shadow: 0 4px 0 #b4c7a9;
+  overflow: hidden;
+  counter-increment: stage;
+}
+.policy-workspace .eco-project-briefing > div:nth-child(2) {
+  --stage: var(--q-green);
+  --stage-soft: #e3f1e6;
+}
+.policy-workspace .eco-project-briefing > .eco-project-retained {
+  --stage: #b04a35;
+  --stage-soft: #fbe8e1;
+}
+.policy-workspace .eco-project-briefing dt {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 14px;
+  background: var(--stage-soft);
+  border-bottom: 2px solid #0000000d;
+  font: 900 15px/1.3 var(--q-heading);
+}
+.policy-workspace .eco-project-briefing dt::before {
+  content: counter(stage);
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--stage);
+  color: #fffdf6;
+  font: 900 14px/1 var(--q-heading);
+}
+.policy-workspace .eco-project-briefing dd {
+  margin: 12px 14px 0;
+}
+.eco-stage-meter {
+  display: block;
+  height: 12px;
+  margin-bottom: 10px;
+  border: 2px solid #e9d3a4;
+  border-radius: 999px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #fdf0d5 0 6px,
+    #f8e3b5 6px 12px
+  );
+  overflow: hidden;
+}
+.eco-stage-meter i {
+  display: block;
+  width: 62%;
+  height: 100%;
+  border-radius: 999px;
+  background: #e2a93b;
+}
+.policy-workspace .eco-project-briefing .eco-project-rewards ul {
+  gap: 6px;
+}
+.policy-workspace .eco-project-briefing .eco-project-rewards li {
+  align-items: center;
+  padding: 6px 6px 6px 12px;
+  border: 2px solid #b9dcc3;
+  border-radius: 12px;
+  background: #e3f1e6;
+  font-weight: 700;
+}
+.policy-workspace .eco-project-briefing .eco-project-rewards li > strong {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--q-green);
+  color: #fffdf6;
+  font-size: 15px;
+}
+.policy-workspace .eco-project-briefing .eco-project-upkeep,
+.policy-workspace .eco-project-retained p + p {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 2px dashed var(--q-line);
+}
+@media (max-width: 1300px) {
+  .policy-workspace-board {
+    grid-template-columns: minmax(0, 1fr) 264px;
+    gap: 12px;
+  }
+  .policy-workspace .eco-policy-row,
+  .policy-workspace .q-tax-card {
+    padding: 12px;
+  }
+  .policy-workspace .eco-policy-identity {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .policy-workspace .eco-policy-identity .eco-policy-selected {
+    font-size: 11px;
+  }
+}
+@media (max-height: 780px) {
+  .policy-plan-effects dl > div {
+    flex-direction: row;
+    gap: 6px;
+    padding: 2px 9px;
+  }
+  .policy-workspace .eco-policy-layout > .eco-policy-action {
+    padding-block: 8px;
+  }
+  .eco-action-badge {
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+  }
+  .policy-workspace .eco-policy-action [data-testid="policy-start"] {
+    min-height: 42px;
+    padding-block: 8px;
+  }
+  .policy-workspace .eco-detail-header {
+    gap: 8px 14px;
+    padding: 12px 14px 10px;
+  }
+  .policy-workspace .eco-briefing-effects h3 {
+    padding-block: 7px;
+  }
+  .policy-workspace .eco-detail-header .eco-policy-facts {
+    padding-top: 8px;
+  }
+  .policy-workspace .eco-detail-header .eco-policy-cost strong {
+    font-size: 22px;
+  }
+  .policy-workspace .eco-detail-header .eco-policy-cost {
+    padding: 7px 12px;
+  }
+  .eco-fact-icon {
+    width: 30px;
+    height: 30px;
+    padding: 6px;
+  }
+  .policy-workspace .eco-detail-header .eco-policy-facts > div {
+    grid-template-columns: 30px auto;
+  }
+  .policy-workspace .eco-detail-header {
+    padding: 12px;
+  }
+  .policy-workspace .eco-detail-header > .economy-emblem {
+    width: 48px;
+    height: 48px;
+    min-height: 48px;
+  }
+  .policy-workspace .eco-detail-header h2 {
+    margin-bottom: 5px;
+    font-size: 22px;
+  }
+  .policy-workspace .eco-detail-header p {
+    margin-block: 0 5px;
+    font-size: 14px;
+  }
+  .policy-workspace .eco-policy-facts {
+    margin-block: 8px;
+    gap: 8px;
+  }
+  .policy-workspace-tools {
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .policy-workspace .q-policy-tabs [role="tab"] {
+    gap: 7px;
+    padding-inline: 10px;
+  }
+  .policy-workspace .q-policy-tabs [role="tab"] > span {
+    font-size: 16px;
+  }
+  .policy-workspace .q-policy-tabs small {
+    font-size: 12px;
+  }
+  .policy-workspace .q-policy-tabs .economy-emblem {
+    width: 32px;
+    height: 32px;
+  }
+  .policy-workspace .eco-policy-row {
+    gap: 8px;
+  }
+  .policy-workspace .eco-policy-identity {
+    min-height: 32px;
+    margin-bottom: 6px;
+  }
+  .policy-workspace .eco-policy-identity .economy-emblem {
+    width: 32px;
+    height: 32px;
+  }
+  .policy-workspace .eco-policy-title h3 {
+    font-size: 17px;
+  }
+  .policy-workspace .eco-policy-summary p {
+    font-size: 13px;
+    line-height: 1.35;
+    margin-bottom: 8px;
+  }
+  .policy-workspace .eco-policy-summary .eco-impacts {
+    margin: 6px 0;
+    gap: 4px;
+  }
+  .policy-workspace .eco-policy-summary .eco-impacts li b {
+    font-size: 16px;
+    line-height: 1;
+  }
+  .policy-workspace .q-tax-card {
+    padding: 11px;
+  }
+  .policy-workspace .q-tax-card-heading {
+    margin-bottom: 8px;
+  }
+  .policy-workspace .q-tax-card-heading .economy-emblem {
+    width: 40px;
+    height: 40px;
+  }
+  .policy-workspace .q-tax-card h2 {
+    font-size: 16px;
+    line-height: 1.25;
+  }
+  .policy-workspace .q-tax-tradeoff {
+    font-size: 13px;
+    line-height: 1.35;
+    margin-bottom: 10px;
+  }
+  .policy-workspace .q-tax-choice {
+    min-height: 52px;
+  }
+  .policy-workspace .q-tax-current {
+    margin-top: 8px;
+  }
+  .policy-plan-board {
+    padding: 12px;
+    gap: 10px;
+  }
+  .policy-plan-capacity p {
+    font-size: 12px;
+  }
+  .policy-budget {
+    padding: 10px;
+  }
+  .policy-workspace .policy-budget h3 {
+    font-size: 14px;
+  }
+  .policy-budget h3 > .economy-emblem {
+    width: 26px;
+    height: 26px;
+  }
+  .policy-budget dl {
+    gap: 5px;
+  }
+  .policy-capacity-grid strong {
+    font-size: 24px;
+  }
+  .policy-workspace .q-policy-tabs [role="tab"] {
+    min-height: 56px;
+    padding-block: 6px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .policy-workspace *,
+  .policy-workspace *::before,
+  .policy-workspace *::after {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Policy type chips: program, one-time build, facility program. */
+.eco-policy-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+}
+.eco-kind-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border: 1px solid var(--q-line);
+  border-radius: 999px;
+  background: var(--q-cream);
+  color: var(--q-ink);
+  font: 800 11px/1.4 var(--q-heading);
+  white-space: nowrap;
+}
+.eco-kind-badge[data-kind="build"] {
+  border-color: #e7c37a;
+  background: #fff3d6;
+  color: #6b4a12;
+}
+.eco-kind-badge[data-kind="facility"] {
+  border-color: #9fd0c8;
+  background: #e5f4f1;
+  color: #1f5d57;
+}
+.policy-workspace .eco-detail-header .eco-kicker {
+  align-items: center;
+  gap: 6px;
+}
+.eco-status[data-tone="done"] {
+  background: #d8ecdf;
+  color: #1a5a43;
+}
+.eco-status[data-tone="idle"] {
+  background: #ece8dc;
+  color: #5a5442;
+}
+.eco-ineligible {
+  display: inline-block;
+  padding: 6px 0;
+  color: var(--q-muted);
+  font-size: 13px;
+  font-style: italic;
+}
+.eco-project-grid > li[data-status="service"] .eco-project-card-heading > span {
+  color: var(--q-green);
+  font-weight: 700;
+}
+.eco-project-grid > li[data-status="idle"] .eco-project-card-heading > span {
+  color: #5a5442;
+  font-weight: 700;
+}
+.eco-project-grid > li[data-status="idle"] progress::-webkit-progress-value {
+  background: var(--q-muted);
+}
+.eco-project-grid > li[data-status="idle"] progress::-moz-progress-bar {
+  background: var(--q-muted);
+}

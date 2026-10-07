@@ -1,0 +1,20 @@
+[
+  {
+    "lang": "en",
+    "before": "Rp 36.0T recurring + Rp 36.0T remaining startup cost = Rp 72.0T",
+    "after": "Rp 36.2T recurring + Rp 0.0T remaining startup cost = Rp 36.2T",
+    "startupRemaining": 0,
+    "recurringEqualsTotalAfterPayment": true,
+    "negativePolicies": 2,
+    "errors": []
+  },
+  {
+    "lang": "id",
+    "before": "Rp 36,0T biaya rutin + Rp 36,0T sisa biaya awal = Rp 72,0T",
+    "after": "Rp 36,2T biaya rutin + Rp 0,0T sisa biaya awal = Rp 36,2T",
+    "startupRemaining": 0,
+    "recurringEqualsTotalAfterPayment": true,
+    "negativePolicies": 2,
+    "errors": []
+  }
+]
