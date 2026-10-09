@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   activeIds,
   launchCount,
@@ -27,18 +35,12 @@ import {
   saveQuarterDebrief,
   saveQuarterPlan,
 } from "./engine/economy/persistence";
-import { PolicyWorkspace } from "./PolicyWorkspace";
-import { EconomyRegions } from "./EconomyRegions";
-import { NationalEconomy } from "./NationalEconomy";
-import { GameQuarterReport } from "./GameQuarterReport";
 import { CampaignSetup } from "./CampaignSetup";
-import { CampaignEnd } from "./CampaignEnd";
 import { TAX_IDS } from "./engine/taxes";
 import { LanguageSwitcher, translate, useLanguage } from "./i18n";
 import { Icon, Modal, money, number } from "./components";
 import { StatHelp } from "./StatHelp";
 import WorldMap, { useReducedMotion } from "./WorldMap";
-import QuarterRecap from "./QuarterRecap";
 import {
   buildQuarterSummaryFromReceipt,
   buildQuarterVisualTransition,
@@ -49,6 +51,24 @@ import { type Overlay } from "./mapLayers";
 import "./economy.css";
 import "./economyApp.css";
 import "./policyWorkspace.css";
+
+// Panels and dialogs load on first use so the map becomes interactive sooner.
+const PolicyWorkspace = lazy(() =>
+  import("./PolicyWorkspace").then((m) => ({ default: m.PolicyWorkspace })),
+);
+const EconomyRegions = lazy(() =>
+  import("./EconomyRegions").then((m) => ({ default: m.EconomyRegions })),
+);
+const NationalEconomy = lazy(() =>
+  import("./NationalEconomy").then((m) => ({ default: m.NationalEconomy })),
+);
+const GameQuarterReport = lazy(() =>
+  import("./GameQuarterReport").then((m) => ({ default: m.GameQuarterReport })),
+);
+const CampaignEnd = lazy(() =>
+  import("./CampaignEnd").then((m) => ({ default: m.CampaignEnd })),
+);
+const QuarterRecap = lazy(() => import("./QuarterRecap"));
 
 type View = "map" | "policies" | "regions" | "economy";
 const copy = <T,>(value: T): T => structuredClone(value);
@@ -634,7 +654,10 @@ export default function QuarterApp() {
               {!plan.policies.length && (
                 <button className="q-brief-issue" onClick={() => openPolicy()}>
                   {game.policies.length
-                    ? t("No policies running: choose some", "Belum ada kebijakan berjalan: pilih kebijakan")
+                    ? t(
+                        "No policies running: choose some",
+                        "Belum ada kebijakan berjalan: pilih kebijakan",
+                      )
                     : t(
                         "Choose your first policies",
                         "Pilih kebijakan pertama Anda",
@@ -674,19 +697,21 @@ export default function QuarterApp() {
             </section>
           )}
           {transition && (
-            <QuarterRecap
-              transition={transition}
-              startedAt={startedAt}
-              quarter={quarterName(transition.from)}
-              onFinish={finishRecap}
-              onReport={() => {
-                reportButton.current?.focus({ preventScroll: true });
-                finishRecap();
-                setReport(true);
-              }}
-              onSeek={(elapsed) => setStartedAt(performance.now() - elapsed)}
-              onRegion={(id) => openRegion(id as RegionId)}
-            />
+            <Suspense fallback={null}>
+              <QuarterRecap
+                transition={transition}
+                startedAt={startedAt}
+                quarter={quarterName(transition.from)}
+                onFinish={finishRecap}
+                onReport={() => {
+                  reportButton.current?.focus({ preventScroll: true });
+                  finishRecap();
+                  setReport(true);
+                }}
+                onSeek={(elapsed) => setStartedAt(performance.now() - elapsed)}
+                onRegion={(id) => openRegion(id as RegionId)}
+              />
+            </Suspense>
           )}
           <main
             ref={panel}
@@ -725,15 +750,17 @@ export default function QuarterApp() {
               </div>
             </div>
             <div className="economy-panel-fill" hidden={view !== "regions"}>
-              <EconomyRegions
-                game={game}
-                plan={plan}
-                selected={selected}
-                onSelect={setSelected}
-                list={regionList}
-                onList={setRegionList}
-                onPolicy={openPolicy}
-              />
+              <Suspense fallback={null}>
+                <EconomyRegions
+                  game={game}
+                  plan={plan}
+                  selected={selected}
+                  onSelect={setSelected}
+                  list={regionList}
+                  onList={setRegionList}
+                  onPolicy={openPolicy}
+                />
+              </Suspense>
             </div>
           </main>
         </section>
@@ -1004,11 +1031,13 @@ export default function QuarterApp() {
               )}
             </p>
           ) : (
-            <NationalEconomy
-              game={game}
-              plan={plan}
-              onPolicies={(id) => openPolicy(id ?? null)}
-            />
+            <Suspense fallback={null}>
+              <NationalEconomy
+                game={game}
+                plan={plan}
+                onPolicies={(id) => openPolicy(id ?? null)}
+              />
+            </Suspense>
           )}
         </Modal>
       )}
@@ -1027,29 +1056,31 @@ export default function QuarterApp() {
               )}
             </p>
           ) : (
-            <PolicyWorkspace
-              game={game}
-              plan={plan}
-              onChange={changePlan}
-              disabled={locked}
-              detail={detail}
-              onDetail={setDetail}
-              tab={policyTab}
-              onTab={setPolicyTab}
-              preview={preview}
-              previewError={previewError}
-              onRetry={() => setPreviewRetry((value) => value + 1)}
-              onUndo={() => {
-                setPlan(undo[undo.length - 1]);
-                setUndo(undo.slice(0, -1));
-              }}
-              onReset={() => changePlan(basePlan(game))}
-              canUndo={!!undo.length}
-              dirty={dirty}
-              saveStatus={saveStatus}
-              onRetrySave={() => void retrySave()}
-              onClose={closePanel}
-            />
+            <Suspense fallback={null}>
+              <PolicyWorkspace
+                game={game}
+                plan={plan}
+                onChange={changePlan}
+                disabled={locked}
+                detail={detail}
+                onDetail={setDetail}
+                tab={policyTab}
+                onTab={setPolicyTab}
+                preview={preview}
+                previewError={previewError}
+                onRetry={() => setPreviewRetry((value) => value + 1)}
+                onUndo={() => {
+                  setPlan(undo[undo.length - 1]);
+                  setUndo(undo.slice(0, -1));
+                }}
+                onReset={() => changePlan(basePlan(game))}
+                canUndo={!!undo.length}
+                dirty={dirty}
+                saveStatus={saveStatus}
+                onRetrySave={() => void retrySave()}
+                onClose={closePanel}
+              />
+            </Suspense>
           )}
         </Modal>
       )}
@@ -1066,22 +1097,24 @@ export default function QuarterApp() {
         />
       )}
       {ready && ended && endgame && !setup && (
-        <CampaignEnd
-          game={game}
-          busy={busy}
-          error={saveStatus === "failed" ? error : ""}
-          onClose={() => setEndgame(false)}
-          onReport={() => {
-            setEndgame(false);
-            setReport(true);
-          }}
-          onExport={() => download(game)}
-          onNew={() => {
-            setReport(false);
-            setSetup(true);
-          }}
-          onRetrySave={() => void retrySave()}
-        />
+        <Suspense fallback={null}>
+          <CampaignEnd
+            game={game}
+            busy={busy}
+            error={saveStatus === "failed" ? error : ""}
+            onClose={() => setEndgame(false)}
+            onReport={() => {
+              setEndgame(false);
+              setReport(true);
+            }}
+            onExport={() => download(game)}
+            onNew={() => {
+              setReport(false);
+              setSetup(true);
+            }}
+            onRetrySave={() => void retrySave()}
+          />
+        </Suspense>
       )}
       {report && (
         <Modal
@@ -1097,16 +1130,18 @@ export default function QuarterApp() {
           className="economy-dialog economy-report national-economy-dialog"
           trapFocus
         >
-          <GameQuarterReport
-            game={game}
-            recap={lastRecap}
-            onClose={() => setReport(false)}
-            onRegion={(id) => {
-              setReport(false);
-              openRegion(id);
-              navOpener.current = reportButton.current;
-            }}
-          />
+          <Suspense fallback={null}>
+            <GameQuarterReport
+              game={game}
+              recap={lastRecap}
+              onClose={() => setReport(false)}
+              onRegion={(id) => {
+                setReport(false);
+                openRegion(id);
+                navOpener.current = reportButton.current;
+              }}
+            />
+          </Suspense>
         </Modal>
       )}
     </div>
