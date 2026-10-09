@@ -1721,3 +1721,62 @@ dialog.policy-workspace-dialog .dialog-content {
 .eco-project-grid > li[data-status="idle"] progress::-moz-progress-bar {
   background: var(--q-muted);
 }
+.eco-kind-badge[data-kind="existing"] {
+  border-color: #a9d3b8;
+  background: #e3f3e8;
+  color: #1a5a43;
+}
+.policy-workspace .eco-reality {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 14px;
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border: 2px solid #bdceb4;
+  border-radius: 16px;
+  background: #fffdf6;
+}
+.policy-workspace .eco-reality h3 {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 15px;
+}
+.policy-workspace .eco-reality p {
+  margin: 0;
+  color: var(--q-muted);
+  line-height: 1.4;
+}
+.policy-workspace .eco-source-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid #bad1c3;
+  border-radius: 11px;
+  background: #fffdf6;
+  color: var(--q-ink);
+  font: 800 14px/1 var(--q-heading);
+  text-decoration: none;
+  box-shadow: 0 3px 0 #c6d9cd;
+  transition:
+    background 140ms,
+    transform 140ms,
+    box-shadow 140ms;
+}
+.policy-workspace .eco-source-link:hover {
+  background: #edf5e9;
+  border-color: #8db49d;
+}
+.policy-workspace .eco-source-link:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #abc8b7;
+}
+.policy-workspace .eco-reality .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

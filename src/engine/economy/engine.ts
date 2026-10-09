@@ -68,8 +68,12 @@ const development = (p: ProvinceEconomy) =>
 const openingById = new Map(baseline.provinces.map((p) => [p.id, p]));
 const totalPopulation = sum(baseline.provinces.map((p) => p.population));
 const totalRice = sum(pillarData.provinces.map((p) => p.rice));
-const annualTrend = 1.025;
+// Gameplay trends: output grows faster than output per worker, so ordinary growth
+// still creates some jobs. Extra output above trend hires less than proportionally.
+const annualTrend = 1.04;
 const monthlyTrend = Math.pow(annualTrend, 1 / 12);
+const laborTrend = Math.pow(1.033, 1 / 12);
+const jobElasticity = 0.5;
 const monthlyPopulation = Math.pow(1.009, 1 / 12);
 const levelWeight = { low: 1, medium: 2, high: 3 };
 const defaultLevels = (): RegionalSpending =>
@@ -707,6 +711,20 @@ function random(s: EconomyState) {
   return s.rng / 4294967296;
 }
 
+/** Indonesia's legal deficit ceiling (UU 17/2003), as a share of annual GDP. */
+export const DEFICIT_LIMIT = 0.03;
+/** Annualized deficit of one monthly ledger as a share of nominal GDP. */
+export const deficitRatio = (ledger: Ledger, nominalGdp: number) =>
+  Math.max(0, ledger.spending + ledger.interest - ledger.revenue) *
+  (12 / nominalGdp);
+/** Borrowing past the legal ceiling is allowed but lenders charge more on the whole debt. */
+export const deficitPremium = (ledger: Ledger, nominalGdp: number) =>
+  Math.max(0, deficitRatio(ledger, nominalGdp) - DEFICIT_LIMIT) * 1;
+/** Each region with a completed coal plant adds 0.03 points to the borrowing rate as climate-minded lenders pull back. */
+export const COAL_RATE_PREMIUM = 0.0003;
+export const coalPremium = (game: QuarterGame) =>
+  builtRegions(game, "pltu").size * COAL_RATE_PREMIUM;
+
 function advanceMonth(
   game: QuarterGame,
   calm: boolean,
@@ -731,7 +749,12 @@ function advanceMonth(
   ledger.revenue = sum(Object.values(ledger.taxes)) + ledger.nonTaxRevenue;
   const debtRatio = before.debt / nominal;
   ledger.interest =
-    (before.debt * (0.05 + Math.max(0, debtRatio - 0.4) * 0.18)) / 12;
+    (before.debt *
+      (0.05 +
+        Math.max(0, debtRatio - 0.4) * 0.18 +
+        deficitPremium(before.ledger, nominal) +
+        coalPremium(game))) /
+    12;
   const programs = game.policies.filter(
     (p) => p.active && policyById[p.id].kind === "program",
   );
@@ -772,7 +795,8 @@ function advanceMonth(
     [...facilityCosts.values()].flatMap((list) => list.map((x) => x.amount)),
   );
   const inherited =
-    205 * before.priceIndex * Math.pow(1.035, before.month / 12);
+    // Inherited costs (wages, regional transfers, subsidies) outpace real growth slightly.
+    205 * before.priceIndex * Math.pow(1.06, before.month / 12);
   const maintenance =
     sum(
       before.provinces.map(
@@ -790,7 +814,7 @@ function advanceMonth(
     construction +
     facilityTotal;
   const borrowingLimit =
-    (nominal / 12) * clamp(0.022 - (debtRatio - 0.4) * 0.075, 0.002, 0.035);
+    (nominal / 12) * clamp(0.032 - (debtRatio - 0.4) * 0.075, 0.002, 0.04);
   ledger.funding = clamp(
     (ledger.revenue + borrowingLimit + before.cash - ledger.interest) /
       ledger.requested,
@@ -1376,9 +1400,11 @@ function advanceMonth(
           old.initialOutput *
           def.laborShare) /
         openingWages;
+      const trendOutput = old.initialOutput * monthlyTrend ** (s.month + 1);
       const laborDemand =
-        (initialJobs * (next.output / Math.max(0.000001, old.initialOutput))) /
-        monthlyTrend ** (s.month + 1) /
+        (initialJobs *
+          (monthlyTrend / laborTrend) ** (s.month + 1) *
+          Math.pow(next.output / trendOutput, jobElasticity)) /
         (1 + 0.0015 * (b.skills - b.initialSkills));
       next.jobs = Math.max(0, old.jobs + (laborDemand - old.jobs) * 0.16);
     }
@@ -1389,7 +1415,7 @@ function advanceMonth(
     const annualWage =
       (openingWages /
         (open.population * 0.52 * (1 - b.initialUnemployment / 100))) *
-      monthlyTrend ** (s.month + 1) *
+      laborTrend ** (s.month + 1) *
       Math.max(0.1, 1 + 0.0015 * (b.skills - b.initialSkills));
     for (const def of industries) {
       const next = p.industries[def.id];

@@ -45,9 +45,9 @@ Random draws remain seeded and independent of policy choices and province proces
 
 The campaign succeeds when all six conditions hold at month 60:
 
-1. Real income per person rises at least 10% from the campaign opening.
-2. Poverty falls at least 1 percentage point.
-3. Unemployment is at most 6%.
+1. Real income per person rises at least 18% from the campaign opening.
+2. Poverty falls at least 1.5 percentage points.
+3. Unemployment is at most 5.5%.
 4. At least three national foundations gain 2 points, and no foundation loses more than 3.
 5. Energy stays within 1 point of the opening level.
 6. Debt is at most 40% of nominal GDP and at least 98% of the final quarter's requested spending is funded.
@@ -93,3 +93,33 @@ The design read is the established cheerful desktop island strategy game, ENERGY
 - Liveliness PASS: the archipelago remains the map focal point, the advance button retains the consequential accent, and existing section spacing and restrained motion remain unchanged. The approved dials and design reasons are stated above.
 - Craftsmanship and Quality Locks PASS: additions serve specific gameplay questions, match established components and localization, and retain the existing loading/error/retry paths. No placeholders presented as facts, template sections, competing themes, generic CTAs, or empty interactions.
 - Changed-control click-through PASS: Campaign goals opens the report; Escape closes it and returns focus. The Energy question-mark hint opens on focus and remains readable on hover; Escape dismisses it. The falling-energy prompt opens RUPTL PLN with its allocation controls and enabled launch action. Existing advance, report, policy, tax, regional, save and camera controls were exercised by the full browser suite.
+
+## Realistic direction, arcade numbers (9 October 2026)
+
+An audit found that the game taught some false lessons: with no policies, unemployment doubled to 11%, coal was the cheapest and fastest power with almost no downside, and some programmes cost far more than their real budgets. The rule for this revision is that numbers can stay arcade (round costs, short build times, a winnable five years), but cause and effect must point the same way as in Indonesia.
+
+| Change | Before | After |
+| --- | --- | --- |
+| Background growth | 2.5% output trend; output per worker grew at the same rate, so trend growth created no jobs | 4% output trend; output per worker grows 3.3%, and output above trend hires with elasticity 0.5 |
+| Inherited spending | Grew 3.5% a year in real terms | Grows 6% a year (wages, regional transfers, subsidies) |
+| Deficit rule | Borrowing envelope about 2.2% of GDP, no legal limit shown | Envelope about 3.2% of GDP at 40% debt; the deficit above the legal 3% adds its excess to the borrowing rate on the whole debt; forecast shows "Deficit / legal limit" |
+| Coal (PLTU) | Cheapest capacity, only a local health cost | Each region with a completed plant adds 0.03 points to the borrowing rate (climate lenders) |
+| Clean power | PLTS 3%, PLTP 6%, PLTA 8% capacity | PLTS cheaper (Rp 27T build), PLTP 8%, PLTA 10% |
+| Programme costs | PKH 18, Prakerja 9, Tol Laut 18 per quarter | PKH 9, Prakerja 4.5, Tol Laut 4.5 (build about Rp 15T), matching their real relative size |
+| Mandate | +10% income, −1 poverty point, unemployment ≤ 6% | +18% income, −1.5 poverty points, unemployment ≤ 5.5% |
+
+Build policies were already one-time, so coal can only be built once per campaign; no extra limit was needed.
+
+Means across seeds 19, 73 and 997, calm and shocks (`npm run balance:quarter`):
+
+| Portfolio | Real GDP growth / yr | Unemployment | Energy change | Goals met |
+| --- | ---: | ---: | ---: | ---: |
+| No policies | 3.5% | 7.3% | −1.6 | 1.0 / 6 |
+| Education four | 4.1% | 7.0% | −3.0 | 1.0 / 6 |
+| Mixed six | 4.6% | 4.9% | −2.1 | 5.0 / 6 |
+| Mixed eight | 5.0% | 4.2% | −2.8 | 5.0 / 6 |
+| Higher-cost eight | 5.5% | 3.1% | −4.1 | 4.0 / 6 |
+| Mixed eight with geothermal (test portfolio) | 5.2% | 3.8% | +1.0 | 6.0 / 6 |
+| Coal + solar, Geothermal + solar, Hydro + solar (four policies) | 4.1–4.2% | 6.0–6.3% | +3.3 to +4.6 | 2.8–3.0 / 6 |
+
+Energy is still the goal that separates a full mandate from strong progress, but it can now be met without coal, and clean routes score slightly better than the coal route. Fiscal pressure is lighter than before for most portfolios; the expensive portfolio still crosses the 3% line and runs funding shortfalls while it builds. Whether this pacing feels right needs player feedback.

@@ -169,8 +169,9 @@ test("a funding shortfall stays visible beside the delivered forecast", async ({
   await page.setViewportSize({ width: 1280, height: 720 });
   await start(page, "en");
   let game = initialQuarter();
-  const portfolio = ["mbg", "jkn", "mrt-lrt", "klinik"] as const;
-  for (let quarter = 0; quarter < 2; quarter++) {
+  const portfolio = ["mbg", "jkn", "mrt-lrt", "klinik", "bos", "pltp"] as const;
+  // Three quarters of expensive launches push borrowing past its envelope.
+  for (let quarter = 0; quarter < 3; quarter++) {
     game = resolveQuarter(
       game,
       { ...basePlan(game), policies: portfolio.slice(0, (quarter + 1) * 2) },

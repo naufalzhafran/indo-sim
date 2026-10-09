@@ -12,6 +12,7 @@ import {
   launchCount,
   aggregate,
   basePlan,
+  DEFICIT_LIMIT,
   initialQuarter,
   validatePlan,
 } from "./engine/economy/engine";
@@ -187,6 +188,9 @@ export default function QuarterApp() {
   const forecastBalance = forecastLedger
     ? forecastLedger.revenue - forecastLedger.spending - forecastLedger.interest
     : 0;
+  // Quarterly shortfall at an annual pace, against today's nominal output.
+  const forecastDeficit =
+    (Math.max(0, -forecastBalance) * 4 * 100) / (n.gdp * n.priceIndex);
   const finishRecap = useCallback(() => setTransition(null), []);
   const rendererReady = useCallback(
     () => setStartedAt((value) => value || performance.now()),
@@ -862,7 +866,13 @@ export default function QuarterApp() {
                         </tr>
                         <tr>
                           <th scope="row">
-                            {t("Other spending", "Belanja lainnya")}
+                            <StatHelp
+                              label={t("Other spending", "Belanja lainnya")}
+                              description={t(
+                                "Ongoing government spending you inherit: salaries, transfers to regions, subsidies and existing programmes such as BOS, JKN, PKH and KUR. Choosing those policies expands them beyond this baseline.",
+                                "Belanja pemerintah yang sudah berjalan: gaji, transfer ke daerah, subsidi, dan program yang ada seperti BOS, JKN, PKH, dan KUR. Memilih kebijakan tersebut berarti memperluasnya di atas belanja dasar ini.",
+                              )}
+                            />
                           </th>
                           <td>
                             −
@@ -889,6 +899,30 @@ export default function QuarterApp() {
                           <td>
                             {forecastBalance < 0 ? "−" : "+"}
                             {money(Math.abs(forecastBalance))}
+                          </td>
+                        </tr>
+                        <tr
+                          data-tone={
+                            forecastDeficit > DEFICIT_LIMIT * 100
+                              ? "warn"
+                              : "pass"
+                          }
+                        >
+                          <th scope="row">
+                            <StatHelp
+                              label={t(
+                                "Deficit / legal limit",
+                                "Defisit / batas",
+                              )}
+                              description={t(
+                                "The quarter's shortfall at a yearly pace, as a share of GDP. Indonesian law caps the deficit at 3% of GDP. Going over is allowed here, but lenders charge a higher rate on the whole debt.",
+                                "Kekurangan triwulan ini dalam laju tahunan, sebagai persentase PDB. Undang-undang membatasi defisit 3% PDB. Di sini batas itu boleh dilewati, tetapi pemberi pinjaman mengenakan bunga lebih tinggi atas seluruh utang.",
+                              )}
+                            />
+                          </th>
+                          <td>
+                            {number(forecastDeficit, 1)}% /{" "}
+                            {number(DEFICIT_LIMIT * 100, 0)}%
                           </td>
                         </tr>
                         <tr>
