@@ -46,4 +46,4 @@ Supported desktop/laptop sizes are 1280×720, 1366×768 and 1440×900 in English
 
 Current unit tests cover the economy, persistence, regional geography and map playback. `tests/economy.spec.ts` covers browser workflows. `scripts/economy-balance.ts` compares complete five-year portfolios in calm and shock scenarios and writes [the balance report](docs/economy-balance.json).
 
-See [the current model](docs/REGIONAL-ECONOMY.md), [verification notes](docs/REGIONAL-ECONOMY-QA.md), and [design decisions](DESIGN.md). Older model documents in `docs/` are historical research, not supported gameplay or save formats.
+See [the current model](docs/REGIONAL-ECONOMY.md), [verification notes](docs/REGIONAL-ECONOMY-QA.md), and [design decisions](DESIGN.md). Earlier model, cabinet and party documents have been removed; they remain in git history.

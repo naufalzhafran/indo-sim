@@ -55,9 +55,6 @@ Only one governing dossier is active. The map underneath it is inert, and modal 
 
 Existing onboarding, optional tutorial, import/export, storage recovery, map attribution, and evidence remain available. A fixed map-table theme is intentional; no alternative theme is presented. Language preferences remain accessible in the compact HUD and setup header.
 
-## Cabinet cards
-
-The cabinet uses fictional photographic portraits with a muted printed-paper treatment to make candidates recognizable. Portraits share one local atlas; there are no remote photo requests. Olive office headers, compact numerical ratings, and separate strength/trade-off lines support comparison. Reform pace, service value, and political influence use the same functions as the engine. A side-by-side dossier previews candidates and party consequences before a turn-time appointment is queued. Queued cards identify their incumbent and offer cancellation; opening selection uses the same cards. ENERGY 2 / RHYTHM 3 / MOTION 2 is retained, with no new animation. Gameplay changes and save compatibility are documented in CABINET.md.
 # Regional map context
 
 Neighboring countries use muted sage land beneath the playable parchment provinces. Singapore and Malaysia provide geographic context for Kepulauan Riau. The map defaults to Indonesia with neighboring geography visible. Labels maintain a readable screen size during zoom. The existing province source is simplified cartography, and its coastlines are not survey detail.
