@@ -13,7 +13,6 @@ import {
   type RegionId,
 } from "./engine/economy/types";
 import type { QuarterVisualTransition } from "./quarterVisual";
-import "./gameQuarterReport.css";
 
 const chapters = [
   "events",

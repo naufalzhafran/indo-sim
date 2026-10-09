@@ -177,7 +177,7 @@ p {
 }
 h1,
 h2 {
-  font-family: "Source Serif 4", Georgia, serif;
+  font-family: var(--q-heading);
   font-weight: 500;
   letter-spacing: -0.035em;
 }
@@ -242,19 +242,6 @@ strong {
 .full {
   width: 100%;
 }
-.text-button {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  padding: 6px 0;
-  min-height: 32px;
-  color: #654221;
-  justify-content: flex-start;
-}
-.text-button:hover:not(:disabled) {
-  background: transparent;
-  text-decoration: underline;
-}
 .icon-button {
   padding: 6px;
   min-width: 32px;
@@ -315,7 +302,7 @@ strong {
 }
 .brand span:not(.flag) {
   display: block;
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-size: 13px;
 }
 
@@ -364,7 +351,7 @@ strong {
 }
 .game-brand small {
   display: block;
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-weight: 400;
   font-size: 13px;
   text-align: left;
@@ -427,7 +414,7 @@ strong {
   padding-left: 20px;
 }
 .calendar > strong {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-size: 20px;
   color: #f5e9ca;
 }
@@ -542,7 +529,7 @@ strong {
   font-size: 10px;
 }
 .map-heading p {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-style: italic;
   font-size: 14px;
   color: #344e45;
@@ -718,7 +705,7 @@ strong {
   pointer-events: none;
 }
 .island-label {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   fill: #273c33;
   font-size: 11px;
   letter-spacing: 0.14em;
@@ -729,7 +716,7 @@ strong {
   pointer-events: none;
 }
 .ocean-label {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-style: italic;
   fill: #3d5d58;
   font-size: 12px;
@@ -746,7 +733,7 @@ strong {
 .compass text {
   fill: #354f44;
   stroke: none;
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-size: 13px;
 }
 .map-marker {
@@ -796,7 +783,7 @@ strong {
   margin-bottom: 0;
 }
 .map-caption strong {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-size: 19px;
   font-weight: 500;
 }
@@ -946,7 +933,7 @@ strong {
   background: #ffffff08;
 }
 .agenda-number {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-size: 30px;
   color: #d5be82;
 }
@@ -1073,7 +1060,7 @@ strong {
   color: #595d4d;
 }
 .province-numbers strong {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-weight: 500;
   font-size: 28px;
 }
@@ -1124,9 +1111,6 @@ strong {
 .province-inspector h3 {
   font-size: 15px;
   margin: 20px 0 12px;
-}
-.province-inspector .text-button {
-  font-size: 12px;
 }
 .province-inspector .full {
   font-size: 13px;
@@ -1332,7 +1316,7 @@ strong {
 .three-stats strong,
 .trend-row strong {
   font-size: 28px;
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-weight: 500;
 }
 .three-stats span {
@@ -1455,13 +1439,13 @@ strong {
   place-items: center;
   background: #576650;
   color: #f2e6c5;
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-size: 20px;
   flex-shrink: 0;
   border: 3px double #cbb886;
 }
 .minister-name h3 {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-weight: 500;
   font-size: 21px;
 }
@@ -1494,7 +1478,7 @@ strong {
   border: 1px solid #b6a779;
 }
 .parliament-hero strong {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-size: 66px;
   font-weight: 500;
 }
@@ -1533,7 +1517,7 @@ strong {
 }
 .dpr-status-number > strong {
   display: block;
-  font: 64px "Source Serif 4", serif;
+  font: 800 64px var(--q-heading);
   line-height: 1;
 }
 .dpr-status-number > strong span {
@@ -1580,7 +1564,7 @@ strong {
 }
 .dpr-next h3 {
   margin: 7px 0;
-  font: 28px "Source Serif 4", serif;
+  font: 800 28px var(--q-heading);
 }
 .dpr-feedback {
   padding: 12px 16px;
@@ -1733,7 +1717,7 @@ strong {
   color: #853724;
 }
 .crisis h3 {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-size: 25px;
   font-weight: 500;
   margin: 8px 0;
@@ -1809,7 +1793,7 @@ strong {
 .legacy-grid strong {
   font-size: 30px;
   display: block;
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   margin: 10px 0;
 }
 .legacy-grid p {
@@ -1828,10 +1812,6 @@ strong {
   border: 1px solid #b1aa82;
   font-size: 12px;
   margin-bottom: 20px;
-}
-.queued-note .text-button {
-  font-size: 12px;
-  margin-left: auto;
 }
 .game-messages > .notice,
 .game-messages > .alert {
@@ -1889,7 +1869,7 @@ strong {
   text-shadow: 0 1px 2px #24352f;
 }
 .resolving-status strong {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-size: 34px;
 }
 .resolving-status svg {
@@ -2131,7 +2111,7 @@ td {
   margin-top: 28px;
 }
 .report-dispatches > h3 {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-size: 25px;
   margin-bottom: 15px;
 }
@@ -2448,7 +2428,7 @@ td {
   border-block: 1px solid var(--line);
 }
 .dpr-acceptance > strong {
-  font: 30px "Source Serif 4", serif;
+  font: 800 30px var(--q-heading);
   line-height: 1;
 }
 .dpr-band {
@@ -2539,7 +2519,7 @@ td {
   color: var(--muted);
 }
 .pillar-cell strong {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-weight: 500;
   font-size: 22px;
   line-height: 1.1;
@@ -2580,7 +2560,7 @@ td {
   color: var(--muted);
 }
 .national-pillar-grid strong {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-weight: 500;
   font-size: 22px;
 }
@@ -2719,7 +2699,7 @@ td {
 }
 .national-pillar strong,
 .national-bar-development strong {
-  font-family: "Source Serif 4", serif;
+  font-family: var(--q-heading);
   font-weight: 500;
   font-size: 18px;
 }

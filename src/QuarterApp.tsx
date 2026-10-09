@@ -51,6 +51,8 @@ import { type Overlay } from "./mapLayers";
 import "./economy.css";
 import "./economyApp.css";
 import "./policyWorkspace.css";
+import "./nationalEconomy.css";
+import "./gameQuarterReport.css";
 
 // Panels and dialogs load on first use so the map becomes interactive sooner.
 const PolicyWorkspace = lazy(() =>

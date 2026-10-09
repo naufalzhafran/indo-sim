@@ -18,7 +18,6 @@ import {
   type QuarterGame,
   type QuarterPlan,
 } from "./engine/economy/types";
-import "./nationalEconomy.css";
 
 export function NationalEconomy({
   game,
