@@ -121,6 +121,23 @@ export function NationalEconomy({
         : policyFilter === "constraint" && !isFoundation
           ? constraintPolicies
           : directPolicies;
+  // One clear starting point: the weakest national foundation and the
+  // largest industries it currently holds back.
+  const weakest = [...FOUNDATIONS].sort((a, b) => national[a] - national[b])[0];
+  const constrained = totals
+    .filter((item) => item.constraint === weakest)
+    .sort((a, b) => b.output - a.output);
+  const heldBack = (
+    constrained.length
+      ? constrained
+      : [...totals].sort(
+          (a, b) =>
+            industryById[b.id].weights[weakest] -
+            industryById[a.id].weights[weakest],
+        )
+  )
+    .slice(0, 2)
+    .map((item) => industryById[item.id].name[language]);
   const foundationHelp = {
     education: t(
       "School access and teaching quality improve before workforce skills reach businesses. Industry uses skills accumulated over time.",
@@ -151,6 +168,13 @@ export function NationalEconomy({
           <h2 id="national-foundations-heading">
             {t("National foundations", "Fondasi nasional")}
           </h2>
+          <p className="national-start">
+            <strong>{t("Start here:", "Mulai dari sini:")}</strong>{" "}
+            {t(
+              `${foundationNames[weakest].en} ${number(national[weakest])} is your weakest foundation. It holds back ${heldBack.join(" and ")}.`,
+              `${foundationNames[weakest].id} ${number(national[weakest])} adalah fondasi terlemah. Ini menghambat ${heldBack.join(" dan ")}.`,
+            )}
+          </p>
           <span>
             {t("Population-weighted · /100", "Berbobot penduduk · /100")}
           </span>
@@ -236,7 +260,7 @@ export function NationalEconomy({
                 </span>
                 <strong>{money(item.output)}</strong>
                 <small>
-                  {number(item.jobs, 2)} {t("million jobs", "juta pekerjaan")}
+                  {number(item.jobs, 1)} {t("million jobs", "juta pekerjaan")}
                 </small>
                 {selected === item.id && (
                   <span className="national-selected-mark" aria-hidden="true">

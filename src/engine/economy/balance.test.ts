@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   aggregate,
   basePlan,
+  COAL_RATE_PREMIUM,
+  coalPremium,
+  DEFICIT_LIMIT,
+  deficitPremium,
   initialQuarter,
   activeIds,
   isFinished,
@@ -35,8 +39,10 @@ describe("campaign balance", () => {
     const initial = aggregate(initialQuarter());
     const idle = campaign([]);
     const now = aggregate(idle);
-    expect(now.realIncome).toBeLessThan(110);
-    expect(now.unemployment).toBeGreaterThan(initial.unemployment + 3);
+    // Idle growth is modest, not a collapse: unemployment drifts up a little.
+    expect(now.realIncome).toBeLessThan(118);
+    expect(now.unemployment).toBeGreaterThan(initial.unemployment + 1);
+    expect(now.unemployment).toBeLessThan(initial.unemployment + 4);
     expect(now.population).toBeGreaterThan(initial.population);
     expect(now.infrastructure).toBeLessThan(initial.infrastructure - 1);
     expect(campaignGoals(idle).filter((g) => g.met).length).toBeLessThan(3);
@@ -97,8 +103,8 @@ describe("campaign balance", () => {
     ).toBe(true);
   });
 
-  it("never mistakes a high-income underfunded portfolio for completing the mandate", () => {
-    const game = campaign([
+  it("pushes a rapid expensive portfolio past the deficit limit into shortfalls", () => {
+    const ids: PolicyId[] = [
       "mbg",
       "jkn",
       "mrt-lrt",
@@ -107,10 +113,52 @@ describe("campaign balance", () => {
       "pltp",
       "tol-laut",
       "broadband",
-    ]);
-    expect(aggregate(game).realIncome).toBeGreaterThan(115);
-    expect(game.receipt!.ledger.funding).toBeLessThan(0.98);
-    expect(campaignGoals(game).find((g) => g.id === "budget")!.met).toBe(false);
+    ];
+    let minimumFunding = 1;
+    let worstDeficit = 0;
+    for (let quarters = 1; quarters <= 8; quarters++) {
+      const game = campaign(ids, 19, true, quarters);
+      const ledger = game.receipt!.ledger;
+      const metrics = aggregate(game);
+      minimumFunding = Math.min(minimumFunding, ledger.funding);
+      worstDeficit = Math.max(
+        worstDeficit,
+        ((ledger.spending + ledger.interest - ledger.revenue) * 4) /
+          (metrics.gdp * metrics.priceIndex),
+      );
+    }
+    expect(worstDeficit).toBeGreaterThan(DEFICIT_LIMIT);
+    expect(minimumFunding).toBeLessThan(0.98);
+    const final = campaign(ids);
+    expect(aggregate(final).realIncome).toBeGreaterThan(115);
+    expect(campaignGoals(final).filter((g) => !g.met).length).toBeGreaterThan(
+      0,
+    );
+  });
+
+  it("charges more interest past the deficit limit and after coal plants", () => {
+    const game = initialQuarter();
+    const nominal = aggregate(game).gdp;
+    const ledger = { ...game.simulation.ledger };
+    expect(deficitPremium(ledger, nominal)).toBe(0);
+    ledger.spending += (nominal * 0.04) / 12;
+    expect(deficitPremium(ledger, nominal)).toBeGreaterThan(0);
+    expect(coalPremium(game)).toBe(0);
+    const coal = campaign(["pltu"], 19, true, 6);
+    expect(isFinished(coal, "pltu")).toBe(true);
+    expect(coalPremium(coal)).toBeCloseTo(9 * COAL_RATE_PREMIUM);
+  });
+
+  it("lets clean power meet the energy goal without coal", () => {
+    for (const ids of [
+      ["plts", "pltp"],
+      ["plta", "plts"],
+    ] as PolicyId[][]) {
+      const game = campaign(ids);
+      expect(campaignGoals(game).find((g) => g.id === "energy")!.met).toBe(
+        true,
+      );
+    }
   });
 
   it.each(["harvest", "flood", "outbreak"] as const)(

@@ -212,8 +212,11 @@ export default function QuarterRecap({
     tabs.current[next]?.focus();
   };
 
-  const signed = (value: number, digits = 1) =>
-    `${value > 0 ? "+" : ""}${number(value, digits)}`;
+  // Round before choosing the sign so tiny changes read "0.00", not "-0.00".
+  const signed = (value: number, digits = 1) => {
+    const rounded = Math.round(value * 10 ** digits) / 10 ** digits;
+    return `${rounded > 0 ? "+" : rounded < 0 ? "−" : ""}${number(Math.abs(rounded), digits)}`;
+  };
   const place = (region: { name: string; nameId?: string }) =>
     language === "id" ? (region.nameId ?? region.name) : region.name;
 
@@ -718,7 +721,10 @@ function ImpactAct({
     {
       key: "balance",
       label: t("Quarter budget balance", "Saldo anggaran triwulan"),
-      value: money(counted(before.balance, after.balance)),
+      value: (() => {
+        const balance = counted(before.balance, after.balance);
+        return `${balance < 0 ? "−" : ""}${money(Math.abs(balance))}`;
+      })(),
       change: after.balance - before.balance,
       planChange: plan?.balance,
       unit: "T",

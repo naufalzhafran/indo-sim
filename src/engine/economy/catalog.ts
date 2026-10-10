@@ -346,6 +346,11 @@ const policyConsequences: Record<PolicyId, PolicyConsequence[]> = {
       "down",
     ),
     buildDisruption(foundationNames.health),
+    consequence(
+      bi("Borrowing cost", "Biaya pinjaman"),
+      bi("Climate lenders pull back", "Pemberi dana iklim menahan diri"),
+      "up",
+    ),
   ],
   teachers: [
     limitedBenefit(bi("Workforce skills", "Keterampilan pekerja"), yearsToDevelop),
@@ -419,6 +424,142 @@ const policyConsequences: Record<PolicyId, PolicyConsequence[]> = {
   ],
 };
 
+/** Real-world context beside the simplified game numbers. */
+const realities: Record<PolicyId, Bilingual> = {
+  mbg: bi(
+    "MBG started in January 2025 with a 2025 budget of about Rp 71T.",
+    "MBG dimulai Januari 2025 dengan anggaran 2025 sekitar Rp 71T.",
+  ),
+  kopdes: bi(
+    "About 80,000 village cooperatives were launched in July 2025.",
+    "Sekitar 80.000 koperasi desa diluncurkan pada Juli 2025.",
+  ),
+  ckg: bi(
+    "Free health checks began in February 2025, offered around each person's birthday.",
+    "Cek kesehatan gratis dimulai Februari 2025, ditawarkan sekitar hari ulang tahun warga.",
+  ),
+  bpn: bi(
+    "A separate state revenue agency was a 2024 Prabowo–Gibran campaign pledge.",
+    "Badan penerimaan negara terpisah adalah janji kampanye Prabowo–Gibran pada 2024.",
+  ),
+  pkh: bi(
+    "PKH has paid conditional cash to poor families since 2007, roughly Rp 28T a year recently.",
+    "PKH menyalurkan bantuan bersyarat bagi keluarga miskin sejak 2007, sekitar Rp 28T per tahun belakangan ini.",
+  ),
+  bos: bi(
+    "BOS has funded school operations since 2005, at more than Rp 50T a year.",
+    "BOS mendanai operasional sekolah sejak 2005, lebih dari Rp 50T per tahun.",
+  ),
+  kur: bi(
+    "KUR has offered subsidised small-business loans since 2007; the 2024 lending target was about Rp 300T.",
+    "KUR memberi kredit usaha bersubsidi sejak 2007; target penyaluran 2024 sekitar Rp 300T.",
+  ),
+  jkn: bi(
+    "JKN has run since 2014; the government pays premiums for about 96 million low-income members.",
+    "JKN berjalan sejak 2014; pemerintah membayar iuran sekitar 96 juta peserta berpenghasilan rendah.",
+  ),
+  "tol-laut": bi(
+    "Tol Laut has subsidised cargo ships to eastern Indonesia since 2015; the 2024 subsidy was about Rp 0.2T.",
+    "Tol Laut menyubsidi kapal barang ke Indonesia timur sejak 2015; subsidi 2024 sekitar Rp 0,2T.",
+  ),
+  prakerja: bi(
+    "Kartu Prakerja began in 2020; its 2024 budget was about Rp 4.8T.",
+    "Kartu Prakerja dimulai 2020; anggaran 2024 sekitar Rp 4,8T.",
+  ),
+  "jalan-desa": bi(
+    "Villages build roads with Dana Desa, about Rp 71T in 2024. Build time is shortened for a five-year game.",
+    "Desa membangun jalan dengan Dana Desa, sekitar Rp 71T pada 2024. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  "embung-desa": bi(
+    "Villages build reservoirs with Dana Desa, about Rp 71T in 2024. Build time is shortened for a five-year game.",
+    "Desa membangun embung dengan Dana Desa, sekitar Rp 71T pada 2024. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  "pasar-desa": bi(
+    "Villages build markets with Dana Desa, about Rp 71T in 2024. Build time is shortened for a five-year game.",
+    "Desa membangun pasar dengan Dana Desa, sekitar Rp 71T pada 2024. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  brt: bi(
+    "TransJakarta has run bus rapid transit since 2004. Build time is shortened for a five-year game.",
+    "TransJakarta menjalankan bus rapid transit sejak 2004. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  krl: bi(
+    "KRL Commuter Line carries about one million passengers a day around Jakarta. Build time is shortened for a five-year game.",
+    "KRL Commuter Line mengangkut sekitar satu juta penumpang per hari di sekitar Jakarta. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  "mrt-lrt": bi(
+    "Jakarta MRT's first 16 km took about six years to build, opening in 2019. Build time is shortened for a five-year game.",
+    "16 km pertama MRT Jakarta dibangun sekitar enam tahun dan dibuka 2019. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  "kereta-antarkota": bi(
+    "The Jakarta–Bandung high-speed line took about seven years, opening in 2023. Build time is shortened for a five-year game.",
+    "Kereta cepat Jakarta–Bandung dibangun sekitar tujuh tahun dan dibuka 2023. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  pupuk: bi(
+    "Cheap fertiliser and seed was a 2024 Anies–Muhaimin campaign pledge.",
+    "Pupuk dan benih murah adalah janji kampanye Anies–Muhaimin pada 2024.",
+  ),
+  klinik: bi(
+    "One clinic and health worker per village was a 2024 Ganjar–Mahfud campaign pledge.",
+    "Satu puskesmas dan tenaga kesehatan per desa adalah janji kampanye Ganjar–Mahfud pada 2024.",
+  ),
+  sarjana: bi(
+    "One graduate per poor family was a 2024 Ganjar–Mahfud campaign pledge.",
+    "Satu sarjana per keluarga miskin adalah janji kampanye Ganjar–Mahfud pada 2024.",
+  ),
+  plts: bi(
+    "Solar is the largest new source in PLN's 2025–2034 electricity plan (RUPTL).",
+    "Surya adalah sumber baru terbesar dalam rencana listrik PLN 2025–2034 (RUPTL).",
+  ),
+  plta: bi(
+    "Large hydro dams usually take five to eight years. Build time is shortened for a five-year game.",
+    "Bendungan PLTA besar biasanya dibangun lima sampai delapan tahun. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  pltp: bi(
+    "Indonesia has the world's second-largest geothermal capacity; projects usually take five to seven years. Build time is shortened for a five-year game.",
+    "Kapasitas panas bumi Indonesia terbesar kedua di dunia; proyeknya biasanya lima sampai tujuh tahun. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  pltu: bi(
+    "Coal supplies most of Indonesia's power, but Perpres 112/2022 bars new coal plants outside existing plans. Build time is shortened for a five-year game.",
+    "Batu bara memasok sebagian besar listrik Indonesia, tetapi Perpres 112/2022 melarang PLTU baru di luar rencana yang ada. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  teachers: bi(
+    "PPG certifies teachers, who then receive a professional allowance.",
+    "PPG menyertifikasi guru, yang kemudian menerima tunjangan profesi.",
+  ),
+  water: bi(
+    "PAMSIMAS has built village water systems since 2008. Build time is shortened for a five-year game.",
+    "PAMSIMAS membangun sarana air desa sejak 2008. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  irrigation: bi(
+    "P3-TGAI pays farmer groups to repair small irrigation channels. Build time is shortened for a five-year game.",
+    "P3-TGAI membiayai kelompok tani untuk memperbaiki saluran irigasi kecil. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  broadband: bi(
+    "The Palapa Ring fibre backbone reached every regency and city in 2019. Build time is shortened for a five-year game.",
+    "Jaringan serat Palapa Ring menjangkau seluruh kabupaten dan kota pada 2019. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  "cold-chain": bi(
+    "SLIN links fishing ports with cold storage to cut losses between catch and market.",
+    "SLIN menghubungkan pelabuhan perikanan dengan gudang beku untuk mengurangi kehilangan hasil tangkapan.",
+  ),
+  "palm-replanting": bi(
+    "PSR grants smallholders about Rp 60 million per hectare, funded by palm oil export levies.",
+    "PSR memberi pekebun sekitar Rp 60 juta per hektare dari pungutan ekspor sawit.",
+  ),
+  "mining-rehabilitation": bi(
+    "Mining companies reclaimed about 7,900 hectares in 2023, according to ESDM. Build time is shortened for a five-year game.",
+    "Perusahaan tambang mereklamasi sekitar 7.900 hektare pada 2023 menurut ESDM. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  "tourism-access": bi(
+    "Thousands of tourism villages are listed on the Jadesta platform. Build time is shortened for a five-year game.",
+    "Ribuan desa wisata terdaftar di platform Jadesta. Waktu bangun dipersingkat untuk permainan lima tahun.",
+  ),
+  "food-reserves": bi(
+    "The National Food Agency supports community food barns that store grain for lean seasons.",
+    "Badan Pangan Nasional mendukung lumbung pangan masyarakat untuk menyimpan gabah saat paceklik.",
+  ),
+};
+const existingProgrammes = new Set<PolicyId>(["bos", "jkn", "pkh", "kur", "prakerja"]);
 const p = (
   id: PolicyId,
   name: string,
@@ -448,6 +589,7 @@ const p = (
   consequences: policyConsequences[id],
   source,
   adapted,
+  reality: realities[id],
 });
 const up = (
   target: PolicyDefinition["impacts"][number]["target"],
@@ -550,7 +692,7 @@ export const policies: PolicyDefinition[] = [
     "pkh",
     "Program Keluarga Harapan",
     "economy",
-    18,
+    9,
     3,
     { transfers: 1 },
     [up("food"), up("retail")],
@@ -638,7 +780,7 @@ export const policies: PolicyDefinition[] = [
     "tol-laut",
     "Tol Laut",
     "infrastructure",
-    18,
+    4.5,
     12,
     { transport: 1, foodStorage: 0.2 },
     [up("infrastructure"), up("logistics"), up("food")],
@@ -657,7 +799,7 @@ export const policies: PolicyDefinition[] = [
     "prakerja",
     "Kartu Prakerja",
     "education",
-    9,
+    4.5,
     9,
     { training: 1 },
     [
@@ -910,7 +1052,7 @@ export const policies: PolicyDefinition[] = [
     "plts",
     "PLTS Surya",
     "energy",
-    12,
+    9,
     6,
     {},
     [up("energy"), up("technology")],
@@ -1360,6 +1502,7 @@ for (const policy of policies) {
     } else policy.idleUpkeepShare = 0.15;
   }
   policy.source = verifiedSources[policy.id] ?? policy.source;
+  if (existingProgrammes.has(policy.id)) policy.existing = true;
   policy.impacts = approvedMainImpacts[policy.id] ?? policy.impacts;
   if (policy.rolloutMonths > 3)
     policy.impacts = policy.impacts.map((impact) =>

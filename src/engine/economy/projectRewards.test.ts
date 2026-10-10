@@ -122,7 +122,7 @@ describe("project completion rewards", () => {
   });
 
   it.each([
-    ["plta", {}, 1.08, 0],
+    ["plta", {}, 1.1, 0],
     ["irrigation", { agriculture: 1.05 }, 1, 0],
     ["broadband", { technology: 1.05, finance: 1.02 }, 1, 0],
     ["tourism-access", { tourism: 1.05 }, 1, 1],

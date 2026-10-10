@@ -188,7 +188,7 @@ dialog:is(.national-economy-dialog, .policy-workspace-dialog) .dialog-content {
 }
 .national-foundations small {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 13px;
 }
 .national-board {
@@ -287,7 +287,7 @@ dialog:is(.national-economy-dialog, .policy-workspace-dialog) .dialog-content {
 }
 .national-industry-roster small {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.3;
   margin-top: 3px;
 }
@@ -418,7 +418,7 @@ dialog:is(.national-economy-dialog, .policy-workspace-dialog) .dialog-content {
   margin: 0;
 }
 .national-policy-card-heading > span {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--q-muted);
   text-align: right;
 }
@@ -455,7 +455,7 @@ dialog:is(.national-economy-dialog, .policy-workspace-dialog) .dialog-content {
 }
 .national-policy-stat-links small {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 400;
 }
 .national-economy .national-policy-cards article p {
@@ -532,7 +532,7 @@ dialog:is(.national-economy-dialog, .policy-workspace-dialog) .dialog-content {
 }
 .national-inputs small {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.3;
   white-space: nowrap;
 }
@@ -583,7 +583,7 @@ dialog:is(.national-economy-dialog, .policy-workspace-dialog) .dialog-content {
 }
 .national-core-caption {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   color: #fff4d5;
 }
 .national-economy .national-industry-core h3 {
@@ -598,7 +598,7 @@ dialog:is(.national-economy-dialog, .policy-workspace-dialog) .dialog-content {
   line-height: 1.2;
 }
 .national-industry-core > span:not(.national-core-caption) {
-  font-size: 11px;
+  font-size: 12px;
 }
 .national-industry-core dl {
   margin: 10px 0;
@@ -630,7 +630,7 @@ dialog:is(.national-economy-dialog, .policy-workspace-dialog) .dialog-content {
   color: var(--q-ink);
   padding: 7px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.3;
   margin: 0;
 }
@@ -659,7 +659,7 @@ dialog:is(.national-economy-dialog, .policy-workspace-dialog) .dialog-content {
 }
 .national-rewards span {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.2;
   min-height: 25px;
 }
@@ -671,12 +671,12 @@ dialog:is(.national-economy-dialog, .policy-workspace-dialog) .dialog-content {
 }
 .national-rewards small {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.25;
 }
 .national-economy .national-spillovers {
   margin: 12px 0;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--q-muted);
   line-height: 1.4;
 }
@@ -714,7 +714,7 @@ dialog:is(.national-economy-dialog, .policy-workspace-dialog) .dialog-content {
 .national-industry-links small {
   display: block;
   flex-basis: 100%;
-  font-size: 11px;
+  font-size: 12px;
 }
 .national-industry-links button[aria-pressed="true"] {
   border-color: var(--q-green);
@@ -800,4 +800,64 @@ dialog:is(.national-economy-dialog, .policy-workspace-dialog) .dialog-content {
   .national-economy-dialog button {
     transition: none;
   }
+}
+
+/* Starting point for new players, in the foundations heading row. */
+.national-economy .national-start {
+  flex: 1;
+  min-width: 0;
+  margin: 0 8px;
+  color: var(--q-ink);
+  font-size: 14px;
+  line-height: 1.3;
+}
+.national-economy .national-start strong {
+  font-family: var(--q-heading);
+  font-weight: 900;
+  color: var(--q-green);
+}
+
+/* Compact industry list: one row per industry with output on the right. */
+.national-industry-roster {
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: max-content;
+  gap: 6px;
+}
+.national-economy-dialog .national-industry-roster button {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 8px;
+  min-height: 44px;
+  padding: 3px 10px 3px 6px;
+  box-shadow: 0 3px 0 #b4c7a9;
+}
+.national-industry-roster .national-roster-title {
+  display: contents;
+}
+.national-industry-roster .national-roster-title .economy-emblem {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: 30px;
+  height: 30px;
+}
+.national-industry-roster .national-roster-title > span {
+  grid-column: 2;
+  grid-row: 1;
+  font: 800 13px/1.2 var(--q-heading);
+}
+.national-industry-roster small {
+  grid-column: 2;
+  grid-row: 2;
+  margin-top: 0;
+}
+.national-industry-roster strong {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  margin-top: 0;
+  font-size: 14px;
+  text-align: right;
+}
+.national-board {
+  grid-template-columns: 340px minmax(0, 1fr);
 }

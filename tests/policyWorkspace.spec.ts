@@ -169,8 +169,9 @@ test("a funding shortfall stays visible beside the delivered forecast", async ({
   await page.setViewportSize({ width: 1280, height: 720 });
   await start(page, "en");
   let game = initialQuarter();
-  const portfolio = ["mbg", "jkn", "mrt-lrt", "klinik"] as const;
-  for (let quarter = 0; quarter < 2; quarter++) {
+  const portfolio = ["mbg", "jkn", "mrt-lrt", "klinik", "bos", "pltp"] as const;
+  // Three quarters of expensive launches push borrowing past its envelope.
+  for (let quarter = 0; quarter < 3; quarter++) {
     game = resolveQuarter(
       game,
       { ...basePlan(game), policies: portfolio.slice(0, (quarter + 1) * 2) },
@@ -436,7 +437,9 @@ for (const language of ["en", "id"] as const) {
     );
     await expect(
       dialog.locator('.policy-plan-effects [data-metric="jobs"] dd'),
-    ).toHaveText(signed(decisions.jobs! * 1_000_000, 0));
+    ).toHaveText(
+      `${signed(decisions.jobs! * 1_000_000, 0)} ${language === "en" ? "people" : "orang"}`,
+    );
     await expect(
       dialog.locator('.policy-plan-effects [data-metric="poverty"] dd'),
     ).toHaveText(
@@ -462,7 +465,7 @@ for (const language of ["en", "id"] as const) {
     ).toHaveText(language === "en" ? "0.00%" : "0,00%", { timeout: 25000 });
     await expect(
       dialog.locator('.policy-plan-effects [data-metric="jobs"] dd'),
-    ).toHaveText("0");
+    ).toHaveText(language === "en" ? "0 people" : "0 orang");
     await expect(
       dialog.locator('.policy-plan-effects [data-metric="poverty"] dd'),
     ).toHaveText(language === "en" ? "0.00 pp" : "0,00 poin");

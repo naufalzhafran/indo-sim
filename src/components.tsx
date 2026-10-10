@@ -6,7 +6,8 @@ export const number = (n: number, d = 1) =>
     maximumFractionDigits: d,
     minimumFractionDigits: d,
   }).format(n);
-export const money = (n: number) => `Rp ${number(n)}T`;
+export const money = (n: number) =>
+  `Rp ${number(n, Math.abs(n) >= 1000 ? 0 : 1)}T`;
 export const date = (month: number) =>
   new Intl.DateTimeFormat(getLanguage() === "id" ? "id-ID" : "en-GB", {
     month: "long",

@@ -22,12 +22,23 @@ export const policyKindDescriptions: Record<PolicyKind, Bilingual> = {
   },
 };
 
+const existingName: Bilingual = {
+  en: "Expand existing",
+  id: "Perluas program",
+};
+
 /** Compact type chip shown beside a policy's category. */
-export function PolicyKindBadge({ kind }: { kind: PolicyKind }) {
+export function PolicyKindBadge({
+  kind,
+  existing = false,
+}: {
+  kind: PolicyKind;
+  existing?: boolean;
+}) {
   const language = useLanguage();
   return (
-    <span className="eco-kind-badge" data-kind={kind}>
-      {policyKindNames[kind][language]}
+    <span className="eco-kind-badge" data-kind={existing ? "existing" : kind}>
+      {(existing ? existingName : policyKindNames[kind])[language]}
     </span>
   );
 }

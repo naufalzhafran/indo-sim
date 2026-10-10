@@ -48,7 +48,13 @@ export function GameQuarterReport({
   if (!receipt)
     return (
       <div className="game-quarter-report" data-testid="quarter-report">
-        <div className="report-stage" style={{ gridRow: "1 / -1" }}>
+        <div
+          className="report-stage"
+          style={{ gridRow: "1 / -1" }}
+          tabIndex={0}
+          role="region"
+          aria-label={t("Economy report", "Laporan ekonomi")}
+        >
           <EconomyReport game={game} onRegion={onRegion} />
         </div>
       </div>
@@ -116,16 +122,26 @@ export function GameQuarterReport({
   const taxRevenue = Object.values(ledger.taxes).reduce((sum, v) => sum + v, 0);
   const balance = ledger.revenue - ledger.spending - ledger.interest;
   const fiscal = [
-    { label: t("Taxes", "Pajak"), value: taxRevenue },
+    {
+      label: t("Taxes", "Pajak"),
+      short: t("Taxes", "Pajak"),
+      value: taxRevenue,
+    },
     {
       label: t("Other revenue", "Penerimaan lain"),
+      short: t("Other", "Lainnya"),
       value: ledger.nonTaxRevenue,
     },
     {
       label: t("Services & programmes", "Layanan & program"),
+      short: t("Spending", "Belanja"),
       value: -ledger.spending,
     },
-    { label: t("Debt interest", "Bunga utang"), value: -ledger.interest },
+    {
+      label: t("Debt interest", "Bunga utang"),
+      short: t("Interest", "Bunga"),
+      value: -ledger.interest,
+    },
   ];
   return (
     <article className="game-quarter-report" data-testid="quarter-report">

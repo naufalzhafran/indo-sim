@@ -3,6 +3,7 @@ import { useLanguage } from "./i18n";
 import { EconomyEmblem } from "./EconomyEmblem";
 import { PolicyKindBadge } from "./policyKinds";
 import { policyById } from "./engine/economy/catalog";
+import { QUARTER_TREND_GROWTH } from "./engine/economy/engine";
 import { projectCompletionRewards } from "./engine/economy/projectRewards";
 import { GAME_REGIONS, regionForProvince } from "./engine/gameRegions";
 import {
@@ -262,7 +263,7 @@ function DebriefScene({
         />
       </g>
       <g transform="translate(14 14)">
-        {[0, 1, 2, 3].map((i) => (
+        {[0, 1, 2, 3, 4].map((i) => (
           <path
             key={i}
             transform={`translate(${i * 22} 0)`}
@@ -296,8 +297,10 @@ export function QuarterDebrief({
     return region ? (language === "id" ? region.nameId : region.name) : id;
   };
 
-  // Objectives the player can read at a glance: each one is a medal.
+  // Quarter results the player can read at a glance: each one is a medal.
+  // Output must beat background trend growth, so standing still earns nothing.
   const outputChange = before.gdp > 0 ? (after.gdp / before.gdp - 1) * 100 : 0;
+  const jobsChange = after.unemployment - before.unemployment;
   const povertyChange = after.poverty - before.poverty;
   const foundationChange = FOUNDATIONS.reduce(
     (sum, f) => sum + (after[f] - before[f]),
@@ -306,26 +309,32 @@ export function QuarterDebrief({
   const objectives = [
     {
       id: "output",
-      met: outputChange > 0,
-      name: t("Grow output", "Output tumbuh"),
-      value: `${signed(outputChange)}%`,
+      met: outputChange > QUARTER_TREND_GROWTH,
+      name: t("Beat trend growth", "Lampaui tren"),
+      value: `${signed(outputChange)}% · ${t("trend", "tren")} ${number(QUARTER_TREND_GROWTH, 1)}%`,
+    },
+    {
+      id: "jobs",
+      met: jobsChange <= 0,
+      name: t("Hold jobs", "Jaga lapangan kerja"),
+      value: `${t("Jobless", "Pengangguran")} ${signed(jobsChange)} ${t("pp", "poin")}`,
     },
     {
       id: "poverty",
-      met: povertyChange <= 0,
+      met: povertyChange < 0,
       name: t("Cut poverty", "Kemiskinan turun"),
       value: `${signed(povertyChange)} ${t("pp", "poin")}`,
     },
     {
       id: "foundations",
-      met: foundationChange >= 0,
+      met: foundationChange > 0,
       name: t("Strengthen foundations", "Fondasi menguat"),
       value: `${signed(foundationChange, 1)} ${t("pts", "poin")}`,
     },
     {
       id: "funding",
       met: ledger.funding >= 0.999,
-      name: t("Fully fund delivery", "Pelaksanaan didanai penuh"),
+      name: t("Fully fund delivery", "Didanai penuh"),
       value: `${number(ledger.funding * 100, 0)}%`,
     },
   ];
@@ -333,6 +342,7 @@ export function QuarterDebrief({
   const verdict = [
     t("A tough quarter", "Triwulan berat"),
     t("A tough quarter", "Triwulan berat"),
+    t("A mixed quarter", "Triwulan campuran"),
     t("A mixed quarter", "Triwulan campuran"),
     t("A good quarter", "Triwulan yang baik"),
     t("An outstanding quarter", "Triwulan gemilang"),
@@ -610,8 +620,8 @@ export function QuarterDebrief({
         />
         <div className="debrief-verdict">
           <span className="debrief-kicker">
-            {t("Quarter result", "Hasil triwulan")} · {grade}/4{" "}
-            {t("goals met", "sasaran tercapai")}
+            {t("Quarter results", "Hasil triwulan")} · {grade}/
+            {objectives.length} {t("medals", "medali")}
           </span>
           <h3 id="debrief-verdict">{verdict}</h3>
           <p>{headline.join(" · ")}</p>
