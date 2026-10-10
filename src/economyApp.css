@@ -530,6 +530,33 @@
 .campaign-checklist [data-met="false"] .campaign-goal-status {
   color: #9a3829;
 }
+.campaign-lessons {
+  margin-top: 24px;
+}
+.campaign-lessons h4 {
+  font: 900 19px var(--q-heading);
+  margin: 0 0 10px;
+}
+.campaign-lessons ul {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 24px;
+  padding: 0;
+  margin: 0;
+}
+.campaign-lessons li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--q-line);
+}
+.campaign-lessons strong {
+  font-family: var(--q-heading);
+}
+.campaign-lessons p {
+  margin: 3px 0 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
 .campaign-bonus {
   display: flex;
   flex-wrap: wrap;
@@ -650,7 +677,9 @@
 }
 .q-stat-grid small {
   display: block;
-  font: 400 12px/1.3 "Source Sans 3", sans-serif;
+  font:
+    400 12px/1.3 "Source Sans 3",
+    sans-serif;
   color: var(--q-muted);
 }
 .q-stat-grid dd[data-tone="warn"],

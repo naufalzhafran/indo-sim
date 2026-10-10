@@ -45,8 +45,8 @@ export function PowerReport({ game }: { game: QuarterGame }) {
       </table>
       <p>
         {t(
-          "RUPTL PLN expands generation and grid access. Review its regional allocation where reserves are low. Isolated provinces cannot draw surplus power from other grids. Completed capacity and paid construction remain after the program stops.",
-          "RUPTL PLN memperluas pembangkit dan akses jaringan. Tinjau alokasi wilayahnya ketika cadangan rendah. Provinsi terpisah tidak dapat mengambil surplus jaringan lain. Kapasitas selesai dan pembangunan yang dibayar tetap ada setelah program berhenti.",
+          "Power builds (PLTS solar, PLTA hydro, PLTP geothermal and PLTU coal) add capacity. Review their regional allocation where reserves are low. Isolated provinces cannot draw surplus power from other grids. Completed capacity and paid construction remain after the program stops.",
+          "Pembangunan pembangkit (PLTS surya, PLTA air, PLTP panas bumi, dan PLTU batu bara) menambah kapasitas. Tinjau alokasi wilayahnya ketika cadangan rendah. Provinsi terpisah tidak dapat mengambil surplus jaringan lain. Kapasitas selesai dan pembangunan yang dibayar tetap ada setelah program berhenti.",
         )}
       </p>
     </section>

@@ -1,3 +1,13 @@
+# Game purpose: education first
+
+- This is an educational game. Its job is to help ordinary Indonesians, including first-time players with no economics background, understand how economic and political decisions work and how they affect the country and individual families. The user set this direction on 2026-10-10. Apply it to every feature, balance change, text and screen.
+- Learning comes before winning. Design goals, results and feedback so players understand why something happened, not only whether they scored. A missed goal should explain its cause and what usually helps, in plain words, never just a red mark or a grade.
+- Do not add competitive features such as leaderboards, high scores, rankings against other players, speed runs, timers or streaks. Keep the six mandate goals and the optional objectives as learning targets that frame decisions, not as a score to beat. Prefer neutral wording such as "Not reached" over "Failed" or "Lost".
+- Keep it easy for beginners. A new player must be able to start, make sensible first choices, advance a quarter and understand the result without reading documentation. Introduce systems gradually, explain jargon (GDP, deficit, APBN, percentage points) in plain language through `StatHelp`, and keep the next step obvious on the map.
+- Teach true cause and effect. Numbers may be simplified ("arcade numbers"), but the direction of every effect must match Indonesia. Pair simplified mechanics with a short, sourced "In reality" fact where it helps, and label game assumptions as assumptions.
+- Stay balanced and non-partisan. Present parties, programmes and policies fairly, show both benefits and costs of every option, and do not reward or punish a political side. No option should be an obvious best answer, and doing nothing should drift rather than collapse.
+- Write for the player, not the developer. Use short sentences in English and Bahasa Indonesia, and avoid internal terms. Check new text with a first-time player in mind.
+
 # Project UI rules
 
 ## Supported devices
