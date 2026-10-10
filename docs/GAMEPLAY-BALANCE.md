@@ -123,3 +123,15 @@ Means across seeds 19, 73 and 997, calm and shocks (`npm run balance:quarter`):
 | Coal + solar, Geothermal + solar, Hydro + solar (four policies) | 4.1–4.2% | 6.0–6.3% | +3.3 to +4.6 | 2.8–3.0 / 6 |
 
 Energy is still the goal that separates a full mandate from strong progress, but it can now be met without coal, and clean routes score slightly better than the coal route. Fiscal pressure is lighter than before for most portfolios; the expensive portfolio still crosses the 3% line and runs funding shortfalls while it builds. Whether this pacing feels right needs player feedback.
+
+## Quarter medals (2026-10-10)
+
+The quarter report awards five medals: beat trend growth (about 1% a quarter, the 4% background trend), hold jobs (unemployment does not rise), cut poverty, strengthen foundations (net gain) and fully fund delivery. 0–1 medals is a tough quarter, 2–3 mixed, 4 good and 5 outstanding. The old four medals counted any growth above 0%, so a quarter with no policies was called "A good quarter".
+
+Average medals per quarter, seeds 19, 73 and 997 over 20 quarters:
+
+| Portfolio | Calm | Shocks |
+| --- | ---: | ---: |
+| No policies | 2.0 (mixed) | 2.2 |
+| Education four | 3.3 | 3.3 |
+| Mixed eight | 4.7 (good to outstanding) | 4.7 |

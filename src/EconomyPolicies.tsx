@@ -1187,13 +1187,13 @@ export function EconomyPolicies({
                             </span>
                           </>
                         )}
-                      </span>
-                      <span className="eco-policy-rollout">
-                        {policy.kind === "program"
-                          ? t("Planned rollout", "Rencana pelaksanaan")
-                          : t("Build time", "Lama bangun")}{" "}
-                        {number(Math.ceil(policy.rolloutMonths / 3), 0)}{" "}
-                        {t("qtr", "triwulan")}
+                        <span className="eco-policy-rollout">
+                          {policy.kind === "program"
+                            ? t("Rollout", "Pelaksanaan")
+                            : t("Build time", "Lama bangun")}{" "}
+                          {number(Math.ceil(policy.rolloutMonths / 3), 0)}{" "}
+                          {t("qtr", "triwulan")}
+                        </span>
                       </span>
                       <div className="eco-row-actions">
                         <button

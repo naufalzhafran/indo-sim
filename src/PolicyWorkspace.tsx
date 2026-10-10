@@ -244,7 +244,9 @@ export function PolicyWorkspace({
                     data-tone={jobsEffect < -0.5 ? "warn" : "neutral"}
                   >
                     <dt>{t("Jobs", "Pekerjaan")}</dt>
-                    <dd>{signed(jobsEffect, 0)}</dd>
+                    <dd>
+                      {signed(jobsEffect, 0)} {t("people", "orang")}
+                    </dd>
                   </div>
                   <div
                     data-metric="poverty"

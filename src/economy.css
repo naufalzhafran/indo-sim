@@ -747,7 +747,7 @@
   border-radius: 10px;
 }
 .eco-graph-nodes[data-compact="true"] button strong {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.2;
   hyphens: auto;
 }
@@ -1167,8 +1167,8 @@
 }
 .eco-region-cards {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
   list-style: none;
   margin: 4px 0 0;
   padding: 0;
@@ -1177,10 +1177,10 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
+  gap: 4px;
   width: 100%;
   height: 100%;
-  padding: 13px 14px 12px;
+  padding: 9px 12px 10px;
   border-radius: 14px;
   background: #fffdf7;
   text-align: left;
@@ -1192,7 +1192,7 @@
     0 3px 0 #c6d9cd;
 }
 .eco-region-card-name {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 900;
 }
 .eco-region-card-output {
@@ -1248,29 +1248,32 @@
 .eco-legend .stat-label {
   margin-left: 4px;
 }
+/* Slot limit status: a compact strip in the shared cream palette, not a yellow notice. */
 .eco-limit-banner {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 0 0 12px;
-  padding: 6px 12px 6px 6px;
-  border: 1px solid #e6cf7d;
-  border-radius: 12px;
-  background: #fff4c9;
-  color: #655022;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 3px 10px 3px 3px;
+  border: 1px solid var(--q-line);
+  border-radius: 10px;
+  background: var(--q-cream);
+  color: var(--q-muted);
   font-size: 13px;
 }
 .eco-limit-banner > strong {
-  padding: 3px 9px;
-  border-radius: 8px;
-  background: #f2cf5b;
-  color: #3e3010;
+  padding: 2px 8px;
+  border: 1px solid var(--q-ink);
+  border-radius: 7px;
+  background: #fffdf6;
+  color: var(--q-ink);
   font-family: var(--q-heading);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 900;
   font-variant-numeric: tabular-nums;
 }
 .eco-limit-banner b {
+  color: var(--q-ink);
   font-family: var(--q-heading);
   font-weight: 900;
   margin-right: 6px;

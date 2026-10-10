@@ -33,10 +33,10 @@
   gap: 5px;
 }
 .quarter-app .stat-help {
-  min-height: 22px;
-  height: 22px;
-  min-width: 22px;
-  width: 22px;
+  min-height: 24px;
+  height: 24px;
+  min-width: 24px;
+  width: 24px;
   padding: 0;
   border-radius: 50%;
   font-size: 12px;
@@ -400,7 +400,7 @@
   flex-shrink: 0;
 }
 .q-recap .q-kicker {
-  font-size: 11px;
+  font-size: 12px;
 }
 .q-recap-tabs {
   flex: 1;
@@ -712,7 +712,7 @@
   flex: 1 1 0;
   min-width: 0;
   color: var(--q-muted);
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -733,7 +733,7 @@
 .q-impact-outcomes .q-impact-plan {
   flex-basis: 100%;
   color: var(--q-muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.2;
 }
 .q-impact-foundations {
@@ -755,7 +755,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--q-muted);
 }
 .q-impact-legend > span[data-kind]::before {
@@ -869,7 +869,7 @@
   padding: 2px 8px;
   border-radius: 999px;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
   background: #e5f1ef;
 }
@@ -903,7 +903,7 @@
 }
 .q-region-stats dt {
   color: var(--q-muted);
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -919,7 +919,7 @@
 .q-region-stats small {
   font-family: "Source Sans 3", sans-serif;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
 }
 .q-region-foundations {
   margin: 0;
@@ -933,7 +933,7 @@
   padding: 0 7px;
   border-radius: 999px;
   background: #fffaf0;
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
 }
 .q-region-foundations li b {
@@ -967,11 +967,17 @@
   border-radius: 10px;
   box-shadow: 0 2px 0 #c6d9cd;
   transition:
-    opacity 220ms,
+    border-color 220ms,
     background 140ms;
 }
+/* Regions not yet reached by the tour wait with a dashed edge; text keeps full contrast. */
 .quarter-app .q-region-chips button[data-pending] {
-  opacity: 0.4;
+  border-style: dashed;
+  background: #f6f2e8;
+  box-shadow: none;
+}
+.quarter-app .q-region-chips button[data-pending] .q-verdict-icon {
+  opacity: 0.35;
 }
 .q-region-chip-name {
   min-width: 0;
@@ -1072,7 +1078,7 @@
     font-size: 12px;
   }
   .q-map-brief .q-brief-report {
-    font-size: 11px;
+    font-size: 12px;
   }
   .world-selected {
     left: 14px;
@@ -1089,7 +1095,7 @@
     right: auto;
     bottom: 72px;
     max-width: calc(100% - 225px);
-    font-size: 11px;
+    font-size: 12px;
     justify-content: flex-start;
   }
   .q-dossier {
@@ -1121,7 +1127,7 @@
   }
   .q-recap-actions button {
     min-height: 44px;
-    font-size: 11px;
+    font-size: 12px;
     padding: 5px 8px;
   }
   .q-recap-callouts {
@@ -1131,7 +1137,7 @@
     flex-direction: column;
     gap: 4px;
     padding: 5px;
-    font-size: 11px;
+    font-size: 12px;
   }
   .q-recap-callouts strong {
     font-size: 12px;

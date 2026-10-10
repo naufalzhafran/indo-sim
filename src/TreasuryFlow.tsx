@@ -11,7 +11,7 @@ export function TreasuryFlow({
   cashBefore,
   cashAfter,
 }: {
-  entries: { label: string; value: number }[];
+  entries: { label: string; short: string; value: number }[];
   balance: number;
   borrowing: number;
   repayment: number;
@@ -120,10 +120,10 @@ export function TreasuryFlow({
               textAnchor="middle"
             >
               {row.value > 0 ? "+" : ""}
-              {number(row.value, 2)}T
+              {number(row.value, Math.abs(row.value) >= 1000 ? 0 : 1)}T
             </text>
             <text x={80 + i * 140} y="214" textAnchor="middle">
-              {i + 1}
+              {i + 1}. {row.short}
             </text>
             {i < 3 && <path d={`M${135 + i * 140} ${y(row.end)}h30`} />}
             {playing && step === i && (

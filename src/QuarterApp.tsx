@@ -786,11 +786,13 @@ export default function QuarterApp() {
             <dl className="q-stat-grid">
               <div>
                 <dt>{t("Government debt", "Utang pemerintah")}</dt>
-                <dd>{money(n.debt)}</dd>
-                <small>
-                  {number((n.debt / (n.gdp * n.priceIndex)) * 100, 1)}%{" "}
-                  {t("of GDP", "dari PDB")}
-                </small>
+                <dd>
+                  {money(n.debt)}
+                  <small>
+                    {number((n.debt / (n.gdp * n.priceIndex)) * 100, 1)}%{" "}
+                    {t("of GDP", "dari PDB")}
+                  </small>
+                </dd>
               </div>
               <div>
                 <dt>{t("Treasury cash", "Kas negara")}</dt>
@@ -802,10 +804,19 @@ export default function QuarterApp() {
               </div>
               <div>
                 <dt>{t("Last quarter balance", "Saldo triwulan lalu")}</dt>
-                <dd data-tone={n.balance < 0 ? "warn" : "pass"}>
-                  {n.balance < 0 ? "−" : "+"}
-                  {money(Math.abs(n.balance))}
-                </dd>
+                {game.receipt ? (
+                  <dd data-tone={n.balance < 0 ? "warn" : "pass"}>
+                    {n.balance < 0 ? "−" : "+"}
+                    {money(Math.abs(n.balance))}
+                  </dd>
+                ) : (
+                  <dd>
+                    —
+                    <span className="sr-only">
+                      {t("No quarter played yet", "Belum ada triwulan")}
+                    </span>
+                  </dd>
+                )}
               </div>
               <div>
                 <dt>{t("Unemployment", "Pengangguran")}</dt>

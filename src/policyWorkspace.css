@@ -204,9 +204,9 @@ dialog.policy-workspace-dialog .dialog-content {
 }
 .policy-workspace .eco-filter-row .stat-help {
   flex: none;
-  min-height: 22px;
-  width: 22px;
-  height: 22px;
+  min-height: 24px;
+  width: 24px;
+  height: 24px;
   padding: 0;
 }
 .policy-workspace .eco-filter-row button[aria-pressed="true"] small {
@@ -323,7 +323,7 @@ dialog.policy-workspace-dialog .dialog-content {
   justify-content: flex-start;
 }
 .policy-workspace .eco-policy-meta .eco-chip {
-  font-size: 11px;
+  font-size: 12px;
   white-space: normal;
 }
 .policy-workspace .eco-row-actions {
@@ -1340,7 +1340,7 @@ dialog.policy-workspace-dialog .dialog-content {
   border-radius: 50%;
   background: var(--q-green);
   color: #fffdf6;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1;
 }
 .policy-plan-actions .policy-save-pill[data-status="failed"] {
@@ -1488,7 +1488,7 @@ dialog.policy-workspace-dialog .dialog-content {
     gap: 5px;
   }
   .policy-workspace .eco-policy-identity .eco-policy-selected {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 @media (max-height: 780px) {
@@ -1675,7 +1675,7 @@ dialog.policy-workspace-dialog .dialog-content {
   border-radius: 999px;
   background: var(--q-cream);
   color: var(--q-ink);
-  font: 800 11px/1.4 var(--q-heading);
+  font: 800 12px/1.4 var(--q-heading);
   white-space: nowrap;
 }
 .eco-kind-badge[data-kind="build"] {
@@ -1779,4 +1779,76 @@ dialog.policy-workspace-dialog .dialog-content {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+/* Denser policy cards: the emblem sits beside the tags and title, so a full
+   row of cards (with costs) fits on laptop screens. */
+.policy-workspace .eco-policy-list {
+  gap: 12px;
+}
+.policy-workspace .eco-policy-row {
+  gap: 8px;
+  padding: 12px;
+}
+.policy-workspace .eco-policy-summary {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  column-gap: 8px;
+  align-content: start;
+}
+.policy-workspace .eco-policy-identity {
+  display: contents;
+}
+.policy-workspace .eco-policy-identity .economy-emblem {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  align-self: start;
+  width: 40px;
+  height: 40px;
+  padding: 3px;
+  border-radius: 10px;
+}
+.policy-workspace .eco-policy-tags {
+  grid-column: 2;
+  grid-row: 1;
+  color: var(--q-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.policy-workspace .eco-policy-identity .eco-policy-selected {
+  grid-column: 3;
+  grid-row: 1;
+  font-size: 12px;
+}
+.policy-workspace .eco-policy-title {
+  grid-column: 2 / -1;
+  grid-row: 2;
+  margin: 2px 0 6px;
+}
+.policy-workspace
+  .eco-policy-summary
+  > :not(.eco-policy-identity):not(.eco-policy-title) {
+  grid-column: 1 / -1;
+}
+.policy-workspace .eco-policy-summary > p {
+  margin-bottom: 6px;
+}
+.policy-workspace .eco-policy-meta {
+  padding-top: 8px;
+  gap: 3px;
+}
+.policy-workspace .eco-row-actions {
+  margin-top: 4px;
+}
+.policy-workspace .eco-row-actions button {
+  min-height: 36px;
+  padding-block: 5px;
+}
+.policy-workspace .eco-policy-summary > .eco-impacts {
+  margin: 3px 0;
+  gap: 3px 12px;
+}
+.policy-workspace .eco-policy-summary > .eco-impacts li b {
+  font-size: 15px;
+  line-height: 1;
 }

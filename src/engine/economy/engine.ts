@@ -71,6 +71,8 @@ const totalRice = sum(pillarData.provinces.map((p) => p.rice));
 // Gameplay trends: output grows faster than output per worker, so ordinary growth
 // still creates some jobs. Extra output above trend hires less than proportionally.
 const annualTrend = 1.04;
+/** Background output growth in one quarter, in percent. */
+export const QUARTER_TREND_GROWTH = (Math.pow(annualTrend, 1 / 4) - 1) * 100;
 const monthlyTrend = Math.pow(annualTrend, 1 / 12);
 const laborTrend = Math.pow(1.033, 1 / 12);
 const jobElasticity = 0.5;
