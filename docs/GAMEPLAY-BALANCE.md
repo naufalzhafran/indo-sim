@@ -1,4 +1,37 @@
-# Gameplay balance review, 5 October 2026
+# Gameplay balance review
+
+## Update, 10 October 2026: beginner and education pass
+
+These means come from `npm run balance:quarter` (seeds 19, 73 and 997, calm and with shocks) after this pass. The script now skips new launches while a rejected APBN freezes them. Before that fix it stopped with an error, because the DPR can reject the budget.
+
+| Portfolio | Goals met | Real income | Poverty | Unemployment | Energy | Debt / GDP | Shortfall quarters |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| baseline | 1.0/6 | 113.5 | 7.78% | 7.33% | 83.7 | 33.4% | 0.0 |
+| education-four | 1.0/6 | 116.4 | 7.26% | 7.05% | 82.3 | 35.1% | 0.0 |
+| health-four | 2.8/6 | 117.6 | 6.04% | 5.47% | 81.7 | 37.2% | 0.0 |
+| food-four | 1.8/6 | 115.8 | 7.13% | 6.09% | 82.5 | 34.8% | 0.0 |
+| industry-six | 4.0/6 | 119.8 | 6.19% | 4.58% | 82.5 | 31.6% | 0.0 |
+| mixed-four | 3.2/6 | 117.6 | 6.10% | 5.66% | 84.1 | 36.9% | 0.0 |
+| mixed-six | 5.0/6 | 119.0 | 5.68% | 4.86% | 83.1 | 36.4% | 0.0 |
+| mixed-eight | 5.0/6 | 119.6 | 5.43% | 4.23% | 82.5 | 34.5% | 0.0 |
+| skills-and-services-eight | 4.8/6 | 119.8 | 5.47% | 4.43% | 82.4 | 32.5% | 0.0 |
+| lower-cost-eight | 3.8/6 | 118.4 | 6.52% | 5.38% | 80.7 | 30.9% | 0.0 |
+| higher-cost-eight | 4.0/6 | 121.5 | 4.33% | 3.63% | 81.8 | 39.6% | 10.2 |
+| regional-sectors-six | 3.8/6 | 118.3 | 6.51% | 5.04% | 81.1 | 34.4% | 0.0 |
+| mixed-six-tax-relief | 4.0/6 | 122.0 | 5.33% | 4.66% | 82.6 | 41.1% | 19.0 |
+| mixed-six-tax-increased | 5.0/6 | 119.0 | 5.68% | 4.86% | 83.1 | 36.4% | 0.0 |
+| mixed-six-eastern | 5.0/6 | 119.0 | 5.65% | 4.88% | 83.2 | 36.5% | 0.0 |
+
+What changed and why:
+
+- **Targeted cash transfers cut poverty.** Poverty used to follow only average real income and unemployment, so PKH, the main poverty programme, barely moved it (about 0.1 points over five years on its own). Transfers now lower poverty in proportion to their size relative to household income (`TARGETED_TRANSFER_POVERTY` in `engine.ts`), because they reach the poorest households. PKH alone now cuts poverty by about 1 point more than doing nothing. Goal counts did not change, but poverty falls further in every portfolio that pays transfers.
+- **Raising every tax at once is no longer a free win.** With the DPR, "mixed six, tax increased" ends exactly like "mixed six": all six bills together fail in parliament, so the rates never change. Single, softened rises can still pass when approval is high. Tax relief still passes and still causes funding shortfalls.
+- **Bonus objectives were always won.** "No region left behind" now needs the national income (+18%) and poverty (−1.5 points) targets in all nine regions. "Re-election 2029" now needs 60% approval instead of 50%. In 64 beginner-style runs, doing nothing ended at 55–56% approval and good portfolios at 63–69%.
+- **The setup's starter list met only about 2 goals.** It is now PLTS, Jalan Desa, CKG, BOS, PKH and KUR (`starterPolicies`), which together meet 5 of 6 goals. The one they miss is energy: a growing economy needs a second power build, which the "Energy is falling" prompt points to.
+
+The notes below describe the 5 October review and are kept for history; their numbers are out of date.
+
+## Review, 5 October 2026
 
 The energy decline came from a mismatch between electricity demand and the rate of new supply. The low difficulty came from generous automatic growth, a static workforce, weak service pressure, permissive financing, brief local crises, and the absence of campaign success conditions. This update changes those mechanics and explains the resulting decisions in the existing report UI.
 

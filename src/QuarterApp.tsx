@@ -709,6 +709,21 @@ export default function QuarterApp() {
                         )}
                   </button>
                 )}
+              {game.simulation.month < 54 &&
+                plan.policies.length > 0 &&
+                plan.policies.length < 4 &&
+                launches < 2 &&
+                game.politics.frozenUntil <= game.simulation.month && (
+                  <button
+                    className="q-brief-report"
+                    onClick={() => openPolicy()}
+                  >
+                    {t(
+                      `Room for more policies: ${plan.policies.length}/8 slots used`,
+                      `Masih ada ruang kebijakan: ${plan.policies.length}/8 slot terpakai`,
+                    )}
+                  </button>
+                )}
               {forecastLedger && forecastLedger.funding < 0.99 && (
                 <button
                   className="q-brief-issue"
@@ -888,9 +903,11 @@ export default function QuarterApp() {
               <div>
                 <dt>{t("Last quarter balance", "Saldo triwulan lalu")}</dt>
                 {game.receipt ? (
-                  <dd data-tone={n.balance < 0 ? "warn" : "pass"}>
-                    {n.balance < 0 ? "−" : "+"}
-                    {money(Math.abs(n.balance))}
+                  <dd
+                    data-tone={game.receipt.after.balance < 0 ? "warn" : "pass"}
+                  >
+                    {game.receipt.after.balance < 0 ? "−" : "+"}
+                    {money(Math.abs(game.receipt.after.balance))}
                   </dd>
                 ) : (
                   <dd>
@@ -902,7 +919,15 @@ export default function QuarterApp() {
                 )}
               </div>
               <div>
-                <dt>{t("Public approval", "Kepuasan publik")}</dt>
+                <dt>
+                  <StatHelp
+                    label={t("Public approval", "Kepuasan publik")}
+                    description={t(
+                      "Approval starts high after the election and settles over the first quarters. It then follows incomes, prices, jobs, tax changes, visible programmes and funding shortfalls. Approval changes how DPR parties vote.",
+                      "Kepuasan publik tinggi setelah pemilu lalu turun perlahan pada triwulan awal. Setelah itu mengikuti pendapatan, harga, lapangan kerja, perubahan pajak, program yang terasa, dan kekurangan dana. Kepuasan publik memengaruhi suara partai di DPR.",
+                    )}
+                  />
+                </dt>
                 <dd>{number(game.politics.approval, 0)}%</dd>
                 <small>
                   {t("DPR coalition", "Koalisi DPR")} {coalitionSeats()}/
@@ -1302,7 +1327,9 @@ export default function QuarterApp() {
                   "Five-year development report",
                   "Laporan pembangunan lima tahun",
                 )
-              : t("Quarter report", "Laporan triwulan")
+              : game.receipt
+                ? t("Quarter report", "Laporan triwulan")
+                : t("Campaign goals", "Target permainan")
           }
           onClose={() => setReport(false)}
           className="economy-dialog economy-report national-economy-dialog"

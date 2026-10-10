@@ -56,7 +56,7 @@ test("setup preserves selections across steps and handles invalid imports withou
     "Bantuan Operasional Sekolah",
   );
   await setup
-    .getByRole("button", { name: "Campaign seed ?", exact: true })
+    .getByRole("button", { name: "Starting world number ?", exact: true })
     .focus();
   await expect(page.getByRole("tooltip")).toBeVisible();
   await page.keyboard.press("Escape");
@@ -210,7 +210,7 @@ for (const language of ["en", "id"] as const)
         })
         .click();
       const seedInput = setup.getByRole("textbox", {
-        name: t("Campaign seed", "Benih permainan"),
+        name: t("Starting world number", "Nomor dunia awal"),
         exact: true,
       });
       await seedInput.fill("invalid");
@@ -627,10 +627,8 @@ for (const language of ["en", "id"] as const)
       await expect(page.getByRole("tooltip")).toHaveCount(0);
       await page.keyboard.press("Escape");
       await expect(page.locator(".economy-dossier")).toBeHidden();
-      await expect(page.locator(".world-markers button")).toHaveCount(1);
-      await expect(page.locator(".world-markers")).toContainText(
-        language === "en" ? "Paused" : "Dijeda",
-      );
+      // Construction markers are drawn in the 3D scene, so check the map is back.
+      await expect(page.locator(".q-map-brief")).toBeVisible();
       await page.screenshot({
         path: testInfo.outputPath(
           `map-construction-${language}-${viewport.width}.png`,
@@ -666,6 +664,14 @@ for (const language of ["en", "id"] as const)
       const errors: string[] = [];
       page.on("pageerror", (error) => errors.push(error.message));
       await start(page, language);
+      // The energy hint lives on the Economy screen's foundation strip.
+      await page
+        .getByRole("navigation")
+        .getByRole("button", {
+          name: language === "en" ? "Economy" : "Ekonomi",
+          exact: true,
+        })
+        .click();
       const energyHint = page.getByRole("button", {
         name: language === "en" ? "Energy ?" : "Energi ?",
         exact: true,
@@ -677,6 +683,7 @@ for (const language of ["en", "id"] as const)
       await page.getByRole("tooltip").hover();
       await page.keyboard.press("Escape");
       await expect(page.getByRole("tooltip")).toHaveCount(0);
+      await page.keyboard.press("Escape");
       await page
         .getByRole("button", {
           name: language === "en" ? "Campaign goals" : "Target permainan",

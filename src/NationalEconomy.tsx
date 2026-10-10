@@ -10,6 +10,7 @@ import {
   industryById,
   policies,
 } from "./engine/economy/catalog";
+import { starterPolicies } from "./engine/economy/policyGoals";
 import {
   FOUNDATIONS,
   type Foundation,
@@ -161,11 +162,19 @@ export function NationalEconomy({
     ),
   };
 
+  // A beginner-friendly next step: a policy that raises the weakest foundation.
+  const remedy =
+    policies.find(
+      (p) => p.category === weakest && starterPolicies.includes(p.id),
+    ) ?? policies.find((p) => p.category === weakest);
   return (
     <div className="national-economy">
       <section aria-labelledby="national-foundations-heading">
         <div className="national-section-heading">
           <h2 id="national-foundations-heading">
+            <span className="national-step" aria-hidden="true">
+              1
+            </span>
             {t("National foundations", "Fondasi nasional")}
           </h2>
           <p className="national-start">
@@ -174,6 +183,11 @@ export function NationalEconomy({
               `${foundationNames[weakest].en} ${number(national[weakest])} is your weakest foundation. It holds back ${heldBack.join(" and ")}.`,
               `${foundationNames[weakest].id} ${number(national[weakest])} adalah fondasi terlemah. Ini menghambat ${heldBack.join(" dan ")}.`,
             )}
+            {remedy &&
+              t(
+                ` ${remedy.name} is one policy that raises it.`,
+                ` ${remedy.name} adalah salah satu kebijakan yang menaikkannya.`,
+              )}
           </p>
           <span>
             {t("Population-weighted · /100", "Berbobot penduduk · /100")}
@@ -231,6 +245,9 @@ export function NationalEconomy({
         >
           <div className="national-section-heading">
             <h2 id="national-industries-heading" tabIndex={-1}>
+              <span className="national-step" aria-hidden="true">
+                2
+              </span>
               {t("Industries", "Industri")}
             </h2>
             <span>
@@ -326,6 +343,9 @@ export function NationalEconomy({
                 ref={relationshipHeading}
                 tabIndex={-1}
               >
+                <span className="national-step" aria-hidden="true">
+                  3
+                </span>
                 {t("How your economy connects", "Hubungan dalam ekonomi Anda")}
               </h2>
             </div>

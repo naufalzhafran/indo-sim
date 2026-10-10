@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 import { aggregate } from "./engine/economy/engine";
 import {
+  GOAL_TARGETS,
   campaignGoals,
   campaignVerdict,
+  goalLessons,
   regionalAchievement,
 } from "./engine/economy/goals";
 import { FOUNDATIONS, type QuarterGame } from "./engine/economy/types";
@@ -41,8 +43,12 @@ export function CampaignEnd({
   const points = (value: number) => `${number(value, 2)} / 100`;
   const funding =
     (game.receipt?.ledger.funding ?? game.simulation.ledger.funding) * 100;
-  const improved = FOUNDATIONS.filter((key) => now[key] - opening[key] >= 3);
-  const harmed = FOUNDATIONS.filter((key) => now[key] < opening[key] - 3);
+  const improved = FOUNDATIONS.filter(
+    (key) => now[key] - opening[key] >= GOAL_TARGETS.foundationGain,
+  );
+  const harmed = FOUNDATIONS.filter(
+    (key) => now[key] < opening[key] - GOAL_TARGETS.foundationLoss,
+  );
   const evidence: Record<
     string,
     { start: string; end: string; detail: string }
@@ -51,8 +57,8 @@ export function CampaignEnd({
       start: "100",
       end: number((now.realIncome / opening.realIncome) * 100, 2),
       detail: t(
-        "Purchasing power index; target 115 or higher",
-        "Indeks daya beli; target minimal 115",
+        `Purchasing power index; target ${100 + GOAL_TARGETS.income} or higher`,
+        `Indeks daya beli; target minimal ${100 + GOAL_TARGETS.income}`,
       ),
     },
     poverty: {
@@ -161,13 +167,32 @@ export function CampaignEnd({
                     <span aria-hidden="true">{goal.met ? "✓" : "○"}</span>
                     {goal.met
                       ? t("Met", "Tercapai")
-                      : t("Missed", "Belum tercapai")}
+                      : t("Not reached", "Belum tercapai")}
                   </span>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <section
+          className="campaign-lessons"
+          aria-labelledby="campaign-lessons-title"
+          data-testid="campaign-lessons"
+        >
+          <h4 id="campaign-lessons-title">
+            {t("What your term shows", "Pelajaran dari masa jabatan Anda")}
+          </h4>
+          <ul>
+            {goals.map((goal) => (
+              <li key={goal.id} data-met={goal.met}>
+                <strong>{goal.label[language]}</strong>
+                <p>
+                  {goalLessons[goal.id][goal.met ? "met" : "missed"][language]}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
         <section className="campaign-bonus" data-testid="regional-achievement">
           <div>
             <p className="campaign-eyebrow">
@@ -176,8 +201,8 @@ export function CampaignEnd({
             <h4>{t("No region left behind", "Tak ada wilayah tertinggal")}</h4>
             <p>
               {t(
-                "Real income rises and poverty falls in every region. This does not change your six-goal verdict.",
-                "Pendapatan riil naik dan kemiskinan turun di setiap wilayah. Ini tidak mengubah penilaian enam target utama.",
+                `Real income rises at least ${GOAL_TARGETS.income}% and poverty falls at least ${number(GOAL_TARGETS.poverty, 1)} points in every region. This does not change your six-goal verdict.`,
+                `Pendapatan riil naik minimal ${GOAL_TARGETS.income}% dan kemiskinan turun minimal ${number(GOAL_TARGETS.poverty, 1)} poin di setiap wilayah. Ini tidak mengubah penilaian enam target utama.`,
               )}
             </p>
           </div>

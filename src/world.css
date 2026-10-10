@@ -678,6 +678,9 @@
   max-height: 46px;
   overflow: hidden;
 }
+.q-impact-mood {
+  margin-left: 6px;
+}
 .q-decision-chip {
   padding: 1px 8px;
   border-radius: 999px;

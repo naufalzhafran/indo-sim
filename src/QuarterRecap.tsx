@@ -762,6 +762,11 @@ function ImpactAct({
     });
   };
 
+  // Approval starts high after the election and drifts down in the first year.
+  const honeymoon =
+    !!transition.politics &&
+    transition.from < 12 &&
+    transition.politics.approval < transition.politics.approvalBefore - 0.5;
   return (
     <div className="q-debrief-impact">
       <div className="q-impact-summary">
@@ -852,19 +857,26 @@ function ImpactAct({
             </span>
           )}
           {transition.politics && (
-            <span
-              className="q-decision-chip"
-              data-kind={
-                transition.politics.approval <
-                transition.politics.approvalBefore - 0.5
-                  ? "end"
-                  : "none"
-              }
-            >
-              {t("Public approval", "Kepuasan publik")}{" "}
-              {number(transition.politics.approvalBefore, 0)}% →{" "}
-              {number(transition.politics.approval, 0)}%
-            </span>
+            <>
+              {/* Approval is the public's reaction, not one of the player's decisions. */}
+              <span className="q-impact-mood">
+                {t("Public mood", "Suasana publik")}:
+              </span>{" "}
+              <span
+                className="q-decision-chip"
+                data-kind={
+                  transition.politics.approval <
+                    transition.politics.approvalBefore - 0.5 && !honeymoon
+                    ? "end"
+                    : "none"
+                }
+              >
+                {t("Approval", "Kepuasan")}{" "}
+                {number(transition.politics.approvalBefore, 0)}% →{" "}
+                {number(transition.politics.approval, 0)}%
+                {honeymoon && t(" · honeymoon fading", " · bulan madu memudar")}
+              </span>
+            </>
           )}
         </p>
         <dl className="q-impact-outcomes">
