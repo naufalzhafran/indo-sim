@@ -9,6 +9,18 @@ import {
   type TaxSettings,
 } from "./engine/taxes";
 import type { Bilingual } from "./engine/economy/types";
+import {
+  MAJORITY,
+  TOTAL_SEATS,
+  VOTER_GROUPS,
+  billGroupEffects,
+  effectiveRate,
+  resultGroupEffects,
+  softenNames,
+  type BillResult,
+  type PoliticsState,
+} from "./engine/politics";
+import { GroupChip } from "./ParliamentPanel";
 
 const taxChangeEffects: Record<
   TaxId,
@@ -79,13 +91,23 @@ const taxChangeEffects: Record<
 export function TaxPolicies({
   taxes,
   enacted,
+  softened,
+  bills,
+  soften,
   disabled,
   onChange,
+  onSoften,
+  onBill,
 }: {
   taxes: TaxSettings;
   enacted: TaxSettings;
+  softened: PoliticsState["softened"];
+  bills: BillResult[];
+  soften: TaxId[];
   disabled: boolean;
   onChange: (taxes: TaxSettings) => void;
+  onSoften: (soften: TaxId[]) => void;
+  onBill: (tax: TaxId) => void;
 }) {
   const language = useLanguage();
   const t = (en: string, id: string) => (language === "id" ? id : en);
@@ -94,8 +116,24 @@ export function TaxPolicies({
       <div className="q-tax-grid">
         {taxDefinitions.map((tax) => {
           const changed = taxes[tax.id] !== enacted[tax.id];
-          const currentRate = tax.rates[enacted[tax.id]];
-          const plannedRate = tax.rates[taxes[tax.id]];
+          const currentRate = effectiveRate(
+            tax.rates,
+            enacted[tax.id],
+            softened[tax.id],
+          );
+          const bill = bills.find((b) => b.tax === tax.id);
+          const probe = TAX_LEVELS.indexOf(enacted[tax.id]) < 2 ? 1 : -1;
+          const probeEffects = billGroupEffects({
+            tax: tax.id,
+            from: enacted[tax.id],
+            to: TAX_LEVELS[TAX_LEVELS.indexOf(enacted[tax.id]) + probe],
+            steps: probe,
+          });
+          const plannedRate = changed
+            ? bill?.softened
+              ? effectiveRate(tax.rates, taxes[tax.id], enacted[tax.id])
+              : tax.rates[taxes[tax.id]]
+            : currentRate;
           const effect = changed
             ? taxChangeEffects[tax.id][
                 plannedRate > currentRate ? "raised" : "lowered"
@@ -199,6 +237,82 @@ export function TaxPolicies({
                   >
                     {t("Restore current rate", "Kembalikan tarif saat ini")}
                   </button>
+                )}
+              </div>
+              <div className="q-tax-dpr" data-testid={`tax-dpr-${tax.id}`}>
+                {bill ? (
+                  <>
+                    <p className="q-tax-dpr-forecast" role="status">
+                      <span className="dpr-vote" data-yes={bill.passed}>
+                        {bill.passed
+                          ? t("DPR: passes", "DPR: lolos")
+                          : t("DPR: fails", "DPR: gagal")}
+                      </span>{" "}
+                      {t(
+                        `${bill.yes} yes of ${TOTAL_SEATS}, needs ${MAJORITY}`,
+                        `${bill.yes} setuju dari ${TOTAL_SEATS}, butuh ${MAJORITY}`,
+                      )}
+                    </p>
+                    <span className="dpr-terms">
+                      {VOTER_GROUPS.map((g) => (
+                        <GroupChip
+                          key={g}
+                          group={g}
+                          value={resultGroupEffects(bill)[g]}
+                        />
+                      ))}
+                    </span>
+                    <div className="q-tax-dpr-actions">
+                      {bill.increase && (
+                        <button
+                          type="button"
+                          className="dpr-soften"
+                          aria-pressed={bill.softened}
+                          disabled={disabled}
+                          onClick={() =>
+                            onSoften(
+                              soften.includes(tax.id)
+                                ? soften.filter((id) => id !== tax.id)
+                                : [...soften, tax.id],
+                            )
+                          }
+                        >
+                          <strong>
+                            {t("Soften: ", "Lunakkan: ")}
+                            {softenNames[tax.id][language]}
+                          </strong>
+                          <span>
+                            {t(
+                              "Half the rise, half the harm",
+                              "Kenaikan separuh, kerugian separuh",
+                            )}
+                          </span>
+                        </button>
+                      )}
+                      <button type="button" onClick={() => onBill(tax.id)}>
+                        {t("See DPR vote", "Lihat suara DPR")}
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="q-tax-dpr-hint">
+                      {probe > 0
+                        ? t(
+                            "Raising it needs the DPR. Voter groups would react:",
+                            "Menaikkannya butuh DPR. Reaksi kelompok pemilih:",
+                          )
+                        : t(
+                            "Lowering it needs the DPR. Voter groups would react:",
+                            "Menurunkannya butuh DPR. Reaksi kelompok pemilih:",
+                          )}
+                    </p>
+                    <span className="dpr-terms">
+                      {VOTER_GROUPS.map((g) => (
+                        <GroupChip key={g} group={g} value={probeEffects[g]} />
+                      ))}
+                    </span>
+                  </>
                 )}
               </div>
             </article>

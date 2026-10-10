@@ -1908,7 +1908,6 @@ function executeQuarter(
     month: s.month,
     incomeNow: after.realIncome,
     incomeThen: window.realIncome,
-    windowMonths: after.month - window.month,
     inflation: after.inflation,
     unemploymentChange: after.unemployment - s.history[0].unemployment,
     activePolicies: activeIds(game),

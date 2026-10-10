@@ -40,7 +40,9 @@ The 10 additions use names inspired by real Indonesian programs or policy framew
 
 Only version-7 campaigns and drafts are supported. IndexedDB `indonesia-economy-v7` contains `autosave-v7` and `draft-v7`. A completed-quarter write clears its draft atomically. Draft identity includes the completed state, preventing an unrelated imported campaign from inheriting it. Exports contain completed quarters; local drafts recover pending changes. Older browser data is left untouched and is not migrated or exposed through the game.
 
-Parties, parliament, campaigning, elections, global priority regions and global allocation strategies have been removed from the active model and interface. The old runtime, save migrations and obsolete tests have been removed.
+- **DPR (parliament):** every tax change is a bill. The eight DPR parties (2024 seats, 580 in total) vote as blocs; a bill needs 291 yes votes. A party's support comes from coalition loyalty, public approval and how the bill affects the voter groups it depends on (villages & farmers, urban households, business, outer islands). A rejected bill keeps the current rate. A tax rise can be softened: the rate rises half as much and the harm to every voter group is halved. Public approval moves each quarter toward a target built from income growth, inflation, unemployment, recent tax changes, visible household programmes and funding shortfalls. The DPR tab shows the seats, each party's voter groups and how each vote adds up; see [the design](docs/PARLIAMENT.md).
+
+Campaigning, elections, global priority regions and global allocation strategies are not part of the active model. Campaigns saved before the DPR existed still load, starting at opening approval.
 
 Supported desktop/laptop sizes are 1280×720, 1366×768 and 1440×900 in English and Bahasa Indonesia. Custom dropdowns, separate help buttons, keyboard focus, reduced motion and the automatic WebGL fallback remain supported. No accordions, sliders or native select controls are used for policy management.
 

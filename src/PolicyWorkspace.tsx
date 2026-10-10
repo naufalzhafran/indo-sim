@@ -2,14 +2,11 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { EconomyPolicies } from "./EconomyPolicies";
 import { EconomyEmblem } from "./EconomyEmblem";
 import { TaxPolicies } from "./TaxPolicies";
+import { voteOnBills } from "./engine/politics";
 import { StatHelp } from "./StatHelp";
 import { money, number } from "./components";
 import { useLanguage } from "./i18n";
-import {
-  activeIds,
-  launchCount,
-  projectsOf,
-} from "./engine/economy/engine";
+import { activeIds, launchCount, projectsOf } from "./engine/economy/engine";
 import { policyById } from "./engine/economy/catalog";
 import { taxDefinitions, type TaxId } from "./engine/taxes";
 import { POLICY_IDS, REGION_IDS } from "./engine/economy/types";
@@ -38,6 +35,7 @@ export function PolicyWorkspace({
   saveStatus,
   onRetrySave,
   onClose,
+  onBill,
 }: {
   game: QuarterGame;
   plan: QuarterPlan;
@@ -57,6 +55,7 @@ export function PolicyWorkspace({
   saveStatus: "saving" | "saved" | "failed";
   onRetrySave: () => void;
   onClose: () => void;
+  onBill: (tax: TaxId) => void;
 }) {
   const language = useLanguage();
   const t = (en: string, id: string) => (language === "id" ? id : en);
@@ -304,8 +303,18 @@ export function PolicyWorkspace({
             <TaxPolicies
               taxes={plan.taxes}
               enacted={game.taxes}
+              softened={game.politics.softened}
+              bills={voteOnBills(
+                game.taxes,
+                plan.taxes,
+                game.politics.approval,
+                plan.soften ?? [],
+              )}
+              soften={plan.soften ?? []}
               disabled={disabled}
               onChange={(taxes) => onChange({ ...plan, taxes })}
+              onSoften={(soften) => onChange({ ...plan, soften })}
+              onBill={onBill}
             />
           </div>
         </div>

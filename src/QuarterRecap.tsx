@@ -4,6 +4,7 @@ import { translate, useLanguage } from "./i18n";
 import { StatHelp } from "./StatHelp";
 import { useReducedMotion } from "./WorldMap";
 import { foundationNames } from "./engine/economy/catalog";
+import { taxDefinitions } from "./engine/taxes";
 import { FOUNDATIONS, type Foundation } from "./engine/economy/types";
 import {
   getQuarterPlayback,
@@ -634,8 +635,10 @@ function ImpactAct({
     ? [...FOUNDATIONS].sort((a, b) => (plan[b] ?? 0) - (plan[a] ?? 0))[0]
     : undefined;
   const bestValue = best && plan ? (plan[best] ?? 0) : 0;
+  const votes = transition.politics?.votes ?? [];
   const changed =
-    decisions.launched.length +
+    votes.length +
+      decisions.launched.length +
       decisions.ended.length +
       Number(decisions.taxesChanged) +
       Number(decisions.allocationChanged) >
@@ -781,6 +784,23 @@ function ImpactAct({
                   {t("Regional budgets shifted", "Anggaran wilayah digeser")}
                 </span>
               )}
+              {votes.map((vote) => (
+                <span
+                  key={vote.tax}
+                  className="q-decision-chip"
+                  data-kind={vote.passed ? "launch" : "end"}
+                >
+                  {vote.passed
+                    ? t("DPR passed", "DPR menyetujui")
+                    : t("DPR rejected", "DPR menolak")}{" "}
+                  {
+                    taxDefinitions.find((d) => d.id === vote.tax)!.name[
+                      language
+                    ]
+                  }{" "}
+                  ({vote.yes}/580)
+                </span>
+              ))}
             </>
           ) : (
             <span className="q-decision-chip" data-kind="none">
@@ -790,6 +810,21 @@ function ImpactAct({
                     "Kept last quarter's plan",
                     "Melanjutkan rencana sebelumnya",
                   )}
+            </span>
+          )}
+          {transition.politics && (
+            <span
+              className="q-decision-chip"
+              data-kind={
+                transition.politics.approval <
+                transition.politics.approvalBefore - 0.5
+                  ? "end"
+                  : "none"
+              }
+            >
+              {t("Public approval", "Kepuasan publik")}{" "}
+              {number(transition.politics.approvalBefore, 0)}% →{" "}
+              {number(transition.politics.approval, 0)}%
             </span>
           )}
         </p>

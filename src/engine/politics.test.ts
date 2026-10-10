@@ -86,7 +86,6 @@ describe("approval", () => {
       month: 3,
       incomeNow: 100,
       incomeThen: 100,
-      windowMonths: 3,
       inflation: 2.5,
       unemploymentChange: 0,
       activePolicies: [],

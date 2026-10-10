@@ -1,0 +1,316 @@
+/* DPR panel and tax-card bill rows. Extends the cheerful --q-* palette. */
+.dpr-panel {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+  gap: 18px;
+  padding: 16px 22px 20px;
+  overflow: hidden;
+}
+.dpr-overview,
+.dpr-main {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 2px 4px 6px 2px;
+}
+.dpr-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dpr-hemicycle {
+  width: 100%;
+  height: auto;
+  padding: 10px 10px 4px;
+  background: #fffdf7;
+  border: 2px solid #cfe0cf;
+  border-radius: 16px;
+  box-shadow: 0 3px 0 #c9dccb;
+}
+.dpr-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0;
+}
+.dpr-stats > div {
+  padding: 10px 12px;
+  background: #fffdf7;
+  border: 1px solid var(--q-line);
+  border-radius: 12px;
+}
+.dpr-stats dt {
+  color: var(--q-muted);
+  font: 700 13px var(--q-heading);
+}
+.dpr-stats dd {
+  margin: 2px 0 0;
+  font: 900 24px var(--q-heading);
+  font-variant-numeric: tabular-nums;
+}
+.dpr-stats .dpr-stat-note {
+  margin: 0;
+  font:
+    400 13px "Source Sans 3",
+    sans-serif;
+  color: var(--q-muted);
+  font-size: 13px;
+}
+.dpr-approval,
+.dpr-reality {
+  padding: 12px 14px;
+  background: #fffdf7;
+  border: 1px solid var(--q-line);
+  border-radius: 12px;
+}
+.quarter-app .dpr-approval h4,
+.quarter-app .dpr-reality h4,
+.quarter-app .dpr-bill-head h4,
+.quarter-app .dpr-last h4 {
+  margin: 0 0 4px;
+  font: 800 16px var(--q-heading);
+}
+.quarter-app .dpr-approval p,
+.quarter-app .dpr-reality p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--q-muted);
+}
+.dpr-approval ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+.dpr-approval li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+  border-top: 1px dashed var(--q-line);
+}
+.dpr-approval li strong {
+  font-variant-numeric: tabular-nums;
+}
+.dpr-approval li[data-tone="down"] strong {
+  color: #b44a35;
+}
+.dpr-approval li[data-tone="up"] strong {
+  color: var(--q-green);
+}
+.quarter-app .dpr-reality p {
+  color: var(--q-ink);
+}
+.dpr-main {
+  display: flex;
+  flex-direction: column;
+}
+.quarter-app .dpr-tabs button,
+.quarter-app .dpr-filters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.dpr-tabs small[data-pass="false"] {
+  background: #fde3dc;
+  color: #8a2f1e;
+}
+.dpr-filters {
+  margin-bottom: 12px;
+}
+.quarter-app .dpr-filters > .dpr-filter-label {
+  margin: 0;
+  font-size: 14px;
+  color: var(--q-muted);
+}
+.quarter-app .dpr-lead {
+  margin: 0 0 12px;
+  color: var(--q-muted);
+  font-size: 15px;
+}
+.dpr-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  font-size: 15px;
+}
+.dpr-table thead th {
+  text-align: left;
+  color: var(--q-muted);
+  font: 700 13px var(--q-heading);
+  padding: 0 10px;
+}
+.dpr-table tbody th,
+.dpr-table tbody td {
+  padding: 9px 10px;
+  background: #fffdf7;
+  border-block: 1px solid var(--q-line);
+  vertical-align: middle;
+  text-align: left;
+}
+.dpr-table tbody th {
+  border-left: 1px solid var(--q-line);
+  border-radius: 12px 0 0 12px;
+  font: 800 15px var(--q-heading);
+  white-space: nowrap;
+}
+.dpr-table tbody td:last-child {
+  border-right: 1px solid var(--q-line);
+  border-radius: 0 12px 12px 0;
+}
+.dpr-table tr[data-dim="true"] > * {
+  opacity: 0.4;
+}
+.dpr-table td small {
+  display: block;
+  margin-top: 5px;
+  color: var(--q-muted);
+  font-size: 13px;
+}
+.dpr-num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dpr-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  border-radius: 4px;
+  vertical-align: -1px;
+}
+.dpr-terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+  font-size: 13px;
+}
+.dpr-terms > span:not(.dpr-group) {
+  padding: 2px 7px;
+  border-radius: 8px;
+  background: #eef4ea;
+  white-space: nowrap;
+}
+.dpr-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border: 1px solid #c9dccb;
+  border-radius: 8px;
+  background: #f4f8ef;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.dpr-group strong {
+  font-variant-numeric: tabular-nums;
+}
+.dpr-group[data-tone="up"] {
+  border-color: #9cc9ad;
+  background: #e2f2e6;
+}
+.dpr-group[data-tone="up"] strong {
+  color: #1d6a4f;
+}
+.dpr-group[data-tone="down"] {
+  border-color: #efb7a7;
+  background: #fdebe5;
+}
+.dpr-group[data-tone="down"] strong {
+  color: #9c3a26;
+}
+.dpr-vote {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 8px;
+  font: 800 13px var(--q-heading);
+  background: #fdebe5;
+  color: #8a2f1e;
+  border: 1px solid #efb7a7;
+}
+.dpr-vote[data-yes="true"] {
+  background: #e2f2e6;
+  color: #1d6a4f;
+  border-color: #9cc9ad;
+}
+.dpr-bill-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 12px 14px;
+  margin-bottom: 4px;
+  background: #fffdf7;
+  border: 2px solid #cfe0cf;
+  border-radius: 14px;
+}
+.quarter-app .dpr-bill-head p {
+  margin: 0 0 6px;
+}
+.dpr-bill-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.quarter-app button.dpr-soften {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  max-width: 300px;
+  text-align: left;
+}
+.quarter-app button.dpr-soften span {
+  font-weight: 400;
+  font-size: 13px;
+}
+.dpr-last {
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  background: #fffdf7;
+  border: 1px solid var(--q-line);
+  border-radius: 12px;
+}
+.dpr-last ul {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  font-size: 14px;
+  columns: 2;
+}
+.dpr-last li {
+  padding: 2px 0;
+  break-inside: avoid;
+}
+
+/* Bill row inside each tax card. */
+.q-tax-dpr {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #bdceb4;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.quarter-app .q-tax-dpr p {
+  margin: 0;
+  font-size: 13px;
+}
+.q-tax-dpr-hint {
+  color: var(--q-muted);
+}
+.q-tax-dpr-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.quarter-app .q-tax-dpr-actions button {
+  font-size: 13px;
+  min-height: 34px;
+  padding: 5px 10px;
+}
+.quarter-app .q-tax-dpr-actions button.dpr-soften {
+  max-width: none;
+}

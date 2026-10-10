@@ -922,15 +922,12 @@ test("33 policies show foundation or industry effects and regional edits preserv
   await expect
     .poll(
       async () =>
-        (await stored(page, DRAFT_KEY))?.plan.regionalSpending.plts
-          .papua,
+        (await stored(page, DRAFT_KEY))?.plan.regionalSpending.plts.papua,
     )
     .toBe("low");
   const draft = (await stored(page, DRAFT_KEY)).plan as QuarterPlan;
   expect(Object.keys(draft.regionalSpending)).toHaveLength(33);
-  expect(
-    REGION_IDS.map((id) => draft.regionalSpending.plts[id]),
-  ).toEqual([
+  expect(REGION_IDS.map((id) => draft.regionalSpending.plts[id])).toEqual([
     "high",
     "high",
     "high",
@@ -952,9 +949,7 @@ test("33 policies show foundation or industry effects and regional edits preserv
   ).toBeChecked();
   await advance(page, 0);
   const completed = await savedGame(page);
-  expect(completed.regionalSpending.plts).toEqual(
-    draft.regionalSpending.plts,
-  );
+  expect(completed.regionalSpending.plts).toEqual(draft.regionalSpending.plts);
   expect(
     completed.policies.find((policy) => policy.id === "plts")?.active,
   ).toBe(true);
@@ -1091,6 +1086,53 @@ test("six taxes share the quarterly draft, undo and reset without using policy s
   await expect(page.getByTestId("quarter-report")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+test("the DPR votes on tax bills, and softening can turn a vote", async ({
+  page,
+}) => {
+  await start(page);
+  await goPolicies(page);
+  await page.getByRole("tab", { name: /^Taxes\b/ }).click();
+  for (const card of await page.locator(".q-tax-card").all())
+    await card.locator('input[value="increased"]').check();
+  await expect(page.getByTestId("tax-dpr-vat")).toContainText("DPR: fails");
+  await page
+    .getByTestId("tax-dpr-vat")
+    .getByRole("button", { name: "See DPR vote", exact: true })
+    .click();
+  const dpr = page.locator(".dpr-dialog");
+  await expect(
+    dpr.locator('.dpr-tabs button[aria-pressed="true"]'),
+  ).toContainText("Value-added tax");
+  await expect(dpr.locator(".dpr-table tbody tr")).toHaveCount(8);
+  await dpr.getByRole("button", { name: /^Villages & farmers/ }).click();
+  await expect(dpr.locator('.dpr-table tr[data-dim="true"]')).toHaveCount(4);
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("button", {
+      name: "A tax bill will fail in the DPR",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await goPolicies(page);
+  await page.getByRole("tab", { name: /^Taxes\b/ }).click();
+  for (const card of await page.locator(".q-tax-card").all())
+    await card.locator('input[value="standard"]').check();
+  await page.locator('#tax-card-vat input[value="increased"]').check();
+  await page
+    .getByTestId("tax-dpr-vat")
+    .getByRole("button", { name: /^Soften:/ })
+    .click();
+  await expect(page.getByTestId("tax-dpr-vat")).toContainText("DPR: passes");
+  await expect
+    .poll(async () => (await stored(page, DRAFT_KEY))?.plan.soften)
+    .toEqual(["vat"]);
+  await advance(page, 0);
+  const saved = await savedGame(page);
+  expect(saved.taxes.vat).toBe("increased");
+  expect(saved.politics.softened.vat).toBe("standard");
+  expect(saved.politics.lastVotes[0].passed).toBe(true);
 });
 
 test("falling energy opens the electricity policy from the map", async ({

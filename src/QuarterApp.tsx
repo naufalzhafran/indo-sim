@@ -36,7 +36,9 @@ import {
   saveQuarterPlan,
 } from "./engine/economy/persistence";
 import { CampaignSetup } from "./CampaignSetup";
-import { TAX_IDS } from "./engine/taxes";
+import { TAX_IDS, TAX_LEVELS } from "./engine/taxes";
+import { TOTAL_SEATS, coalitionSeats, voteOnBills } from "./engine/politics";
+import type { ParliamentTab } from "./ParliamentPanel";
 import { LanguageSwitcher, translate, useLanguage } from "./i18n";
 import { Icon, Modal, money, number } from "./components";
 import { StatHelp } from "./StatHelp";
@@ -53,6 +55,7 @@ import "./economyApp.css";
 import "./policyWorkspace.css";
 import "./nationalEconomy.css";
 import "./gameQuarterReport.css";
+import "./parliament.css";
 
 // Panels and dialogs load on first use so the map becomes interactive sooner.
 const PolicyWorkspace = lazy(() =>
@@ -71,8 +74,11 @@ const CampaignEnd = lazy(() =>
   import("./CampaignEnd").then((m) => ({ default: m.CampaignEnd })),
 );
 const QuarterRecap = lazy(() => import("./QuarterRecap"));
+const ParliamentPanel = lazy(() =>
+  import("./ParliamentPanel").then((m) => ({ default: m.ParliamentPanel })),
+);
 
-type View = "map" | "policies" | "regions" | "economy";
+type View = "map" | "policies" | "regions" | "economy" | "dpr";
 const copy = <T,>(value: T): T => structuredClone(value);
 const same = (a: unknown, b: unknown) =>
   JSON.stringify(a) === JSON.stringify(b);
@@ -96,6 +102,13 @@ export default function QuarterApp() {
   const t = (en: string, id: string) => (language === "id" ? id : en);
   const [game, setGame] = useState<QuarterGame>(() => initialQuarter());
   const [plan, setPlan] = useState<QuarterPlan>(() => basePlan(game));
+  const [dprTab, setDprTab] = useState<ParliamentTab>("parties");
+  const failingBill = voteOnBills(
+    game.taxes,
+    plan.taxes,
+    game.politics.approval,
+    plan.soften ?? [],
+  ).find((bill) => !bill.passed);
   const [ready, setReady] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
   const [setup, setSetup] = useState(false);
@@ -378,8 +391,16 @@ export default function QuarterApp() {
     setPolicyTab("policies");
     openView("policies");
   };
-  const changePlan = (next: QuarterPlan) => {
+  const changePlan = (input: QuarterPlan) => {
     if (locked) return;
+    // Only tax increases can be softened; drop stale choices.
+    const { soften, ...rest } = input;
+    const kept = (soften ?? []).filter(
+      (id) =>
+        TAX_LEVELS.indexOf(input.taxes[id]) >
+        TAX_LEVELS.indexOf(game.taxes[id]),
+    );
+    const next: QuarterPlan = kept.length ? { ...rest, soften: kept } : rest;
     const issues = validatePlan(game, next);
     if (issues.length) {
       setError(issues.map((issue) => translate(issue)).join(" "));
@@ -583,6 +604,7 @@ export default function QuarterApp() {
             ["economy", "Economy", "Ekonomi"],
             ["policies", "Policies & taxes", "Kebijakan & pajak"],
             ["regions", "Regions", "Wilayah"],
+            ["dpr", "DPR", "DPR"],
           ] as const
         ).map(([id, en, ind]) => (
           <button
@@ -674,6 +696,20 @@ export default function QuarterApp() {
                   {t(
                     "Your plan has a funding shortfall",
                     "Rencana Anda kekurangan pendanaan",
+                  )}
+                </button>
+              )}
+              {failingBill && (
+                <button
+                  className="q-brief-issue"
+                  onClick={() => {
+                    setDprTab(failingBill.tax);
+                    openView("dpr");
+                  }}
+                >
+                  {t(
+                    "A tax bill will fail in the DPR",
+                    "Satu RUU pajak akan ditolak DPR",
                   )}
                 </button>
               )}
@@ -769,7 +805,9 @@ export default function QuarterApp() {
         <aside
           className="q-plan"
           aria-hidden={
-            view === "policies" || view === "economy" ? true : undefined
+            view === "policies" || view === "economy" || view === "dpr"
+              ? true
+              : undefined
           }
           aria-label={t("State finances", "Keuangan negara")}
         >
@@ -802,6 +840,14 @@ export default function QuarterApp() {
                   {n.balance < 0 ? "−" : "+"}
                   {money(Math.abs(n.balance))}
                 </dd>
+              </div>
+              <div>
+                <dt>{t("Public approval", "Kepuasan publik")}</dt>
+                <dd>{number(game.politics.approval, 0)}%</dd>
+                <small>
+                  {t("DPR coalition", "Koalisi DPR")} {coalitionSeats()}/
+                  {TOTAL_SEATS}
+                </small>
               </div>
               <div>
                 <dt>{t("Unemployment", "Pengangguran")}</dt>
@@ -1081,6 +1127,38 @@ export default function QuarterApp() {
                 saveStatus={saveStatus}
                 onRetrySave={() => void retrySave()}
                 onClose={closePanel}
+                onBill={(tax) => {
+                  setDprTab(tax);
+                  openView("dpr");
+                }}
+              />
+            </Suspense>
+          )}
+        </Modal>
+      )}
+      {ready && view === "dpr" && !setup && (
+        <Modal
+          title={t("Parliament (DPR)", "Parlemen (DPR)")}
+          onClose={closePanel}
+          className="economy-dialog national-economy-dialog dpr-dialog"
+          trapFocus
+        >
+          {loadFailed ? (
+            <p role="alert">
+              {t(
+                "Your campaign could not be loaded. Import a valid save or start a new campaign.",
+                "Permainan tidak dapat dimuat. Impor simpanan yang valid atau mulai permainan baru.",
+              )}
+            </p>
+          ) : (
+            <Suspense fallback={null}>
+              <ParliamentPanel
+                game={game}
+                plan={plan}
+                onChange={changePlan}
+                disabled={locked}
+                tab={dprTab}
+                onTab={setDprTab}
               />
             </Suspense>
           )}

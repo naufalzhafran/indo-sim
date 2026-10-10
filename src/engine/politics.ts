@@ -315,6 +315,25 @@ export function voteOnBills(
   });
 }
 
+/** The voter-group effects recorded with a bill result. */
+export const resultGroupEffects = (bill: BillResult) =>
+  billGroupEffects(
+    {
+      tax: bill.tax,
+      from: bill.from,
+      to: bill.to,
+      steps: levelIndex(bill.to) - levelIndex(bill.from),
+    },
+    bill.softened,
+  );
+
+/** Effective rate in percent, including a softened increase. */
+export const effectiveRate = (
+  rates: Record<TaxLevel, number>,
+  level: TaxLevel,
+  softenedFrom?: TaxLevel,
+) => (softenedFrom ? (rates[level] + rates[softenedFrom]) / 2 : rates[level]);
+
 /** Standing support with no bill on the table. */
 export function standingSupport(approval: number) {
   return parties.map((party) => ({
@@ -330,10 +349,9 @@ export const coalitionSeats = () =>
 
 export type ApprovalInputs = {
   month: number;
-  /** Real income now and at the start of the trailing window. */
+  /** Real income now and at the start of the trailing year. */
   incomeNow: number;
   incomeThen: number;
-  windowMonths: number;
   inflation: number;
   unemploymentChange: number;
   activePolicies: readonly string[];
@@ -355,9 +373,9 @@ export function updateApproval(
     input.funding < 0.98
       ? [...state.shortfalls, input.month]
       : state.shortfalls;
-  const months = Math.max(3, input.windowMonths);
-  const growth =
-    ((input.incomeNow / input.incomeThen) ** (12 / months) - 1) * 100;
+  // Change over the trailing year (shorter at the start), not annualised,
+  // so a single quarter cannot swing approval.
+  const growth = (input.incomeNow / input.incomeThen - 1) * 100;
   const programmes = Math.min(
     4,
     VISIBLE_PROGRAMMES.filter((id) => input.activePolicies.includes(id)).length,

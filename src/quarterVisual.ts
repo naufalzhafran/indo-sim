@@ -283,6 +283,12 @@ export type QuarterVisualTransition = {
   crises: { before: Crisis | null; after: Crisis }[];
   national: QuarterGame["receipt"];
   callouts: VisualCallout[];
+  /** DPR votes and the approval change this quarter. */
+  politics?: {
+    votes: QuarterGame["politics"]["lastVotes"];
+    approvalBefore: number;
+    approval: number;
+  };
 };
 
 const crisisState = (crisis: Crisis) =>
@@ -443,6 +449,11 @@ export function buildQuarterVisualTransition(
     crises,
     national: after.receipt,
     callouts,
+    politics: after.politics && {
+      votes: after.politics.lastVotes,
+      approvalBefore: after.politics.previousApproval,
+      approval: after.politics.approval,
+    },
     regions: buildRegionResults(before, after),
     news: buildNationalNews(after),
     decisions: buildDecisions(before, after),
