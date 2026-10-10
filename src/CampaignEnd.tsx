@@ -9,6 +9,7 @@ import { FOUNDATIONS, type QuarterGame } from "./engine/economy/types";
 import { foundationNames } from "./engine/economy/catalog";
 import { useLanguage } from "./i18n";
 import { Modal, number } from "./components";
+import { REELECTION_APPROVAL } from "./engine/politics";
 
 export function CampaignEnd({
   game,
@@ -194,6 +195,26 @@ export function CampaignEnd({
               </li>
             ))}
           </ul>
+        </section>
+        <section className="campaign-bonus" data-testid="reelection">
+          <div>
+            <p className="campaign-eyebrow">
+              {t("Optional achievement", "Pencapaian opsional")}
+            </p>
+            <h4>{t("Re-election 2029", "Terpilih kembali 2029")}</h4>
+            <p>
+              {t(
+                `Finish the term with public approval of at least ${REELECTION_APPROVAL}%. This does not change your six-goal verdict.`,
+                `Akhiri masa jabatan dengan kepuasan publik minimal ${REELECTION_APPROVAL}%. Ini tidak mengubah penilaian enam target utama.`,
+              )}
+            </p>
+          </div>
+          <strong>
+            {number(game.politics.approval, 0)}% ·{" "}
+            {game.politics.approval >= REELECTION_APPROVAL
+              ? t("Re-elected", "Terpilih kembali")
+              : t("Not re-elected", "Tidak terpilih kembali")}
+          </strong>
         </section>
         {error && (
           <p role="alert" className="campaign-error">

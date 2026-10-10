@@ -1,6 +1,6 @@
 # Parliament (DPR) design
 
-Status: phase 1 (approval, tax bills, softening, DPR tab, recap) is built. The yearly APBN vote is phase 2.
+Status: all three phases are built. Phase 1: approval, tax bills, softening, DPR tab, recap. Phase 2: the yearly APBN vote, the launch freeze and the re-election objective. Phase 3: Perppu during a crisis, street protests below 30% approval and coalition deals.
 
 ## The idea in one paragraph
 
@@ -168,7 +168,7 @@ Support for the budget uses the same formula with these base effects:
 
 - **+5** to a group for each running policy it favours (villages: pupuk, irrigation, Kopdes, jalan desa, embung; urban: KRL, MRT/LRT, BRT, Prakerja; business: KUR, broadband, cold chain; outer islands: Tol Laut, PLTS, tourism access). Capped at +15 per group.
 - **−10** to a group for each programme it favours that was stopped this year.
-- **−20 to every party** if the forecast deficit is above 3% of GDP (the legal limit; this links to the 3% line planned in fix 2).
+- **−30 to every party** if the forecast deficit is above 3% of GDP (the legal limit). At −20 an expensive eight-policy portfolio just over 3% still passed, so the penalty was raised.
 
 If the APBN fails, the following four quarters are "last year's budget": the draft disables launches with a plain explanation beside the Launch button, and the DPR tab shows when the freeze ends.
 
@@ -202,7 +202,13 @@ PR #2 (fixes 1–4) changes `engine.ts`, `catalog.ts`, `goals.ts` and the balanc
 
 1. **Phase 1 (core):** approval, DPR tab, tax bills with forecast, recap, softening, tests. Saves keep version 8 with an optional `politics` field, so older campaigns still load.
 2. **Phase 2:** the yearly APBN vote and the launch freeze; the re-election objective.
-3. **Later, if wanted:** Perppu during a crisis (pass a tax or deficit change immediately, the DPR confirms it next quarter, as in Perppu 1/2020), protests when approval drops below 30, and coalition deals that buy a party's vote with regional projects.
+3. **Phase 3:** Perppu, protests and coalition deals, described below.
+
+### Phase 3 rules
+
+- **Perppu.** While any crisis is unresolved, a tax change can be issued as a Perppu. It applies this quarter whatever the vote forecast. At the start of the next quarter the DPR votes to confirm it with the usual support formula; a rejected Perppu returns the tax to its earlier level. The tax is locked in the plan until that vote. Real basis: Perppu 1/2020 during COVID-19.
+- **Street protests.** While approval is below 30%, every party except PDI-P (outside the government) loses 10 support on every vote, and the map shows a protest prompt.
+- **Coalition deals.** Once a quarter, the player can offer regional projects to one party that is not the president's: +15 support on every vote for four quarters. It costs Rp 0.1T per seat, scaled by the price level, paid from cash and then debt. A party cannot take a second deal while one is running.
 
 ## Decisions I made (say if you want different)
 

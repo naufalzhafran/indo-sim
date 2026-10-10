@@ -4,6 +4,7 @@ import {
   basePlan,
   foundations,
   initialQuarter,
+  activeIds,
   isFinished,
   launchCount,
   policyAllocations,
@@ -515,9 +516,13 @@ describe("regional economic kernel", () => {
     let minimumFunding = 1;
     for (let q = 0; q < 8; q++) {
       const plan = basePlan(game);
+      // A rejected APBN freezes launches; running policies carry on.
+      const frozen = game.politics.frozenUntil > game.simulation.month;
+      const running = activeIds(game);
       plan.policies = ids
         .slice(0, (q + 1) * 2)
-        .filter((id) => !isFinished(game, id));
+        .filter((id) => !isFinished(game, id))
+        .filter((id) => !frozen || running.includes(id));
       game = resolveQuarter(game, plan, { calm: true, attribution: false });
       minimumFunding = Math.min(minimumFunding, game.receipt!.ledger.funding);
     }

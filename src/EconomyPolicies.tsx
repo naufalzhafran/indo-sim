@@ -306,6 +306,9 @@ export function EconomyPolicies({
     : undefined;
   const slotsFull = plan.policies.length >= 8;
   const launchesFull = launchCount(game, plan) >= 2;
+  // A rejected APBN repeats last year's budget: nothing new can launch.
+  const frozen = game.politics.frozenUntil > game.simulation.month;
+  const thawQuarter = `Q${Math.floor((game.politics.frozenUntil % 12) / 3) + 1} ${2025 + Math.floor(game.politics.frozenUntil / 12)}`;
   const blockedFor = (id: PolicyId) =>
     plan.policies.includes(id)
       ? ""
@@ -318,6 +321,11 @@ export function EconomyPolicies({
         ? t(
             "All eight policy slots are in use. Remove a policy from this plan to make room.",
             "Delapan slot kebijakan sudah terisi. Hapus satu kebijakan dari rencana untuk menyediakan tempat.",
+          )
+        : isLaunch(id) && frozen
+        ? t(
+            `The DPR rejected the APBN, so last year's budget is in force. Running policies continue, but nothing new can launch until ${thawQuarter}.`,
+            `DPR menolak APBN, sehingga anggaran tahun lalu berlaku. Kebijakan berjalan tetap, tetapi tidak ada yang baru bisa diluncurkan sampai ${thawQuarter}.`,
           )
         : isLaunch(id) && launchesFull
           ? t(
@@ -416,7 +424,16 @@ export function EconomyPolicies({
     active: active.length,
     planned: launches.length,
   };
-  const listNotice = slotsFull
+  const listNotice = frozen
+    ? {
+        count: "0/2",
+        title: t("Budget frozen", "Anggaran dibekukan"),
+        hint: t(
+          `No launches until ${thawQuarter}`,
+          `Tidak ada peluncuran sampai ${thawQuarter}`,
+        ),
+      }
+    : slotsFull
     ? {
         count: "8/8",
         title: t("Policy slots full", "Slot kebijakan penuh"),

@@ -5,6 +5,7 @@ import { StatHelp } from "./StatHelp";
 import { useReducedMotion } from "./WorldMap";
 import { foundationNames } from "./engine/economy/catalog";
 import { taxDefinitions } from "./engine/taxes";
+import { partyById } from "./engine/politics";
 import { FOUNDATIONS, type Foundation } from "./engine/economy/types";
 import {
   getQuarterPlayback,
@@ -641,6 +642,8 @@ function ImpactAct({
   const votes = transition.politics?.votes ?? [];
   const changed =
     votes.length +
+      Number(!!transition.politics?.deal) +
+      Number(!!transition.politics?.budget) +
       decisions.launched.length +
       decisions.ended.length +
       Number(decisions.taxesChanged) +
@@ -792,13 +795,19 @@ function ImpactAct({
               )}
               {votes.map((vote) => (
                 <span
-                  key={vote.tax}
+                  key={`${vote.tax}-${vote.confirmation ? "c" : "b"}`}
                   className="q-decision-chip"
-                  data-kind={vote.passed ? "launch" : "end"}
+                  data-kind={vote.passed || vote.perppu ? "launch" : "end"}
                 >
-                  {vote.passed
-                    ? t("DPR passed", "DPR menyetujui")
-                    : t("DPR rejected", "DPR menolak")}{" "}
+                  {vote.perppu
+                    ? t("Perppu enacted", "Perppu diterbitkan")
+                    : vote.confirmation
+                      ? vote.passed
+                        ? t("DPR confirmed Perppu", "DPR mengesahkan Perppu")
+                        : t("DPR revoked Perppu", "DPR mencabut Perppu")
+                      : vote.passed
+                        ? t("DPR passed", "DPR menyetujui")
+                        : t("DPR rejected", "DPR menolak")}{" "}
                   {
                     taxDefinitions.find((d) => d.id === vote.tax)!.name[
                       language
@@ -816,6 +825,30 @@ function ImpactAct({
                     "Kept last quarter's plan",
                     "Melanjutkan rencana sebelumnya",
                   )}
+            </span>
+          )}
+          {transition.politics?.deal && (
+            <span className="q-decision-chip">
+              {t("Coalition deal", "Kesepakatan koalisi")}{" "}
+              {partyById[transition.politics.deal.party].name} · Rp{" "}
+              {number(transition.politics.deal.cost, 1)}T
+            </span>
+          )}
+          {transition.politics?.budget && (
+            <span
+              className="q-decision-chip"
+              data-kind={transition.politics.budget.passed ? "launch" : "end"}
+            >
+              {transition.politics.budget.passed
+                ? t(
+                    `DPR passed the ${transition.politics.budget.year} APBN`,
+                    `DPR mengesahkan APBN ${transition.politics.budget.year}`,
+                  )
+                : t(
+                    `DPR rejected the ${transition.politics.budget.year} APBN: no launches for a year`,
+                    `DPR menolak APBN ${transition.politics.budget.year}: tanpa peluncuran setahun`,
+                  )}{" "}
+              ({transition.politics.budget.yes}/580)
             </span>
           )}
           {transition.politics && (

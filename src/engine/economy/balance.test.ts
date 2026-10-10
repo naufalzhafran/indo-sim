@@ -25,9 +25,11 @@ function campaign(ids: PolicyId[], seed = 19, calm = true, quarters = 20) {
       .slice(0, (q + 1) * 2)
       .filter((id) => !isFinished(game, id));
     const running = activeIds(game);
+    // A rejected APBN freezes launches; running policies carry on.
+    const launches = game.politics.frozenUntil > game.simulation.month ? 0 : 2;
     plan.policies = [
       ...wanted.filter((id) => running.includes(id)),
-      ...wanted.filter((id) => !running.includes(id)).slice(0, 2),
+      ...wanted.filter((id) => !running.includes(id)).slice(0, launches),
     ].slice(0, 8);
     game = resolveQuarter(game, plan, { calm, attribution: false });
   }

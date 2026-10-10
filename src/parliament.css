@@ -112,7 +112,11 @@
   align-items: center;
   gap: 7px;
 }
-.dpr-tabs small[data-pass="false"] {
+.quarter-app .dpr-tabs button[aria-pressed="true"] small {
+  background: #15573e;
+  color: #fffdf6;
+}
+.quarter-app .dpr-tabs button small[data-pass="false"] {
   background: #fde3dc;
   color: #8a2f1e;
 }
@@ -313,4 +317,73 @@
 }
 .quarter-app .q-tax-dpr-actions button.dpr-soften {
   max-width: none;
+}
+.dpr-extra {
+  border: 1px solid #c9dccb;
+}
+.dpr-terms > .dpr-extra[data-tone="up"],
+.dpr-extra[data-tone="up"] {
+  background: #e2f2e6;
+  color: #1d6a4f;
+  border-color: #9cc9ad;
+}
+.dpr-terms > .dpr-extra[data-tone="down"] {
+  background: #fdebe5;
+  color: #8a2f1e;
+  border-color: #efb7a7;
+}
+td > .dpr-extra {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.dpr-muted {
+  color: var(--q-muted);
+  font-size: 13px;
+}
+.quarter-app button.dpr-deal {
+  font-size: 13px;
+  min-height: 34px;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+.dpr-bill-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dpr-alerts {
+  padding: 10px 14px;
+  background: #fdebe5;
+  border: 1px solid #efb7a7;
+  border-radius: 12px;
+}
+.quarter-app .dpr-alerts p {
+  margin: 0;
+  font-size: 14px;
+}
+.quarter-app .dpr-alerts p + p {
+  margin-top: 6px;
+}
+.dpr-budget-rules {
+  max-width: 340px;
+}
+.quarter-app .dpr-budget-rules p {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: var(--q-muted);
+}
+.dpr-budget-groups {
+  list-style: none;
+  margin: 8px 0 4px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 16px;
+  font-size: 13px;
+  color: var(--q-muted);
+}
+.dpr-budget-groups strong {
+  color: var(--q-ink);
 }

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import baseline from "../../data/baseline.json" with { type: "json" };
 import { TAX_IDS, TAX_LEVELS } from "../taxes";
-import { PARTY_IDS, VOTER_GROUPS, initialPolitics } from "../politics";
+import { PARTY_IDS, VOTER_GROUPS, normalizePolitics } from "../politics";
 import { aggregate, summarizeEconomyRegions } from "./engine";
 import { policyById } from "./catalog";
 import {
@@ -62,10 +62,30 @@ export const planSchema = z
     taxes,
     regionalSpending,
     soften: z.array(z.enum(TAX_IDS)).max(TAX_IDS.length).optional(),
+    perppu: z.array(z.enum(TAX_IDS)).max(TAX_IDS.length).optional(),
+    deal: z.enum(PARTY_IDS).optional(),
   })
   .strict();
 
 const taxLevel = z.enum(TAX_LEVELS);
+const supportExtra = z
+  .object({ id: z.enum(["deal", "protest", "deficit"]), value: finite })
+  .strict();
+const supportRow = z
+  .object({
+    party: z.enum(PARTY_IDS),
+    loyalty: finite,
+    approval: finite,
+    groups: z
+      .array(z.object({ group: z.enum(VOTER_GROUPS), value: finite }).strict())
+      .max(VOTER_GROUPS.length),
+    pileUp: finite,
+    extras: z.array(supportExtra).max(3).optional(),
+    total: finite,
+    yes: z.boolean(),
+    softenFlips: z.boolean(),
+  })
+  .strict();
 const months = z.array(month).max(200);
 const politics = z
   .object({
@@ -105,6 +125,8 @@ const politics = z
             softened: z.boolean(),
             yes: finite.int().min(0).max(580),
             passed: z.boolean(),
+            perppu: z.boolean().optional(),
+            confirmation: z.boolean().optional(),
             parties: z
               .array(
                 z
@@ -123,6 +145,7 @@ const politics = z
                       )
                       .max(VOTER_GROUPS.length),
                     pileUp: finite,
+                    extras: z.array(supportExtra).max(3).optional(),
                     total: finite,
                     yes: z.boolean(),
                     softenFlips: z.boolean(),
@@ -133,7 +156,54 @@ const politics = z
           })
           .strict(),
       )
-      .max(TAX_IDS.length),
+      .max(TAX_IDS.length * 2),
+    frozenUntil: finite.int().min(0).max(80).optional(),
+    budgets: z
+      .array(
+        z
+          .object({
+            month,
+            year: finite.int(),
+            deficit: finite.min(0),
+            groups: exactRecord(VOTER_GROUPS, finite),
+            yes: finite.int().min(0).max(580),
+            passed: z.boolean(),
+            parties: z.array(supportRow).length(PARTY_IDS.length),
+          })
+          .strict(),
+      )
+      .max(8)
+      .optional(),
+    stopped: z
+      .array(z.object({ policy: policyId, month }).strict())
+      .max(400)
+      .optional(),
+    deals: z
+      .array(
+        z
+          .object({
+            party: z.enum(PARTY_IDS),
+            until: finite.int().min(0).max(80),
+            cost: finite.min(0),
+          })
+          .strict(),
+      )
+      .max(40)
+      .optional(),
+    perppu: z
+      .array(
+        z
+          .object({
+            tax: z.enum(TAX_IDS),
+            from: taxLevel,
+            to: taxLevel,
+            month,
+            softened: z.boolean(),
+          })
+          .strict(),
+      )
+      .max(TAX_IDS.length)
+      .optional(),
   })
   .strict();
 
@@ -685,7 +755,7 @@ export function parseQuarter(raw: string): QuarterGame {
       { cause: parsed.error.issues },
     );
   const game = parsed.data.state as QuarterGame;
-  game.politics ??= initialPolitics();
+  game.politics = normalizePolitics(game.politics);
   validateGame(game);
   for (const project of game.simulation.projects) {
     if (Math.abs(project.progress - 100) <= 1e-10) {

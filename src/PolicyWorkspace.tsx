@@ -2,11 +2,16 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { EconomyPolicies } from "./EconomyPolicies";
 import { EconomyEmblem } from "./EconomyEmblem";
 import { TaxPolicies } from "./TaxPolicies";
-import { voteOnBills } from "./engine/politics";
 import { StatHelp } from "./StatHelp";
 import { money, number } from "./components";
 import { useLanguage } from "./i18n";
-import { activeIds, launchCount, projectsOf } from "./engine/economy/engine";
+import {
+  activeIds,
+  crisisActive,
+  forecastBills,
+  launchCount,
+  projectsOf,
+} from "./engine/economy/engine";
 import { policyById } from "./engine/economy/catalog";
 import { taxDefinitions, type TaxId } from "./engine/taxes";
 import { POLICY_IDS, REGION_IDS } from "./engine/economy/types";
@@ -306,13 +311,12 @@ export function PolicyWorkspace({
               taxes={plan.taxes}
               enacted={game.taxes}
               softened={game.politics.softened}
-              bills={voteOnBills(
-                game.taxes,
-                plan.taxes,
-                game.politics.approval,
-                plan.soften ?? [],
-              )}
+              bills={forecastBills(game, plan)}
               soften={plan.soften ?? []}
+              perppu={plan.perppu ?? []}
+              emergency={crisisActive(game)}
+              pending={game.politics.perppu.map((p) => p.tax)}
+              onPerppu={(perppu) => onChange({ ...plan, perppu })}
               disabled={disabled}
               onChange={(taxes) => onChange({ ...plan, taxes })}
               onSoften={(soften) => onChange({ ...plan, soften })}

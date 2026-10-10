@@ -14,9 +14,20 @@ import {
   type TaxSettings,
 } from "../taxes";
 import {
+  BUDGET_VOTE_MONTHS,
+  PROTEST_THRESHOLD,
+  canDeal,
+  confirmPerppu,
+  dealCost,
   initialPolitics,
+  nextBudgetVote,
+  partyById,
+  stoppedWithin,
   updateApproval,
+  voteContext,
   voteOnBills,
+  voteOnBudget,
+  type BillResult,
   type PoliticsState,
 } from "../politics";
 import {
@@ -424,6 +435,54 @@ export const activeIds = (game: QuarterGame): PolicyId[] =>
 export const isFinished = (game: QuarterGame, id: PolicyId) =>
   Boolean(game.policies.find((p) => p.id === id)?.finished);
 /** Launches restart work; reactivating built facilities does not count. */
+/** The vote context for a draft, counting a deal offered in it. */
+export const planVoteContext = (game: QuarterGame, plan: QuarterPlan) => {
+  const month = game.simulation.month;
+  const politics = plan.deal
+    ? {
+        ...game.politics,
+        deals: [
+          ...game.politics.deals,
+          { party: plan.deal, until: month + 12, cost: dealCost(plan.deal) },
+        ],
+      }
+    : game.politics;
+  return voteContext(politics, month);
+};
+
+/** How the DPR would vote on the draft's tax changes right now. */
+export const forecastBills = (game: QuarterGame, plan: QuarterPlan) =>
+  voteOnBills(
+    game.taxes,
+    plan.taxes,
+    planVoteContext(game, plan),
+    plan.soften ?? [],
+    plan.perppu ?? [],
+  );
+
+/** The next APBN vote at today's approval, for this draft's portfolio. */
+export function forecastBudget(
+  game: QuarterGame,
+  plan: QuarterPlan,
+  deficit: number,
+) {
+  const month = nextBudgetVote(game.simulation.month);
+  if (month === null) return null;
+  const ending = activeIds(game).filter(
+    (id) => !plan.policies.includes(id) && !isFinished(game, id),
+  );
+  return voteOnBudget({
+    context: { ...planVoteContext(game, plan), month },
+    month,
+    active: plan.policies,
+    stoppedThisYear: [...stoppedWithin(game.politics, month), ...ending],
+    deficit,
+  });
+}
+
+/** A Perppu needs an emergency: any unresolved crisis. */
+export const crisisActive = (game: QuarterGame) =>
+  game.simulation.crises.some((c) => !c.resolved);
 export const launchCount = (game: QuarterGame, plan: QuarterPlan) =>
   plan.policies.filter((id) => {
     if (activeIds(game).includes(id)) return false;
@@ -561,6 +620,36 @@ export function validatePlan(game: QuarterGame, plan: QuarterPlan): string[] {
       plan.soften.some((id) => !TAX_IDS.includes(id)))
   )
     errors.push("Choose valid taxes to soften.");
+  const politics = game.politics;
+  const month = game.simulation.month;
+  if (
+    politics.frozenUntil > month &&
+    Array.isArray(plan.policies) &&
+    launchCount(game, plan) > 0
+  )
+    errors.push(
+      "Last year's budget is in force: no new policy can launch until the freeze ends.",
+    );
+  if (
+    plan.deal !== undefined &&
+    !(plan.deal in partyById && canDeal(politics, plan.deal, month))
+  )
+    errors.push("Choose a party that can take a coalition deal.");
+  if (plan.perppu !== undefined) {
+    if (
+      !Array.isArray(plan.perppu) ||
+      plan.perppu.some(
+        (id) => !TAX_IDS.includes(id) || plan.taxes?.[id] === game.taxes[id],
+      )
+    )
+      errors.push("A Perppu must change a tax.");
+    else if (plan.perppu.length && !crisisActive(game))
+      errors.push("A Perppu is only possible during an active crisis.");
+  }
+  if (politics.perppu.some((p) => plan.taxes?.[p.tax] !== game.taxes[p.tax]))
+    errors.push(
+      "A Perppu awaits DPR confirmation; keep that tax unchanged this quarter.",
+    );
   if (
     !plan.regionalSpending ||
     Object.keys(plan.regionalSpending).length !== POLICY_IDS.length ||
@@ -731,6 +820,10 @@ function random(s: EconomyState) {
   return s.rng / 4294967296;
 }
 
+/** Annual deficit of a quarter's ledger as a share of nominal GDP. */
+export const quarterDeficit = (ledger: Ledger, metrics: Metrics) =>
+  Math.max(0, ledger.spending + ledger.interest - ledger.revenue) *
+  (4 / (metrics.gdp * metrics.priceIndex));
 /** Indonesia's legal deficit ceiling (UU 17/2003), as a share of annual GDP. */
 export const DEFICIT_LIMIT = 0.03;
 /** Annualized deficit of one monthly ledger as a share of nominal GDP. */
@@ -1747,34 +1840,110 @@ function executeQuarter(
     for (const region of regionsBefore)
       for (const id of TAX_IDS) region.taxes[id] *= 3;
   }
-  // Each tax change is a DPR bill; a failed bill keeps the current level.
-  const votes = voteOnBills(
-    original.taxes,
-    plan.taxes,
-    original.politics.approval,
-    plan.soften ?? [],
-  );
   const politics = game.politics;
-  for (const vote of votes) {
+  const taxName = (id: TaxId) => taxDefinitions.find((d) => d.id === id)!.name;
+  // A coalition deal is paid at once and counts in this quarter's votes.
+  if (plan.deal) {
+    const cost = dealCost(plan.deal) * s.priceIndex;
+    politics.deals.push({ party: plan.deal, until: s.month + 12, cost });
+    const fromCash = Math.min(s.cash, cost);
+    s.cash -= fromCash;
+    s.debt += cost - fromCash;
     s.events.push({
       month: s.month,
       kind: "policy",
       title: bi(
-        `DPR ${vote.passed ? "passes" : "rejects"} ${taxDefinitions.find((d) => d.id === vote.tax)!.name.en}`,
-        `DPR ${vote.passed ? "menyetujui" : "menolak"} ${taxDefinitions.find((d) => d.id === vote.tax)!.name.id}`,
+        `Coalition deal with ${partyById[plan.deal].name}`,
+        `Kesepakatan koalisi dengan ${partyById[plan.deal].name}`,
+      ),
+      detail: bi(
+        `Rp ${cost.toFixed(1)}T of regional projects in the party's strongholds buys its support for a year.`,
+        `Proyek daerah Rp ${cost.toFixed(1).replace(".", ",")}T di basis partai ini membeli dukungannya selama setahun.`,
+      ),
+    });
+  }
+  const context = voteContext(politics, s.month);
+  const votes: BillResult[] = [];
+  // Last quarter's Perppu goes to the DPR first; a rejection revokes it.
+  for (const pending of politics.perppu) {
+    const vote = confirmPerppu(pending, context);
+    votes.push(vote);
+    s.events.push({
+      month: s.month,
+      kind: "policy",
+      title: bi(
+        `DPR ${vote.passed ? "confirms" : "revokes"} the Perppu on ${taxName(pending.tax).en}`,
+        `DPR ${vote.passed ? "mengesahkan" : "mencabut"} Perppu ${taxName(pending.tax).id}`,
       ),
       detail: bi(
         `${vote.yes} of 580 seats voted yes; 291 were needed.`,
         `${vote.yes} dari 580 kursi setuju; dibutuhkan 291.`,
       ),
     });
-    if (!vote.passed) continue;
+    if (vote.passed) continue;
+    game.taxes[pending.tax] = pending.from;
+    delete politics.softened[pending.tax];
+  }
+  politics.perppu = [];
+  // Each tax change is a DPR bill; a failed bill keeps the current level.
+  // A Perppu takes effect now and is voted on next quarter.
+  const emergency = plan.perppu ?? [];
+  // A tax whose Perppu was just voted on stays where that vote left it.
+  const planned = { ...plan.taxes };
+  for (const pending of original.politics.perppu)
+    planned[pending.tax] = game.taxes[pending.tax];
+  for (const vote of voteOnBills(
+    game.taxes,
+    planned,
+    context,
+    plan.soften ?? [],
+    emergency,
+  )) {
+    votes.push(vote);
+    s.events.push({
+      month: s.month,
+      kind: "policy",
+      title: vote.perppu
+        ? bi(
+            `Perppu changes ${taxName(vote.tax).en}`,
+            `Perppu mengubah ${taxName(vote.tax).id}`,
+          )
+        : bi(
+            `DPR ${vote.passed ? "passes" : "rejects"} ${taxName(vote.tax).en}`,
+            `DPR ${vote.passed ? "menyetujui" : "menolak"} ${taxName(vote.tax).id}`,
+          ),
+      detail: vote.perppu
+        ? bi(
+            "The emergency regulation applies now. The DPR votes to confirm or revoke it next quarter.",
+            "Peraturan darurat ini berlaku sekarang. DPR memutuskan mengesahkan atau mencabutnya triwulan depan.",
+          )
+        : bi(
+            `${vote.yes} of 580 seats voted yes; 291 were needed.`,
+            `${vote.yes} dari 580 kursi setuju; dibutuhkan 291.`,
+          ),
+    });
+    if (!vote.passed && !vote.perppu) continue;
+    if (vote.perppu)
+      politics.perppu.push({
+        tax: vote.tax,
+        from: vote.from,
+        to: vote.to,
+        month: s.month,
+        softened: vote.softened,
+      });
     game.taxes[vote.tax] = vote.to;
     if (vote.softened) politics.softened[vote.tax] = vote.from;
     else delete politics.softened[vote.tax];
     (vote.increase ? politics.taxRises : politics.taxCuts).push(s.month);
   }
   politics.lastVotes = votes;
+  for (const runtime of game.policies)
+    if (
+      runtime.active &&
+      !runtime.finished &&
+      !plan.policies.includes(runtime.id)
+    )
+      politics.stopped.push({ policy: runtime.id, month: s.month });
   game.regionalSpending = clone(plan.regionalSpending);
   for (const runtime of game.policies)
     runtime.active = plan.policies.includes(runtime.id);
@@ -1941,6 +2110,53 @@ function executeQuarter(
     activePolicies: activeIds(game),
     funding: ledger.funding,
   });
+  if (
+    game.politics.approval < PROTEST_THRESHOLD &&
+    !s.events.slice(eventStart).some((e) => e.title.en === "Street protests")
+  )
+    s.events.push({
+      month: s.month,
+      kind: "crisis",
+      title: bi("Street protests", "Demonstrasi besar"),
+      detail: bi(
+        `Approval fell to ${game.politics.approval.toFixed(0)}%. Coalition parties lose 10 support on every vote until it recovers to 30%.`,
+        `Kepuasan turun ke ${game.politics.approval.toFixed(0)}%. Partai koalisi kehilangan 10 dukungan pada setiap pemungutan suara sampai kembali ke 30%.`,
+      ),
+    });
+  // After Q3 the DPR votes on next year's APBN.
+  if ((BUDGET_VOTE_MONTHS as readonly number[]).includes(s.month)) {
+    const budget = voteOnBudget({
+      context: voteContext(game.politics, s.month),
+      month: s.month,
+      active: activeIds(game),
+      stoppedThisYear: stoppedWithin(game.politics, s.month),
+      deficit: quarterDeficit(ledger, after),
+    });
+    game.politics.budgets.push(budget);
+    if (!budget.passed) game.politics.frozenUntil = s.month + 12;
+    s.events.push({
+      month: s.month,
+      kind: "policy",
+      title: budget.passed
+        ? bi(
+            `DPR passes the ${budget.year} APBN`,
+            `DPR mengesahkan APBN ${budget.year}`,
+          )
+        : bi(
+            `DPR rejects the ${budget.year} APBN`,
+            `DPR menolak APBN ${budget.year}`,
+          ),
+      detail: budget.passed
+        ? bi(
+            `${budget.yes} of 580 seats voted yes. Next year's budget is approved.`,
+            `${budget.yes} dari 580 kursi setuju. Anggaran tahun depan disetujui.`,
+          )
+        : bi(
+            `${budget.yes} of 580 seats voted yes. Last year's budget repeats: running policies continue, but none can launch for four quarters.`,
+            `${budget.yes} dari 580 kursi setuju. Anggaran tahun lalu berlaku lagi: kebijakan berjalan tetap, tetapi tidak ada yang bisa diluncurkan selama empat triwulan.`,
+          ),
+    });
+  }
   game.receipt = {
     from: original.simulation.month,
     to: s.month,

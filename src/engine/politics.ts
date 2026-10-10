@@ -151,7 +151,31 @@ export const softenNames: Record<TaxId, Bilingual> = {
 };
 
 export const PILE_UP = 5;
+export const DEAL_BONUS = 15;
+export const PROTEST_PENALTY = -10;
+export const PROTEST_THRESHOLD = 30;
+export const DEFICIT_PENALTY = -30;
+/** Rp trillion per seat for regional projects promised in a coalition deal. */
+export const DEAL_COST_PER_SEAT = 0.1;
+/** Quarters end in these months (Q3) before the next year's APBN vote. */
+export const BUDGET_VOTE_MONTHS = [9, 21, 33, 45] as const;
 const VISIBLE_PROGRAMMES = ["mbg", "pkh", "jkn", "ckg"] as const;
+
+/** Running programmes each voter group notices in the yearly budget. */
+export const budgetGroupPolicies: Record<VoterGroup, readonly string[]> = {
+  villages: [
+    "pupuk",
+    "irrigation",
+    "kopdes",
+    "jalan-desa",
+    "embung-desa",
+    "pasar-desa",
+    "food-reserves",
+  ],
+  urban: ["krl", "mrt-lrt", "brt", "prakerja", "kereta-antarkota", "jkn"],
+  business: ["kur", "broadband", "cold-chain", "palm-replanting"],
+  outer: ["tol-laut", "plts", "pltp", "tourism-access"],
+};
 
 export type ApprovalTermId =
   | "income"
@@ -163,12 +187,17 @@ export type ApprovalTermId =
   | "shortfalls";
 export type ApprovalTerm = { id: ApprovalTermId; value: number };
 
+export type SupportExtraId = "deal" | "protest" | "deficit";
+export type SupportExtra = { id: SupportExtraId; value: number };
+
 export type SupportBreakdown = {
   party: PartyId;
   loyalty: number;
   approval: number;
   groups: { group: VoterGroup; value: number }[];
   pileUp: number;
+  /** Deals, protests and the deficit rule. */
+  extras?: SupportExtra[];
   total: number;
   yes: boolean;
   /** Vote flips to yes if this bill is softened. */
@@ -184,6 +213,30 @@ export type BillResult = {
   yes: number;
   passed: boolean;
   parties: SupportBreakdown[];
+  /** Enacted at once by emergency regulation; the DPR confirms it next quarter. */
+  perppu?: boolean;
+  /** The DPR's confirmation vote on last quarter's Perppu. */
+  confirmation?: boolean;
+};
+
+export type BudgetResult = {
+  /** Month the vote happened (end of Q3). */
+  month: number;
+  /** Calendar year the budget covers. */
+  year: number;
+  deficit: number;
+  groups: Record<VoterGroup, number>;
+  yes: number;
+  passed: boolean;
+  parties: SupportBreakdown[];
+};
+
+export type PendingPerppu = {
+  tax: TaxId;
+  from: TaxLevel;
+  to: TaxLevel;
+  month: number;
+  softened: boolean;
 };
 
 export type PoliticsState = {
@@ -197,6 +250,13 @@ export type PoliticsState = {
   target: number;
   previousApproval: number;
   lastVotes: BillResult[];
+  /** Launches are blocked while month < frozenUntil (a failed APBN). */
+  frozenUntil: number;
+  budgets: BudgetResult[];
+  /** Programmes stopped by the player, with the month they stopped. */
+  stopped: { policy: string; month: number }[];
+  deals: { party: PartyId; until: number; cost: number }[];
+  perppu: PendingPerppu[];
 };
 
 export const initialPolitics = (): PoliticsState => ({
@@ -209,7 +269,17 @@ export const initialPolitics = (): PoliticsState => ({
   target: OPENING_APPROVAL,
   previousApproval: OPENING_APPROVAL,
   lastVotes: [],
+  frozenUntil: 0,
+  budgets: [],
+  stopped: [],
+  deals: [],
+  perppu: [],
 });
+
+/** Fills fields added after a campaign was saved. */
+export const normalizePolitics = (
+  politics: Partial<PoliticsState> | undefined,
+): PoliticsState => ({ ...initialPolitics(), ...politics });
 
 const levelIndex = (level: TaxLevel) => TAX_LEVELS.indexOf(level);
 
@@ -247,37 +317,80 @@ export function billGroupEffects(bill: TaxBill, softened = false) {
   ) as Record<VoterGroup, number>;
 }
 
+/** Everything that shifts a party's vote besides the bill itself. */
+export type VoteContext = {
+  approval: number;
+  month: number;
+  deals: PoliticsState["deals"];
+};
+
+export const voteContext = (
+  politics: PoliticsState,
+  month: number,
+): VoteContext => ({
+  approval: politics.approval,
+  month,
+  deals: politics.deals,
+});
+
+export function partyExtras(
+  party: PartyDefinition,
+  context: VoteContext,
+): SupportExtra[] {
+  const extras: SupportExtra[] = [];
+  if (
+    context.deals.some((d) => d.party === party.id && d.until > context.month)
+  )
+    extras.push({ id: "deal", value: DEAL_BONUS });
+  if (context.approval < PROTEST_THRESHOLD && party.side !== "outside")
+    extras.push({ id: "protest", value: PROTEST_PENALTY });
+  return extras;
+}
+
 function partySupport(
   party: PartyDefinition,
   effects: Record<VoterGroup, number>,
-  approval: number,
+  context: VoteContext,
   pileUp: number,
+  extras: SupportExtra[],
 ) {
   const groups = party.groups.map((group) => ({
     group,
     value: effects[group],
   }));
-  const approvalTerm = 0.5 * (approval - 50);
+  const approvalTerm = 0.5 * (context.approval - 50);
   const total =
     loyalty[party.side] +
     approvalTerm +
     groups.reduce((sum, g) => sum + g.value, 0) +
-    pileUp;
+    pileUp +
+    extras.reduce((sum, e) => sum + e.value, 0);
   return {
     loyalty: loyalty[party.side],
     approval: approvalTerm,
     groups,
+    extras,
     total,
   };
 }
+
+const seatsFor = (rows: SupportBreakdown[]) =>
+  rows
+    .filter((b) => b.yes)
+    .reduce((sum, b) => sum + partyById[b.party].seats, 0);
+
+const asContext = (input: number | VoteContext): VoteContext =>
+  typeof input === "number" ? { approval: input, month: 0, deals: [] } : input;
 
 /** Each tax change is its own bill. Parties vote as blocs (fraksi). */
 export function voteOnBills(
   current: TaxSettings,
   planned: TaxSettings,
-  approval: number,
+  approvalOrContext: number | VoteContext,
   soften: readonly TaxId[] = [],
+  perppu: readonly TaxId[] = [],
 ): BillResult[] {
+  const context = asContext(approvalOrContext);
   const bills = pendingBills(current, planned);
   const increases = bills.filter((b) => b.steps > 0).length;
   return bills.map((bill) => {
@@ -287,9 +400,10 @@ export function voteOnBills(
     const effects = billGroupEffects(bill, softened);
     const softEffects = billGroupEffects(bill, true);
     const breakdown = parties.map((party): SupportBreakdown => {
-      const s = partySupport(party, effects, approval, pileUp);
+      const extras = partyExtras(party, context);
+      const s = partySupport(party, effects, context, pileUp, extras);
       const yes = s.total >= YES_THRESHOLD;
-      const soft = partySupport(party, softEffects, approval, pileUp);
+      const soft = partySupport(party, softEffects, context, pileUp, extras);
       return {
         party: party.id,
         ...s,
@@ -299,10 +413,8 @@ export function voteOnBills(
           increase && !softened && !yes && soft.total >= YES_THRESHOLD,
       };
     });
-    const yes = breakdown
-      .filter((b) => b.yes)
-      .reduce((sum, b) => sum + partyById[b.party].seats, 0);
-    return {
+    const yes = seatsFor(breakdown);
+    const result: BillResult = {
       tax: bill.tax,
       from: bill.from,
       to: bill.to,
@@ -312,8 +424,100 @@ export function voteOnBills(
       passed: yes >= MAJORITY,
       parties: breakdown,
     };
+    if (perppu.includes(bill.tax)) result.perppu = true;
+    return result;
   });
 }
+
+/** The DPR confirms or revokes a Perppu one quarter after it took effect. */
+export function confirmPerppu(
+  pending: PendingPerppu,
+  context: VoteContext,
+): BillResult {
+  const current = Object.fromEntries(
+    TAX_IDS.map((id) => [id, "standard"]),
+  ) as TaxSettings;
+  const planned = { ...current };
+  current[pending.tax] = pending.from;
+  planned[pending.tax] = pending.to;
+  const [vote] = voteOnBills(
+    current,
+    planned,
+    context,
+    pending.softened ? [pending.tax] : [],
+  );
+  return { ...vote, confirmation: true };
+}
+
+/** Group effects of the yearly budget: running programmes help, cuts hurt. */
+export function budgetGroupEffects(
+  active: readonly string[],
+  stoppedThisYear: readonly string[],
+): Record<VoterGroup, number> {
+  return Object.fromEntries(
+    VOTER_GROUPS.map((group) => {
+      const favoured = budgetGroupPolicies[group];
+      const running = active.filter((id) => favoured.includes(id)).length;
+      const cut = stoppedThisYear.filter((id) => favoured.includes(id)).length;
+      return [group, Math.min(15, 5 * running) - 10 * cut + 0];
+    }),
+  ) as Record<VoterGroup, number>;
+}
+
+/** The DPR votes on next year's APBN after Q3. */
+export function voteOnBudget(input: {
+  context: VoteContext;
+  month: number;
+  active: readonly string[];
+  stoppedThisYear: readonly string[];
+  /** Annual deficit as a share of GDP. */
+  deficit: number;
+}): BudgetResult {
+  const groups = budgetGroupEffects(input.active, input.stoppedThisYear);
+  const breakdown = parties.map((party): SupportBreakdown => {
+    const extras = partyExtras(party, input.context);
+    if (input.deficit > 0.03)
+      extras.push({ id: "deficit", value: DEFICIT_PENALTY });
+    const s = partySupport(party, groups, input.context, 0, extras);
+    return {
+      party: party.id,
+      ...s,
+      pileUp: 0,
+      yes: s.total >= YES_THRESHOLD,
+      softenFlips: false,
+    };
+  });
+  const yes = seatsFor(breakdown);
+  return {
+    month: input.month,
+    year: 2025 + Math.floor(input.month / 12) + 1,
+    deficit: input.deficit,
+    groups,
+    yes,
+    passed: yes >= MAJORITY,
+    parties: breakdown,
+  };
+}
+
+/** The first APBN vote at or after this month, or null after the last. */
+export const nextBudgetVote = (month: number) =>
+  BUDGET_VOTE_MONTHS.find((m) => m > month) ?? null;
+
+export const stoppedWithin = (politics: PoliticsState, month: number) =>
+  politics.stopped
+    .filter((s) => s.month > month - 12 && s.month <= month)
+    .map((s) => s.policy);
+
+export const dealCost = (party: PartyId) =>
+  Math.round(partyById[party].seats * DEAL_COST_PER_SEAT * 10) / 10;
+
+export const canDeal = (
+  politics: PoliticsState,
+  party: PartyId,
+  month: number,
+) =>
+  partyById[party].side !== "president" &&
+  !politics.deals.some((d) => d.party === party && d.until > month);
 
 /** The voter-group effects recorded with a bill result. */
 export const resultGroupEffects = (bill: BillResult) =>
@@ -335,11 +539,19 @@ export const effectiveRate = (
 ) => (softenedFrom ? (rates[level] + rates[softenedFrom]) / 2 : rates[level]);
 
 /** Standing support with no bill on the table. */
-export function standingSupport(approval: number) {
-  return parties.map((party) => ({
-    party: party.id,
-    total: loyalty[party.side] + 0.5 * (approval - 50),
-  }));
+export function standingSupport(context: number | VoteContext) {
+  const c = asContext(context);
+  return parties.map((party) => {
+    const extras = partyExtras(party, c);
+    return {
+      party: party.id,
+      extras,
+      total:
+        loyalty[party.side] +
+        0.5 * (c.approval - 50) +
+        extras.reduce((sum, e) => sum + e.value, 0),
+    };
+  });
 }
 
 export const coalitionSeats = () =>
@@ -360,6 +572,8 @@ export type ApprovalInputs = {
 
 export const APPROVAL_BASE = 55;
 export const APPROVAL_SPEED = 0.3;
+/** Approval needed at the end of the term for the re-election objective. */
+export const REELECTION_APPROVAL = 50;
 
 const recent = (months: number[], now: number) =>
   months.filter((m) => m > now - 12 && m <= now).length;
@@ -422,4 +636,10 @@ export const approvalTermNames: Record<ApprovalTermId, Bilingual> = {
     en: "Funding shortfalls this year",
     id: "Kekurangan dana setahun terakhir",
   },
+};
+
+export const extraNames: Record<SupportExtraId, Bilingual> = {
+  deal: { en: "Coalition deal", id: "Kesepakatan koalisi" },
+  protest: { en: "Street protests", id: "Demonstrasi" },
+  deficit: { en: "Deficit above 3%", id: "Defisit di atas 3%" },
 };

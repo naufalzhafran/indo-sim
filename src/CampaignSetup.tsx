@@ -127,6 +127,23 @@ export function CampaignSetup({
                   )}
                 </p>
               </section>
+              <section
+                className="campaign-brief"
+                aria-labelledby="campaign-reelection-title"
+              >
+                <h4 id="campaign-reelection-title">
+                  {t(
+                    "Bonus objective: Re-election 2029",
+                    "Target bonus: Terpilih kembali 2029",
+                  )}
+                </h4>
+                <p>
+                  {t(
+                    "Finish with public approval of at least 50%. Tax changes and each year's APBN need DPR votes, and approval moves how parties vote.",
+                    "Akhiri dengan kepuasan publik minimal 50%. Perubahan pajak dan APBN tiap tahun butuh suara DPR, dan kepuasan publik memengaruhi suara partai.",
+                  )}
+                </p>
+              </section>
             </>
           ) : step === 1 ? (
             <>

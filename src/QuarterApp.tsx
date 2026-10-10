@@ -15,6 +15,9 @@ import {
   DEFICIT_LIMIT,
   initialQuarter,
   validatePlan,
+  crisisActive,
+  forecastBills,
+  quarterDeficit,
 } from "./engine/economy/engine";
 import { policyById } from "./engine/economy/catalog";
 import { regionForProvince } from "./engine/gameRegions";
@@ -38,7 +41,11 @@ import {
 } from "./engine/economy/persistence";
 import { CampaignSetup } from "./CampaignSetup";
 import { TAX_IDS, TAX_LEVELS } from "./engine/taxes";
-import { TOTAL_SEATS, coalitionSeats, voteOnBills } from "./engine/politics";
+import {
+  PROTEST_THRESHOLD,
+  TOTAL_SEATS,
+  coalitionSeats,
+} from "./engine/politics";
 import type { ParliamentTab } from "./ParliamentPanel";
 import { LanguageSwitcher, translate, useLanguage } from "./i18n";
 import { Icon, Modal, money, number } from "./components";
@@ -104,12 +111,9 @@ export default function QuarterApp() {
   const [game, setGame] = useState<QuarterGame>(() => initialQuarter());
   const [plan, setPlan] = useState<QuarterPlan>(() => basePlan(game));
   const [dprTab, setDprTab] = useState<ParliamentTab>("parties");
-  const failingBill = voteOnBills(
-    game.taxes,
-    plan.taxes,
-    game.politics.approval,
-    plan.soften ?? [],
-  ).find((bill) => !bill.passed);
+  const failingBill = forecastBills(game, plan).find(
+    (bill) => !bill.passed && !bill.perppu,
+  );
   const [ready, setReady] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
   const [setup, setSetup] = useState(false);
@@ -398,13 +402,22 @@ export default function QuarterApp() {
   const changePlan = (input: QuarterPlan) => {
     if (locked) return;
     // Only tax increases can be softened; drop stale choices.
-    const { soften, ...rest } = input;
+    // A Perppu needs a changed tax and an active crisis.
+    const { soften, perppu, deal, ...rest } = input;
     const kept = (soften ?? []).filter(
       (id) =>
         TAX_LEVELS.indexOf(input.taxes[id]) >
         TAX_LEVELS.indexOf(game.taxes[id]),
     );
-    const next: QuarterPlan = kept.length ? { ...rest, soften: kept } : rest;
+    const emergency = crisisActive(game)
+      ? (perppu ?? []).filter((id) => input.taxes[id] !== game.taxes[id])
+      : [];
+    const next: QuarterPlan = {
+      ...rest,
+      ...(kept.length ? { soften: kept } : {}),
+      ...(emergency.length ? { perppu: emergency } : {}),
+      ...(deal ? { deal } : {}),
+    };
     const issues = validatePlan(game, next);
     if (issues.length) {
       setError(issues.map((issue) => translate(issue)).join(" "));
@@ -679,19 +692,23 @@ export default function QuarterApp() {
               className="q-map-brief"
               aria-label={t("Quarter brief", "Catatan triwulan")}
             >
-              {!plan.policies.length && (
-                <button className="q-brief-issue" onClick={() => openPolicy()}>
-                  {game.policies.length
-                    ? t(
-                        "No policies running: choose some",
-                        "Belum ada kebijakan berjalan: pilih kebijakan",
-                      )
-                    : t(
-                        "Choose your first policies",
-                        "Pilih kebijakan pertama Anda",
-                      )}
-                </button>
-              )}
+              {!plan.policies.length &&
+                game.politics.frozenUntil <= game.simulation.month && (
+                  <button
+                    className="q-brief-issue"
+                    onClick={() => openPolicy()}
+                  >
+                    {game.policies.length
+                      ? t(
+                          "No policies running: choose some",
+                          "Belum ada kebijakan berjalan: pilih kebijakan",
+                        )
+                      : t(
+                          "Choose your first policies",
+                          "Pilih kebijakan pertama Anda",
+                        )}
+                  </button>
+                )}
               {forecastLedger && forecastLedger.funding < 0.99 && (
                 <button
                   className="q-brief-issue"
@@ -700,6 +717,34 @@ export default function QuarterApp() {
                   {t(
                     "Your plan has a funding shortfall",
                     "Rencana Anda kekurangan pendanaan",
+                  )}
+                </button>
+              )}
+              {game.politics.frozenUntil > game.simulation.month && (
+                <button
+                  className="q-brief-issue"
+                  onClick={() => {
+                    setDprTab("budget");
+                    openView("dpr");
+                  }}
+                >
+                  {t(
+                    `APBN rejected: no launches until ${quarterName(game.politics.frozenUntil)}`,
+                    `APBN ditolak: tidak ada peluncuran sampai ${quarterName(game.politics.frozenUntil)}`,
+                  )}
+                </button>
+              )}
+              {game.politics.approval < PROTEST_THRESHOLD && (
+                <button
+                  className="q-brief-issue"
+                  onClick={() => {
+                    setDprTab("parties");
+                    openView("dpr");
+                  }}
+                >
+                  {t(
+                    "Street protests: coalition support is slipping",
+                    "Demonstrasi: dukungan koalisi melemah",
                   )}
                 </button>
               )}
@@ -1204,6 +1249,14 @@ export default function QuarterApp() {
                 disabled={locked}
                 tab={dprTab}
                 onTab={setDprTab}
+                deficit={
+                  preview?.receipt
+                    ? quarterDeficit(
+                        preview.receipt.ledger,
+                        preview.receipt.after,
+                      )
+                    : null
+                }
               />
             </Suspense>
           )}

@@ -80,6 +80,16 @@ export const indonesian: Record<string, string> = {
     "Periode pembangunan lima tahun telah selesai.",
   "Choose up to eight different policies.":
     "Pilih maksimal delapan kebijakan berbeda.",
+  "Last year's budget is in force: no new policy can launch until the freeze ends.":
+    "Anggaran tahun lalu berlaku: tidak ada kebijakan baru yang bisa diluncurkan sampai pembekuan berakhir.",
+  "Choose a party that can take a coalition deal.":
+    "Pilih partai yang bisa menerima kesepakatan koalisi.",
+  "A Perppu must change a tax.": "Perppu harus mengubah pajak.",
+  "A Perppu is only possible during an active crisis.":
+    "Perppu hanya bisa diterbitkan saat ada krisis aktif.",
+  "A Perppu awaits DPR confirmation; keep that tax unchanged this quarter.":
+    "Perppu menunggu pengesahan DPR; jangan ubah pajak itu triwulan ini.",
+  "Choose valid taxes to soften.": "Pilih pajak yang valid untuk dilunakkan.",
   "At most two policies can launch per quarter.":
     "Maksimal dua kebijakan dapat diluncurkan setiap triwulan.",
   "Choose a valid level for all six taxes.":

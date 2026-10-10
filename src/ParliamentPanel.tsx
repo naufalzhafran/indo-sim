@@ -16,16 +16,29 @@ import {
   sideNames,
   softenNames,
   standingSupport,
-  voteOnBills,
+  PROTEST_THRESHOLD,
+  budgetGroupPolicies,
+  canDeal,
+  dealCost,
+  extraNames,
+  nextBudgetVote,
   type BillResult,
+  type BudgetResult,
   type PartyId,
   type SupportBreakdown,
   type VoterGroup,
 } from "./engine/politics";
 import { taxDefinitions, type TaxId } from "./engine/taxes";
 import type { QuarterGame, QuarterPlan } from "./engine/economy/types";
+import {
+  crisisActive,
+  forecastBills,
+  forecastBudget,
+  planVoteContext,
+} from "./engine/economy/engine";
+import { policyById } from "./engine/economy/catalog";
 
-export type ParliamentTab = "parties" | "last" | TaxId;
+export type ParliamentTab = "parties" | "last" | "budget" | TaxId;
 
 const SEAT_ORDER: PartyId[] = [
   "pdip",
@@ -67,6 +80,9 @@ const seatPositions = (() => {
 const seatParty: PartyId[] = SEAT_ORDER.flatMap((id) =>
   Array<PartyId>(partyById[id].seats).fill(id),
 );
+
+const quarterLabel = (month: number) =>
+  `Q${Math.floor((month % 12) / 3) + 1} ${2025 + Math.floor(month / 12)}`;
 
 const signed = (value: number) =>
   `${value > 0 ? "+" : value < 0 ? "−" : "±"}${number(Math.abs(value), Number.isInteger(value) ? 0 : 1)}`;
@@ -148,7 +164,12 @@ function reason(row: SupportBreakdown, language: "en" | "id") {
   const worst = [...row.groups].sort((a, b) => a.value - b.value)[0];
   const best = [...row.groups].sort((a, b) => b.value - a.value)[0];
   const id = language === "id";
+  const extra = (kind: string) => row.extras?.find((e) => e.id === kind);
   if (!row.yes) {
+    if (extra("deficit"))
+      return id ? "defisit melewati 3%" : "the deficit breaks the 3% rule";
+    if (extra("protest") && row.total > 40)
+      return id ? "takut pada demonstrasi" : "wary of street protests";
     if (row.pileUp <= -10 && (!worst || worst.value > row.pileUp))
       return id
         ? "terlalu banyak kenaikan pajak"
@@ -159,6 +180,7 @@ function reason(row: SupportBreakdown, language: "en" | "id") {
         : `hurts ${groupNames[worst.group].en.toLowerCase()}`;
     return id ? "di luar koalisi" : "outside the coalition";
   }
+  if (extra("deal")) return id ? "kesepakatan koalisi" : "a coalition deal";
   if (best && best.value > 0)
     return id
       ? `menguntungkan ${groupNames[best.group].id.toLowerCase()}`
@@ -172,7 +194,7 @@ function BillTable({
   bill,
   filter,
 }: {
-  bill: BillResult;
+  bill: Pick<BillResult, "parties">;
   filter: VoterGroup | null;
 }) {
   const language = useLanguage();
@@ -224,6 +246,15 @@ function BillTable({
                       {signed(row.pileUp)}
                     </span>
                   )}
+                  {row.extras?.map((e) => (
+                    <span
+                      key={e.id}
+                      className="dpr-extra"
+                      data-tone={e.value > 0 ? "up" : "down"}
+                    >
+                      {extraNames[e.id][language]} {signed(e.value)}
+                    </span>
+                  ))}
                 </span>
                 <small>
                   {reason(row, language)}
@@ -259,6 +290,7 @@ export function ParliamentPanel({
   disabled,
   tab,
   onTab,
+  deficit,
 }: {
   game: QuarterGame;
   plan: QuarterPlan;
@@ -266,31 +298,47 @@ export function ParliamentPanel({
   disabled: boolean;
   tab: ParliamentTab;
   onTab: (tab: ParliamentTab) => void;
+  /** Annual deficit share forecast for this draft, when known. */
+  deficit: number | null;
 }) {
   const language = useLanguage();
   const t = (en: string, id: string) => (language === "id" ? id : en);
   const [filter, setFilter] = useState<VoterGroup | null>(null);
   const politics = game.politics;
-  const bills = voteOnBills(
-    game.taxes,
-    plan.taxes,
-    politics.approval,
-    plan.soften ?? [],
-  );
+  const month = game.simulation.month;
+  const bills = forecastBills(game, plan);
   const last = politics.lastVotes;
+  const lastBudget = politics.budgets.at(-1) ?? null;
+  const budget = deficit === null ? null : forecastBudget(game, plan, deficit);
+  const voteMonth = nextBudgetVote(month);
+  const frozen = politics.frozenUntil > month;
+  const emergency = crisisActive(game);
   const current: ParliamentTab =
     tab === "last"
       ? last.length
         ? "last"
         : "parties"
-      : tab === "parties" || bills.some((b) => b.tax === tab)
+      : tab === "budget" ||
+          tab === "parties" ||
+          bills.some((b) => b.tax === tab)
         ? tab
         : "parties";
   const bill =
-    current === "parties" || current === "last"
+    current === "parties" || current === "last" || current === "budget"
       ? null
       : bills.find((b) => b.tax === current)!;
-  const standing = standingSupport(politics.approval);
+  const standing = standingSupport(planVoteContext(game, plan));
+  const togglePerppu = (id: TaxId) => {
+    const perppu = plan.perppu ?? [];
+    onChange({
+      ...plan,
+      perppu: perppu.includes(id)
+        ? perppu.filter((x) => x !== id)
+        : [...perppu, id],
+    });
+  };
+  const toggleDeal = (party: PartyId) =>
+    onChange({ ...plan, deal: plan.deal === party ? undefined : party });
   const taxName = (id: TaxId) =>
     taxDefinitions.find((d) => d.id === id)!.name[language];
   const rate = (id: TaxId, level: BillResult["to"]) =>
@@ -318,7 +366,11 @@ export function ParliamentPanel({
           highlight={(party) =>
             !filter || partyById[party].groups.includes(filter)
           }
-          votes={bill?.parties ?? null}
+          votes={
+            bill?.parties ??
+            (current === "budget" ? (budget ?? lastBudget)?.parties : null) ??
+            null
+          }
         />
         <dl className="dpr-stats">
           <div>
@@ -348,6 +400,28 @@ export function ParliamentPanel({
             </dd>
           </div>
         </dl>
+        {(politics.approval < PROTEST_THRESHOLD || frozen) && (
+          <div className="dpr-alerts" role="status">
+            {politics.approval < PROTEST_THRESHOLD && (
+              <p>
+                <strong>{t("Street protests", "Demonstrasi")}</strong>{" "}
+                {t(
+                  "Approval is below 30%. Coalition parties lose 10 support on every vote until it recovers.",
+                  "Kepuasan di bawah 30%. Partai koalisi kehilangan 10 dukungan pada setiap pemungutan suara sampai pulih.",
+                )}
+              </p>
+            )}
+            {frozen && (
+              <p>
+                <strong>{t("Budget frozen", "Anggaran dibekukan")}</strong>{" "}
+                {t(
+                  `The DPR rejected the APBN. Last year's budget runs until ${quarterLabel(politics.frozenUntil)}: running policies continue, but nothing new can launch.`,
+                  `DPR menolak APBN. Anggaran tahun lalu berlaku sampai ${quarterLabel(politics.frozenUntil)}: kebijakan berjalan tetap, tetapi tidak ada yang baru bisa diluncurkan.`,
+                )}
+              </p>
+            )}
+          </div>
+        )}
         <div className="dpr-approval">
           <h4>
             {t("Where approval is heading", "Arah kepuasan publik")}{" "}
@@ -407,6 +481,12 @@ export function ParliamentPanel({
           </p>
           <p>
             {t(
+              "If the DPR rejects the APBN, the government runs on last year's budget (UUD 1945, Article 23(3)). In a crisis the president can issue a Perppu, which the DPR must confirm, as with Perppu 1/2020 during COVID-19.",
+              "Jika DPR menolak APBN, pemerintah memakai anggaran tahun lalu (UUD 1945 Pasal 23 ayat 3). Saat krisis presiden dapat menerbitkan Perppu yang harus disahkan DPR, seperti Perppu 1/2020 saat COVID-19.",
+            )}
+          </p>
+          <p>
+            {t(
               "Voter groups are a game simplification of each party's base.",
               "Kelompok pemilih adalah penyederhanaan basis tiap partai untuk permainan.",
             )}
@@ -444,13 +524,33 @@ export function ParliamentPanel({
               aria-pressed={current === b.tax}
               onClick={() => onTab(b.tax)}
             >
-              {t("Bill: ", "RUU: ")}
+              {b.perppu ? "Perppu: " : t("Bill: ", "RUU: ")}
               {taxName(b.tax)}
-              <small data-pass={b.passed}>
-                {b.passed ? t("passes", "lolos") : t("fails", "gagal")}
+              <small data-pass={b.passed || !!b.perppu}>
+                {b.perppu
+                  ? t("in force now", "berlaku sekarang")
+                  : b.passed
+                    ? t("passes", "lolos")
+                    : t("fails", "gagal")}
               </small>
             </button>
           ))}
+          {(voteMonth !== null || lastBudget) && (
+            <button
+              type="button"
+              aria-pressed={current === "budget"}
+              onClick={() => onTab("budget")}
+            >
+              {voteMonth !== null
+                ? `APBN ${2025 + Math.floor(voteMonth / 12) + 1}`
+                : `APBN ${lastBudget!.year}`}
+              {budget && (
+                <small data-pass={budget.passed}>
+                  {budget.passed ? t("passes", "lolos") : t("fails", "gagal")}
+                </small>
+              )}
+            </button>
+          )}
           {last.length > 0 && (
             <button
               type="button"
@@ -518,6 +618,15 @@ export function ParliamentPanel({
                       )}
                     />
                   </th>
+                  <th scope="col">
+                    <StatHelp
+                      label={t("Coalition deal", "Kesepakatan koalisi")}
+                      description={t(
+                        "Promise regional projects in a party's strongholds. It is paid at once from the treasury and adds 15 support on every vote for a year. One deal per quarter.",
+                        "Janjikan proyek daerah di basis partai. Dibayar langsung dari kas negara dan menambah 15 dukungan pada setiap pemungutan suara selama setahun. Satu kesepakatan per triwulan.",
+                      )}
+                    />
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -555,6 +664,37 @@ export function ParliamentPanel({
                         )}
                       </strong>
                     </td>
+                    <td>
+                      {party.side === "president" ? (
+                        <span className="dpr-muted">
+                          {t("President's party", "Partai presiden")}
+                        </span>
+                      ) : !canDeal(politics, party.id, month) ? (
+                        <span className="dpr-extra" data-tone="up">
+                          {t("Deal until ", "Sepakat sampai ")}
+                          {quarterLabel(
+                            politics.deals.find(
+                              (d) => d.party === party.id && d.until > month,
+                            )!.until,
+                          )}
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          className="dpr-deal"
+                          aria-pressed={plan.deal === party.id}
+                          disabled={disabled}
+                          onClick={() => toggleDeal(party.id)}
+                        >
+                          {t("Offer projects", "Tawarkan proyek")} · Rp{" "}
+                          {number(
+                            dealCost(party.id) * game.simulation.priceIndex,
+                            1,
+                          )}
+                          T
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -575,12 +715,17 @@ export function ParliamentPanel({
                     )}
                   </strong>
                   {" · "}
-                  {bill.passed
-                    ? t("passes", "lolos")
-                    : t(
-                        `fails (needs ${MAJORITY})`,
-                        `gagal (butuh ${MAJORITY})`,
-                      )}
+                  {bill.perppu
+                    ? t(
+                        "applies now by Perppu; this is how a confirmation vote would go today",
+                        "berlaku sekarang lewat Perppu; beginilah hasil pengesahan jika hari ini",
+                      )
+                    : bill.passed
+                      ? t("passes", "lolos")
+                      : t(
+                          `fails (needs ${MAJORITY})`,
+                          `gagal (butuh ${MAJORITY})`,
+                        )}
                 </p>
                 <p className="dpr-bill-groups">
                   {VOTER_GROUPS.map((g) => (
@@ -592,29 +737,59 @@ export function ParliamentPanel({
                   ))}
                 </p>
               </div>
-              {bill.increase && (
-                <button
-                  type="button"
-                  className="dpr-soften"
-                  aria-pressed={bill.softened}
-                  disabled={disabled}
-                  onClick={() => toggleSoften(bill.tax)}
-                >
-                  <strong>
-                    {t("Soften: ", "Lunakkan: ")}
-                    {softenNames[bill.tax][language]}
-                  </strong>
-                  <span>
-                    {t(
-                      "The rate rises half as much and harm to every voter group is halved.",
-                      "Tarif naik separuhnya dan kerugian bagi setiap kelompok pemilih berkurang separuh.",
-                    )}
-                  </span>
-                </button>
-              )}
+              <div className="dpr-bill-actions">
+                {emergency && (
+                  <button
+                    type="button"
+                    className="dpr-soften"
+                    aria-pressed={!!bill.perppu}
+                    disabled={disabled}
+                    onClick={() => togglePerppu(bill.tax)}
+                  >
+                    <strong>
+                      {t("Issue as Perppu", "Terbitkan sebagai Perppu")}
+                    </strong>
+                    <span>
+                      {t(
+                        "A crisis allows an emergency regulation: it applies now and the DPR votes to confirm or revoke it next quarter.",
+                        "Krisis memungkinkan peraturan darurat: berlaku sekarang dan DPR memutuskan mengesahkan atau mencabutnya triwulan depan.",
+                      )}
+                    </span>
+                  </button>
+                )}
+                {bill.increase && (
+                  <button
+                    type="button"
+                    className="dpr-soften"
+                    aria-pressed={bill.softened}
+                    disabled={disabled}
+                    onClick={() => toggleSoften(bill.tax)}
+                  >
+                    <strong>
+                      {t("Soften: ", "Lunakkan: ")}
+                      {softenNames[bill.tax][language]}
+                    </strong>
+                    <span>
+                      {t(
+                        "The rate rises half as much and harm to every voter group is halved.",
+                        "Tarif naik separuhnya dan kerugian bagi setiap kelompok pemilih berkurang separuh.",
+                      )}
+                    </span>
+                  </button>
+                )}
+              </div>
             </div>
             <BillTable bill={bill} filter={filter} />
           </>
+        )}
+
+        {current === "budget" && (
+          <BudgetView
+            budget={budget}
+            last={lastBudget}
+            voteMonth={voteMonth}
+            filter={filter}
+          />
         )}
 
         {current === "last" && (
@@ -626,16 +801,26 @@ export function ParliamentPanel({
               )}
             </p>
             {last.map((b) => (
-              <div key={b.tax} className="dpr-last">
+              <div
+                key={`${b.tax}-${b.confirmation ? "c" : "b"}`}
+                className="dpr-last"
+              >
                 <h4>
+                  {b.confirmation &&
+                    t("Perppu confirmation: ", "Pengesahan Perppu: ")}
+                  {b.perppu && "Perppu: "}
                   {billLabel(b)}
                   {b.softened && ` · ${t("softened", "dilunakkan")}`}
                 </h4>
                 <p>
-                  <span className="dpr-vote" data-yes={b.passed}>
-                    {b.passed
-                      ? t("Passed", "Disetujui")
-                      : t("Rejected", "Ditolak")}
+                  <span className="dpr-vote" data-yes={b.passed || !!b.perppu}>
+                    {b.perppu
+                      ? t("In force", "Berlaku")
+                      : b.passed
+                        ? t("Passed", "Disetujui")
+                        : b.confirmation
+                          ? t("Revoked", "Dicabut")
+                          : t("Rejected", "Ditolak")}
                   </span>{" "}
                   {t(
                     `${b.yes} of ${TOTAL_SEATS} voted yes`,
@@ -664,5 +849,102 @@ export function ParliamentPanel({
         )}
       </section>
     </div>
+  );
+}
+
+function BudgetView({
+  budget,
+  last,
+  voteMonth,
+  filter,
+}: {
+  budget: BudgetResult | null;
+  last: BudgetResult | null;
+  voteMonth: number | null;
+  filter: VoterGroup | null;
+}) {
+  const language = useLanguage();
+  const t = (en: string, id: string) => (language === "id" ? id : en);
+  const shown = budget ?? last;
+  return (
+    <>
+      <div className="dpr-bill-head">
+        <div>
+          <h4>
+            {budget && voteMonth !== null
+              ? t(
+                  `APBN ${budget.year}: vote after ${quarterLabel(voteMonth - 3)}`,
+                  `APBN ${budget.year}: pemungutan suara setelah ${quarterLabel(voteMonth - 3)}`,
+                )
+              : last
+                ? t(
+                    `APBN ${last.year}: last vote`,
+                    `APBN ${last.year}: hasil terakhir`,
+                  )
+                : t("APBN", "APBN")}
+          </h4>
+          {shown ? (
+            <>
+              <p role="status">
+                <strong>
+                  {t(
+                    `${shown.yes} yes of ${TOTAL_SEATS}`,
+                    `${shown.yes} setuju dari ${TOTAL_SEATS}`,
+                  )}
+                </strong>
+                {" · "}
+                {budget
+                  ? budget.passed
+                    ? t("would pass today", "akan lolos hari ini")
+                    : t(
+                        `would fail today (needs ${MAJORITY})`,
+                        `akan gagal hari ini (butuh ${MAJORITY})`,
+                      )
+                  : shown.passed
+                    ? t("passed", "disetujui")
+                    : t("rejected", "ditolak")}
+                {" · "}
+                {t("Deficit", "Defisit")} {number(shown.deficit * 100, 1)}%{" "}
+                {t("of GDP (limit 3%)", "dari PDB (batas 3%)")}
+              </p>
+              <p className="dpr-bill-groups">
+                {VOTER_GROUPS.map((g) => (
+                  <GroupChip key={g} group={g} value={shown.groups[g]} />
+                ))}
+              </p>
+            </>
+          ) : (
+            <p>{t("Forecast unavailable.", "Prakiraan tidak tersedia.")}</p>
+          )}
+        </div>
+        <div className="dpr-budget-rules">
+          <p>
+            {t(
+              "Each running programme a voter group values adds 5 (up to 15). Each one stopped in the last year costs 10. A deficit above 3% of GDP costs every party 30.",
+              "Setiap program berjalan yang dihargai kelompok pemilih menambah 5 (maksimal 15). Setiap program yang dihentikan setahun terakhir mengurangi 10. Defisit di atas 3% PDB mengurangi 30 bagi setiap partai.",
+            )}
+          </p>
+          <p>
+            {t(
+              "If it fails, last year's budget repeats: running policies continue, but nothing new can launch for four quarters.",
+              "Jika gagal, anggaran tahun lalu berlaku lagi: kebijakan berjalan tetap, tetapi tidak ada yang baru bisa diluncurkan selama empat triwulan.",
+            )}
+          </p>
+        </div>
+      </div>
+      <ul className="dpr-budget-groups">
+        {VOTER_GROUPS.map((g) => (
+          <li key={g}>
+            <strong>{groupNames[g][language]}</strong>{" "}
+            {budgetGroupPolicies[g]
+              .map(
+                (id) => policyById[id as keyof typeof policyById]?.name ?? id,
+              )
+              .join(", ")}
+          </li>
+        ))}
+      </ul>
+      {shown && <BillTable bill={shown} filter={filter} />}
+    </>
   );
 }

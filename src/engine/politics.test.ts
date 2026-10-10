@@ -7,8 +7,14 @@ import {
 } from "./economy/engine";
 import { parseQuarter, quarterEnvelope } from "./economy/persistence";
 import type { QuarterGame } from "./economy/types";
+import { validatePlan } from "./economy/engine";
 import {
+  BUDGET_VOTE_MONTHS,
   MAJORITY,
+  dealCost,
+  normalizePolitics,
+  voteContext,
+  voteOnBudget,
   TOTAL_SEATS,
   coalitionSeats,
   initialPolitics,
@@ -142,5 +148,130 @@ describe("DPR in the quarter", () => {
     const loaded = parseQuarter(JSON.stringify(older));
     expect(loaded.politics).toEqual(initialPolitics());
     expect(aggregate(loaded)).toEqual(aggregate(game));
+  });
+});
+
+describe("phase 2: the yearly APBN", () => {
+  const context = { approval: 60, month: 9, deals: [] };
+  it("passes a budget within the 3% rule and rejects one above it at low approval", () => {
+    const ok = voteOnBudget({
+      context,
+      month: 9,
+      active: ["pupuk", "kur"],
+      stoppedThisYear: [],
+      deficit: 0.02,
+    });
+    expect(ok.passed).toBe(true);
+    expect(ok.year).toBe(2026);
+    expect(ok.groups.villages).toBe(5);
+    const over = voteOnBudget({
+      context: { ...context, approval: 40 },
+      month: 9,
+      active: [],
+      stoppedThisYear: ["pupuk", "irrigation"],
+      deficit: 0.04,
+    });
+    expect(over.passed).toBe(false);
+    expect(over.parties[0].extras?.some((e) => e.id === "deficit")).toBe(true);
+  });
+
+  it("votes after Q3 and freezes launches for four quarters when it fails", () => {
+    expect(BUDGET_VOTE_MONTHS).toEqual([9, 21, 33, 45]);
+    let game = initialQuarter(19);
+    for (let q = 0; q < 2; q++)
+      game = resolveQuarter(game, basePlan(game), calm);
+    game.politics.approval = 10;
+    game = resolveQuarter(game, basePlan(game), calm);
+    expect(game.simulation.month).toBe(9);
+    expect(game.politics.budgets).toHaveLength(1);
+    expect(game.politics.budgets[0].passed).toBe(false);
+    expect(game.politics.frozenUntil).toBe(21);
+    const plan = basePlan(game);
+    plan.policies = ["bos"];
+    expect(validatePlan(game, plan).join(" ")).toContain(
+      "Last year's budget is in force",
+    );
+    expect(parseQuarter(encode(game))).toEqual(game);
+  });
+});
+
+describe("phase 3: deals, protests and Perppu", () => {
+  it("a coalition deal adds support for a year and is paid at once", () => {
+    const game = initialQuarter(19);
+    game.politics.approval = 45;
+    const plan = basePlan(game);
+    plan.taxes.vat = "increased";
+    plan.deal = "golkar";
+    const next = resolveQuarter(game, plan, calm);
+    const golkar = next.politics.lastVotes[0].parties.find(
+      (p) => p.party === "golkar",
+    )!;
+    expect(golkar.extras).toEqual([{ id: "deal", value: 15 }]);
+    expect(golkar.yes).toBe(true);
+    expect(next.politics.deals[0]).toMatchObject({
+      party: "golkar",
+      until: 12,
+    });
+    expect(dealCost("golkar")).toBe(10.2);
+    const again = basePlan(next);
+    again.deal = "golkar";
+    expect(validatePlan(next, again).join(" ")).toContain("coalition deal");
+  });
+
+  it("protests cost coalition parties support below 30% approval", () => {
+    const politics = normalizePolitics({ approval: 25 });
+    const [vote] = voteOnBills(
+      defaultTaxes(),
+      { ...defaultTaxes(), luxury: "increased" },
+      voteContext(politics, 0),
+    );
+    const pkb = vote.parties.find((p) => p.party === "pkb")!;
+    const pdip = vote.parties.find((p) => p.party === "pdip")!;
+    expect(pkb.extras).toEqual([{ id: "protest", value: -10 }]);
+    expect(pdip.extras).toEqual([]);
+  });
+
+  it("a Perppu applies during a crisis and the DPR can revoke it next quarter", () => {
+    const game = initialQuarter(19);
+    const plan = basePlan(game);
+    for (const id of TAX_IDS) plan.taxes[id] = "increased";
+    plan.perppu = [...TAX_IDS];
+    expect(validatePlan(game, plan).join(" ")).toContain("active crisis");
+    game.simulation.crises.push({
+      id: "test-flood",
+      title: "Flood",
+      description: "Test",
+      province: game.simulation.provinces[0].id,
+      months: 3,
+      severity: 1,
+      response: "relief",
+      resolved: false,
+      kind: "flood",
+      stage: "active",
+      damage: 1,
+      initialDamage: 1,
+      age: 0,
+    });
+    expect(validatePlan(game, plan)).toEqual([]);
+    const enacted = resolveQuarter(game, plan, calm);
+    expect(enacted.taxes.vat).toBe("increased");
+    expect(enacted.politics.perppu).toHaveLength(6);
+    const changed = basePlan(enacted);
+    changed.taxes.vat = "standard";
+    expect(validatePlan(enacted, changed).join(" ")).toContain(
+      "awaits DPR confirmation",
+    );
+    enacted.politics.approval = 30;
+    const voted = resolveQuarter(enacted, basePlan(enacted), calm);
+    const confirmations = voted.politics.lastVotes.filter(
+      (v) => v.confirmation,
+    );
+    expect(confirmations).toHaveLength(6);
+    expect(voted.politics.perppu).toEqual([]);
+    for (const vote of confirmations)
+      expect(voted.taxes[vote.tax]).toBe(
+        vote.passed ? "increased" : "standard",
+      );
+    expect(confirmations.some((v) => !v.passed)).toBe(true);
   });
 });

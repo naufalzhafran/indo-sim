@@ -286,6 +286,8 @@ export type QuarterVisualTransition = {
   /** DPR votes and the approval change this quarter. */
   politics?: {
     votes: QuarterGame["politics"]["lastVotes"];
+    budget?: QuarterGame["politics"]["budgets"][number];
+    deal?: QuarterGame["politics"]["deals"][number];
     approvalBefore: number;
     approval: number;
   };
@@ -451,6 +453,12 @@ export function buildQuarterVisualTransition(
     callouts,
     politics: after.politics && {
       votes: after.politics.lastVotes,
+      budget: after.politics.budgets?.find(
+        (b) => b.month === after.simulation.month,
+      ),
+      deal: after.politics.deals?.find(
+        (d) => d.until === after.simulation.month + 9,
+      ),
       approvalBefore: after.politics.previousApproval,
       approval: after.politics.approval,
     },

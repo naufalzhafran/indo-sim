@@ -1,6 +1,6 @@
 import type { Province, Project, Crisis } from "../../worldTypes";
 import type { TaxSettings, TaxId } from "../taxes";
-import type { PoliticsState } from "../politics";
+import type { PartyId, PoliticsState } from "../politics";
 
 export const FOUNDATIONS = [
   "education",
@@ -315,6 +315,10 @@ export type QuarterPlan = {
   regionalSpending: Record<PolicyId, RegionalSpending>;
   /** Tax increases sent to the DPR in softened form. */
   soften?: TaxId[];
+  /** Tax changes enacted at once by emergency regulation during a crisis. */
+  perppu?: TaxId[];
+  /** A party offered regional projects for its support this year. */
+  deal?: PartyId;
 };
 export type QuarterReceipt = {
   from: number;

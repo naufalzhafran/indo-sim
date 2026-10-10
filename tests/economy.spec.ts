@@ -1135,6 +1135,42 @@ test("the DPR votes on tax bills, and softening can turn a vote", async ({
   expect(saved.politics.lastVotes[0].passed).toBe(true);
 });
 
+test("a rejected APBN freezes launches and protests show on the map", async ({
+  page,
+}) => {
+  await start(page);
+  let game = initialQuarter(19);
+  for (let q = 0; q < 2; q++) game = resolveQuarter(game, basePlan(game), calm);
+  game.politics.approval = 10;
+  game = resolveQuarter(game, basePlan(game), calm);
+  expect(game.politics.frozenUntil).toBe(21);
+  expect(game.politics.approval).toBeLessThan(30);
+  await importGame(page, game);
+  await expect(
+    page.getByRole("button", {
+      name: "Street protests: coalition support is slipping",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: /^APBN rejected: no launches until/ })
+    .click();
+  const dpr = page.locator(".dpr-dialog");
+  await expect(
+    dpr.locator('.dpr-tabs button[aria-pressed="true"]'),
+  ).toContainText("APBN");
+  await expect(dpr).toContainText("rejected");
+  expect(
+    (await new AxeBuilder({ page }).include(".dpr-dialog").analyze())
+      .violations,
+  ).toEqual([]);
+  await page.keyboard.press("Escape");
+  await goPolicies(page);
+  await expect(page.locator(".eco-limit-banner")).toContainText(
+    "Budget frozen",
+  );
+});
+
 test("falling energy opens the electricity policy from the map", async ({
   page,
 }) => {

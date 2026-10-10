@@ -94,9 +94,13 @@ export function TaxPolicies({
   softened,
   bills,
   soften,
+  perppu,
+  emergency,
+  pending,
   disabled,
   onChange,
   onSoften,
+  onPerppu,
   onBill,
 }: {
   taxes: TaxSettings;
@@ -104,9 +108,15 @@ export function TaxPolicies({
   softened: PoliticsState["softened"];
   bills: BillResult[];
   soften: TaxId[];
+  perppu: TaxId[];
+  /** An active crisis allows a Perppu. */
+  emergency: boolean;
+  /** Taxes whose Perppu awaits DPR confirmation. */
+  pending: TaxId[];
   disabled: boolean;
   onChange: (taxes: TaxSettings) => void;
   onSoften: (soften: TaxId[]) => void;
+  onPerppu: (perppu: TaxId[]) => void;
   onBill: (tax: TaxId) => void;
 }) {
   const language = useLanguage();
@@ -176,7 +186,7 @@ export function TaxPolicies({
                 {effect}
               </p>
               <fieldset
-                disabled={disabled}
+                disabled={disabled || pending.includes(tax.id)}
                 aria-describedby={`tax-tradeoff-${tax.id} tax-rate-${tax.id}`}
               >
                 <legend className="sr-only">{tax.name[language]}</legend>
@@ -240,18 +250,38 @@ export function TaxPolicies({
                 )}
               </div>
               <div className="q-tax-dpr" data-testid={`tax-dpr-${tax.id}`}>
-                {bill ? (
+                {pending.includes(tax.id) ? (
+                  <p className="q-tax-dpr-forecast" role="status">
+                    <span className="dpr-vote" data-yes="true">
+                      Perppu
+                    </span>{" "}
+                    {t(
+                      "In force by emergency regulation. The DPR votes to confirm or revoke it when you advance; the rate is locked until then.",
+                      "Berlaku lewat peraturan darurat. DPR memutuskan mengesahkan atau mencabutnya saat Anda melanjutkan; tarif dikunci sampai saat itu.",
+                    )}
+                  </p>
+                ) : bill ? (
                   <>
                     <p className="q-tax-dpr-forecast" role="status">
-                      <span className="dpr-vote" data-yes={bill.passed}>
-                        {bill.passed
-                          ? t("DPR: passes", "DPR: lolos")
-                          : t("DPR: fails", "DPR: gagal")}
+                      <span
+                        className="dpr-vote"
+                        data-yes={bill.passed || !!bill.perppu}
+                      >
+                        {bill.perppu
+                          ? t("Perppu: applies now", "Perppu: berlaku sekarang")
+                          : bill.passed
+                            ? t("DPR: passes", "DPR: lolos")
+                            : t("DPR: fails", "DPR: gagal")}
                       </span>{" "}
-                      {t(
-                        `${bill.yes} yes of ${TOTAL_SEATS}, needs ${MAJORITY}`,
-                        `${bill.yes} setuju dari ${TOTAL_SEATS}, butuh ${MAJORITY}`,
-                      )}
+                      {bill.perppu
+                        ? t(
+                            `Confirmation vote next quarter; today ${bill.yes} of ${TOTAL_SEATS} would vote yes`,
+                            `Pengesahan triwulan depan; hari ini ${bill.yes} dari ${TOTAL_SEATS} akan setuju`,
+                          )
+                        : t(
+                            `${bill.yes} yes of ${TOTAL_SEATS}, needs ${MAJORITY}`,
+                            `${bill.yes} setuju dari ${TOTAL_SEATS}, butuh ${MAJORITY}`,
+                          )}
                     </p>
                     <span className="dpr-terms">
                       {VOTER_GROUPS.map((g) => (
@@ -263,6 +293,31 @@ export function TaxPolicies({
                       ))}
                     </span>
                     <div className="q-tax-dpr-actions">
+                      {emergency && (
+                        <button
+                          type="button"
+                          className="dpr-soften"
+                          aria-pressed={!!bill.perppu}
+                          disabled={disabled}
+                          onClick={() =>
+                            onPerppu(
+                              perppu.includes(tax.id)
+                                ? perppu.filter((id) => id !== tax.id)
+                                : [...perppu, tax.id],
+                            )
+                          }
+                        >
+                          <strong>
+                            {t("Issue as Perppu", "Terbitkan sebagai Perppu")}
+                          </strong>
+                          <span>
+                            {t(
+                              "Crisis: applies now, DPR votes next quarter",
+                              "Krisis: berlaku sekarang, DPR memutuskan triwulan depan",
+                            )}
+                          </span>
+                        </button>
+                      )}
                       {bill.increase && (
                         <button
                           type="button"
