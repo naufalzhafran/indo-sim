@@ -12,6 +12,7 @@ import {
   launchCount,
   aggregate,
   basePlan,
+  DEFICIT_LIMIT,
   initialQuarter,
   validatePlan,
 } from "./engine/economy/engine";
@@ -200,6 +201,9 @@ export default function QuarterApp() {
   const forecastBalance = forecastLedger
     ? forecastLedger.revenue - forecastLedger.spending - forecastLedger.interest
     : 0;
+  // Quarterly shortfall at an annual pace, against today's nominal output.
+  const forecastDeficit =
+    (Math.max(0, -forecastBalance) * 4 * 100) / (n.gdp * n.priceIndex);
   const finishRecap = useCallback(() => setTransition(null), []);
   const rendererReady = useCallback(
     () => setStartedAt((value) => value || performance.now()),
@@ -820,11 +824,13 @@ export default function QuarterApp() {
             <dl className="q-stat-grid">
               <div>
                 <dt>{t("Government debt", "Utang pemerintah")}</dt>
-                <dd>{money(n.debt)}</dd>
-                <small>
-                  {number((n.debt / (n.gdp * n.priceIndex)) * 100, 1)}%{" "}
-                  {t("of GDP", "dari PDB")}
-                </small>
+                <dd>
+                  {money(n.debt)}
+                  <small>
+                    {number((n.debt / (n.gdp * n.priceIndex)) * 100, 1)}%{" "}
+                    {t("of GDP", "dari PDB")}
+                  </small>
+                </dd>
               </div>
               <div>
                 <dt>{t("Treasury cash", "Kas negara")}</dt>
@@ -836,10 +842,19 @@ export default function QuarterApp() {
               </div>
               <div>
                 <dt>{t("Last quarter balance", "Saldo triwulan lalu")}</dt>
-                <dd data-tone={n.balance < 0 ? "warn" : "pass"}>
-                  {n.balance < 0 ? "−" : "+"}
-                  {money(Math.abs(n.balance))}
-                </dd>
+                {game.receipt ? (
+                  <dd data-tone={n.balance < 0 ? "warn" : "pass"}>
+                    {n.balance < 0 ? "−" : "+"}
+                    {money(Math.abs(n.balance))}
+                  </dd>
+                ) : (
+                  <dd>
+                    —
+                    <span className="sr-only">
+                      {t("No quarter played yet", "Belum ada triwulan")}
+                    </span>
+                  </dd>
+                )}
               </div>
               <div>
                 <dt>{t("Public approval", "Kepuasan publik")}</dt>
@@ -908,7 +923,13 @@ export default function QuarterApp() {
                         </tr>
                         <tr>
                           <th scope="row">
-                            {t("Other spending", "Belanja lainnya")}
+                            <StatHelp
+                              label={t("Other spending", "Belanja lainnya")}
+                              description={t(
+                                "Ongoing government spending you inherit: salaries, transfers to regions, subsidies and existing programmes such as BOS, JKN, PKH and KUR. Choosing those policies expands them beyond this baseline.",
+                                "Belanja pemerintah yang sudah berjalan: gaji, transfer ke daerah, subsidi, dan program yang ada seperti BOS, JKN, PKH, dan KUR. Memilih kebijakan tersebut berarti memperluasnya di atas belanja dasar ini.",
+                              )}
+                            />
                           </th>
                           <td>
                             −
@@ -935,6 +956,30 @@ export default function QuarterApp() {
                           <td>
                             {forecastBalance < 0 ? "−" : "+"}
                             {money(Math.abs(forecastBalance))}
+                          </td>
+                        </tr>
+                        <tr
+                          data-tone={
+                            forecastDeficit > DEFICIT_LIMIT * 100
+                              ? "warn"
+                              : "pass"
+                          }
+                        >
+                          <th scope="row">
+                            <StatHelp
+                              label={t(
+                                "Deficit / legal limit",
+                                "Defisit / batas",
+                              )}
+                              description={t(
+                                "The quarter's shortfall at a yearly pace, as a share of GDP. Indonesian law caps the deficit at 3% of GDP. Going over is allowed here, but lenders charge a higher rate on the whole debt.",
+                                "Kekurangan triwulan ini dalam laju tahunan, sebagai persentase PDB. Undang-undang membatasi defisit 3% PDB. Di sini batas itu boleh dilewati, tetapi pemberi pinjaman mengenakan bunga lebih tinggi atas seluruh utang.",
+                              )}
+                            />
+                          </th>
+                          <td>
+                            {number(forecastDeficit, 1)}% /{" "}
+                            {number(DEFICIT_LIMIT * 100, 0)}%
                           </td>
                         </tr>
                         <tr>

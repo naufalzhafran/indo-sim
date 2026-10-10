@@ -87,8 +87,8 @@ export const projectCompletionRewards: Partial<
       label: { en: "Electrification", id: "Elektrifikasi" },
     },
   ],
-  plta: [power(8)],
-  pltp: [power(6)],
+  plta: [power(10)],
+  pltp: [power(8)],
   pltu: [
     power(7),
     {

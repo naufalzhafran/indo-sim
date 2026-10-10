@@ -539,7 +539,7 @@ export function EconomyPolicies({
               <EconomyEmblem kind={current.impacts[0]?.target ?? "finance"} />
               <div>
                 <p className="eco-kicker">
-                  <PolicyKindBadge kind={current.kind} />
+                  <PolicyKindBadge kind={current.kind} existing={current.existing} />
                   {status(current.id)}
                 </p>
                 <h2 tabIndex={-1} ref={heading}>
@@ -704,6 +704,32 @@ export function EconomyPolicies({
               hidden={detailView !== "briefing"}
             >
               <PolicyEffects policy={current} briefing />
+              <section className="eco-reality">
+                <h3>{t("In reality", "Kenyataannya")}</h3>
+                <p>
+                  {current.existing &&
+                    t(
+                      "Already running and paid for in Other spending; choosing it here expands it. ",
+                      "Sudah berjalan dan dibiayai dalam Belanja lainnya; memilihnya di sini berarti memperluasnya. ",
+                    )}
+                  {current.reality[language]}{" "}
+                  {t(
+                    "Game costs and effects are simplified.",
+                    "Biaya dan dampak dalam permainan disederhanakan.",
+                  )}
+                </p>
+                <a
+                  className="eco-source-link"
+                  href={current.source}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t("Source", "Sumber")}
+                  <span className="sr-only">
+                    {t(" (opens in a new tab)", " (membuka tab baru)")}
+                  </span>
+                </a>
+              </section>
               <PolicyProjects policy={current} game={game} view="briefing" />
             </div>
             {current.kind !== "program" && (
@@ -1067,7 +1093,7 @@ export function EconomyPolicies({
                               ? t("Economy", "Ekonomi")
                               : foundationNames[policy.category][language]}
                           </span>
-                          <PolicyKindBadge kind={policy.kind} />
+                          <PolicyKindBadge kind={policy.kind} existing={policy.existing} />
                         </span>
                         {plan.policies.includes(policy.id) && (
                           <span
@@ -1161,13 +1187,13 @@ export function EconomyPolicies({
                             </span>
                           </>
                         )}
-                      </span>
-                      <span className="eco-policy-rollout">
-                        {policy.kind === "program"
-                          ? t("Planned rollout", "Rencana pelaksanaan")
-                          : t("Build time", "Lama bangun")}{" "}
-                        {number(Math.ceil(policy.rolloutMonths / 3), 0)}{" "}
-                        {t("qtr", "triwulan")}
+                        <span className="eco-policy-rollout">
+                          {policy.kind === "program"
+                            ? t("Rollout", "Pelaksanaan")
+                            : t("Build time", "Lama bangun")}{" "}
+                          {number(Math.ceil(policy.rolloutMonths / 3), 0)}{" "}
+                          {t("qtr", "triwulan")}
+                        </span>
                       </span>
                       <div className="eco-row-actions">
                         <button

@@ -1,6 +1,6 @@
 # Indonesia / Regional Economy
 
-A bilingual, browser-local strategy game about Indonesia's development over **20 quarters**. Model 7 connects **25 national policies → five regional foundations → 12 business sectors → jobs and household income → taxes → public funding**.
+A bilingual, browser-local strategy game about Indonesia's development over **20 quarters**. Model 7 connects **33 national policies → five regional foundations → 12 business sectors → jobs and household income → taxes → public funding**.
 
 The nine playable regions are Sumatra, Java, Bali, Kalimantan, Sulawesi, NTB, NTT, Maluku and Papua. All 38 provinces retain their own economy and geography. The cheerful island world remains the main view, with dedicated policy, regional and report panels.
 
@@ -34,7 +34,7 @@ Open http://127.0.0.1:5174. Deploy `dist/` to a static HTTP host; workers and bu
 - Stopping a policy ends future funding. Earned skills and paid assets remain; services need continued support. Restarting does not instantly restore delivery. Spending shortfalls reduce delivery and appear in forecasts and reports.
 - Costs determine affordability. Four or five mixed-cost policies are the opening balancing target; viable development can support larger portfolios. Eight expensive policies create fiscal pressure.
 
-The 10 additions use names inspired by real Indonesian programs or policy frameworks, including RUPTL PLN, PPG, PAMSIMAS & SANIMAS, P3-TGAI, Palapa Ring, SLIN, PSR, Reklamasi dan Pascatambang, Pengembangan Desa Wisata and Lumbung Pangan Masyarakat. Their simulated budgets, timings and effects are game assumptions, not claims about measured real-world outcomes. Source links appear in each detail panel.
+The 10 additions use names inspired by real Indonesian programs or policy frameworks, including the PLTS/PLTA/PLTP/PLTU power builds, PPG, PAMSIMAS & SANIMAS, P3-TGAI, Palapa Ring, SLIN, PSR, Reklamasi dan Pascatambang, Pengembangan Desa Wisata and Lumbung Pangan Masyarakat. Their simulated budgets, timings and effects are game assumptions, not claims about measured real-world outcomes. Each detail panel has an "In reality" line with one real-world fact and a source button. BOS, JKN, PKH, KUR and Prakerja are labelled as existing programmes: their baseline is already in Other spending, and choosing them expands them.
 
 ## Persistence and verification
 

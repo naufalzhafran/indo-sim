@@ -5,7 +5,8 @@
   display: flex;
   flex-direction: column;
   padding: 16px 20px !important;
-  width: min(730px, calc(100% - 36px));
+  /* Narrow side panel so the archipelago stays visible beside it. */
+  width: min(470px, calc(100% - 36px));
 }
 .economy-dossier > .q-dossier-top {
   flex: none;
@@ -648,7 +649,8 @@
   font-variant-numeric: tabular-nums;
 }
 .q-stat-grid small {
-  font-size: 11px;
+  display: block;
+  font: 400 12px/1.3 "Source Sans 3", sans-serif;
   color: var(--q-muted);
 }
 .q-stat-grid dd[data-tone="warn"],
@@ -725,4 +727,27 @@
   .economy-app .q-ledger td {
     padding: 1px 0;
   }
+}
+/* Narrow regions panel: metrics in pairs, foundations in two rows. */
+.economy-dossier .eco-region-metrics {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+  margin-bottom: 16px;
+}
+.economy-dossier .eco-region-metrics dd {
+  font-size: 18px;
+}
+.economy-dossier .eco-foundation-strip {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  row-gap: 12px;
+}
+.economy-dossier .eco-foundation {
+  padding: 0 10px;
+}
+.economy-dossier .eco-foundation:nth-child(3n + 1) {
+  padding-left: 0;
+}
+.economy-dossier .eco-foundation:nth-child(3n) {
+  padding-right: 0;
+  border-right: 0;
 }

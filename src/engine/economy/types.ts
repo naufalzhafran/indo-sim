@@ -151,6 +151,10 @@ export type PolicyDefinition = {
   impacts: PolicyImpact[];
   source: string;
   adapted: boolean;
+  /** Already funded inside inherited spending; choosing it expands the programme. */
+  existing?: boolean;
+  /** One short real-world fact shown beside the simplified game numbers. */
+  reality: Bilingual;
 };
 export type IndustryDefinition = {
   id: IndustryId;
