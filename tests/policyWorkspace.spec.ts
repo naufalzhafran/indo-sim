@@ -437,7 +437,9 @@ for (const language of ["en", "id"] as const) {
     );
     await expect(
       dialog.locator('.policy-plan-effects [data-metric="jobs"] dd'),
-    ).toHaveText(signed(decisions.jobs! * 1_000_000, 0));
+    ).toHaveText(
+      `${signed(decisions.jobs! * 1_000_000, 0)} ${language === "en" ? "people" : "orang"}`,
+    );
     await expect(
       dialog.locator('.policy-plan-effects [data-metric="poverty"] dd'),
     ).toHaveText(
@@ -463,7 +465,7 @@ for (const language of ["en", "id"] as const) {
     ).toHaveText(language === "en" ? "0.00%" : "0,00%", { timeout: 25000 });
     await expect(
       dialog.locator('.policy-plan-effects [data-metric="jobs"] dd'),
-    ).toHaveText("0");
+    ).toHaveText(language === "en" ? "0 people" : "0 orang");
     await expect(
       dialog.locator('.policy-plan-effects [data-metric="poverty"] dd'),
     ).toHaveText(language === "en" ? "0.00 pp" : "0,00 poin");

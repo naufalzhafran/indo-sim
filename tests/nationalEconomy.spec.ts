@@ -173,7 +173,10 @@ for (const language of ["en", "id"] as const) {
         );
         const formatted = new Intl.NumberFormat(
           language === "id" ? "id-ID" : "en-GB",
-          { minimumFractionDigits: 1, maximumFractionDigits: 1 },
+          {
+            minimumFractionDigits: expectedOutput >= 1000 ? 0 : 1,
+            maximumFractionDigits: expectedOutput >= 1000 ? 0 : 1,
+          },
         ).format(expectedOutput);
         await expect(panel.locator(".national-output")).toHaveText(
           `Rp ${formatted}T`,
