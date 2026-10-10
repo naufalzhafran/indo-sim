@@ -94,6 +94,41 @@ const monthlyTrend = Math.pow(annualTrend, 1 / 12);
 const laborTrend = Math.pow(1.033, 1 / 12);
 const jobElasticity = 0.5;
 const monthlyPopulation = Math.pow(1.009, 1 / 12);
+/**
+ * Diminishing returns: the first improvements to roads, power and services
+ * lift output fully, and each gain beyond that adds less. Losses count fully.
+ */
+const READINESS_FULL_GAIN = 0.03;
+const READINESS_SATURATION = 0.1;
+export const readinessReturn = (ratio: number) => {
+  const extra = ratio - 1 - READINESS_FULL_GAIN;
+  return extra <= 0
+    ? ratio
+    : 1 + READINESS_FULL_GAIN + extra / (1 + extra / READINESS_SATURATION);
+};
+/**
+ * Frictional unemployment in percent. Below it, extra labour demand fills
+ * only part of the gap, so unemployment rarely falls below about 3%.
+ * Indonesia's open unemployment rate was about 4.8% in early 2025 (BPS).
+ * Provinces that open lower, where most people farm or run a family
+ * business, keep a floor just under their own opening rate.
+ */
+export const FRICTIONAL_UNEMPLOYMENT = 4;
+const TIGHT_MARKET_FILL = 0.4;
+export const unemploymentFloor = (openingRate: number) =>
+  Math.min(FRICTIONAL_UNEMPLOYMENT, 0.75 * openingRate);
+/** Scale applied to labour demand so a tight market hires less than asked. */
+export function tightLabourScale(
+  demand: number,
+  laborForce: number,
+  floorPercent = FRICTIONAL_UNEMPLOYMENT,
+) {
+  const floor = floorPercent / 100;
+  const wanted = 1 - demand / laborForce;
+  if (wanted >= floor || demand <= 0) return 1;
+  const filled = floor - (floor - wanted) * TIGHT_MARKET_FILL;
+  return ((1 - filled) * laborForce) / demand;
+}
 const levelWeight = { low: 1, medium: 2, high: 3 };
 const defaultLevels = (): RegionalSpending =>
   Object.fromEntries(
@@ -1400,6 +1435,7 @@ function advanceMonth(
       -0.2,
       0.3,
     );
+    const demandByIndustry = new Map<IndustryId, number>();
     for (const def of industries) {
       const industrialFoundations = {
         ...f,
@@ -1469,7 +1505,7 @@ function advanceMonth(
         old.initialOutput *
         (1 + built(`industry:${def.id}`) / 100) *
         monthlyTrend ** (s.month + 1) *
-        (ready.value / old.initialReadiness) *
+        readinessReturn(ready.value / old.initialReadiness) *
         next.productivity *
         (1 + spillover) *
         tariffCost;
@@ -1523,6 +1559,19 @@ function advanceMonth(
           (monthlyTrend / laborTrend) ** (s.month + 1) *
           Math.pow(next.output / trendOutput, jobElasticity)) /
         (1 + 0.0015 * (b.skills - b.initialSkills));
+      demandByIndustry.set(def.id, laborDemand);
+    }
+    // Some people are always between jobs or looking for a better match, so
+    // hiring gets harder as unemployment nears that floor.
+    const demandScale = tightLabourScale(
+      sum([...demandByIndustry.values()]),
+      p.laborForce,
+      unemploymentFloor(b.initialUnemployment),
+    );
+    for (const def of industries) {
+      const old = b.industries[def.id],
+        next = p.industries[def.id];
+      const laborDemand = demandByIndustry.get(def.id)! * demandScale;
       next.jobs = Math.max(0, old.jobs + (laborDemand - old.jobs) * 0.16);
     }
     const jobs = sum(industries.map((def) => p.industries[def.id].jobs));

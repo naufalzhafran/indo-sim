@@ -1,5 +1,53 @@
 # Gameplay balance review
 
+## Playtest sweep, 10 October 2026
+
+`npm run playtest` plays about 800 five-year campaigns with simple bots: doing nothing, beginners who follow the "Good first picks" or stop early, random picks of 3, 5 and 8 cards, random players who refill every free slot, single-topic specialists, every policy on its own, tax rises and cuts, coalition deals and reckless spending. Fixed strategies run on seeds 19, 73, 997 and 2025, calm and with shocks. `npm run playtest -- --quick` runs a smaller set, and `--only idle,starter` picks strategies by name.
+
+### What the first sweep found
+
+- **One strategy won everything.** Launching every one-time build and refilling each slot as a build finished met all six goals on every seed, with the best income (+27.5%), the lowest debt (30%) and the most power. Unemployment fell to **0.8%**, which no real economy reaches. Every random player who refilled slots this way also drove unemployment under 3%.
+- **No goal was unreachable and nothing collapsed.** Doing nothing still drifts (1 of 6 goals, 7.3% unemployment, debt 33%). Reckless spending with tax cuts hits the 3% deficit line, runs funding shortfalls every quarter and loses the APBN vote, but debt stays near 40% instead of running away.
+- **Politics already prevents the old tax exploits.** Raising all six taxes at once fails in the DPR every time. Single rises pass and trade income for lower debt. Tax relief raises income but breaks the budget goal and costs approval.
+
+### What changed
+
+| Change | Why |
+| --- | --- |
+| **Job-market floor** (`FRICTIONAL_UNEMPLOYMENT`, `tightLabourScale` in `engine.ts`). Below 4% unemployment, extra demand for workers fills only 40% of the gap. Provinces that open lower (Bali, the Papua highlands) keep a floor at 75% of their own opening rate. | Some people are always between jobs. Indonesia's open unemployment rate was about 4.8% in early 2025 (BPS). The goal explanation now says it rarely falls below about 3%. |
+| **Diminishing returns** (`readinessReturn`). The first 3% gain in an industry's foundations raises output fully; gains beyond that add less and less. Losses still count in full. | The first roads and power plants help most. This trims runaway growth without touching ordinary play. |
+
+Both changes only bite in tight or very well-built economies, so the opening, doing nothing and typical portfolios are unchanged.
+
+### Results after the change
+
+Means per strategy. Goal columns show how often each goal was met.
+
+| Strategy | Goals | Income | Poverty | Jobs | Foundations | Power | Budget | Unemployment | Approval |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Do nothing | 1.0 | 0% | 0% | 0% | 0% | 0% | 100% | 7.3% | 56% |
+| Good first picks (6) | 5.0 | 100% | 100% | 100% | 100% | 0% | 100% | 5.2% | 64% |
+| Two first picks, then stop | 2.1 | 0% | 13% | 0% | 0% | 100% | 100% | 6.4% | 58% |
+| Good first picks, then refill slots | 6.0 | 100% | 100% | 100% | 100% | 100% | 100% | 4.0% | 67% |
+| Every build, refilling slots | 6.0 | 100% | 100% | 100% | 100% | 100% | 100% | 2.7% (was 0.8%) | 68% |
+| Programmes only, no builds | 3.9 | 100% | 100% | 88% | 0% | 0% | 100% | 5.4% | 67% |
+| Mixed eight | 5.0 | 100% | 100% | 100% | 100% | 0% | 100% | 4.4% | 65% |
+| Expensive eight | 4.8 | 100% | 100% | 100% | 100% | 0% | 75% | 3.9% | 67% |
+| Expensive eight with tax relief | 4.0 | 100% | 100% | 100% | 100% | 0% | 0% | 4.2% | 47% |
+| 3 random cards (80 runs) | 2.4 | 10% | 73% | 18% | 0% | 40% | 100% | 6.0% | 59% |
+| 5 random cards (80 runs) | 3.8 | 65% | 98% | 70% | 13% | 31% | 100% | 5.1% | 62% |
+| 8 random cards (80 runs) | 4.6 | 93% | 100% | 100% | 34% | 36% | 100% | 4.2% | 65% |
+| Random, refilling slots (80 runs) | 5.2 | 100% | 100% | 100% | 70% | 53% | 96% | 3.7% | 68% |
+
+Every policy played alone for five years meets 1 or 2 goals. None is useless and none wins alone.
+
+### Still open
+
+- **Building everything is still the strongest route.** It no longer runs away (income +24% instead of +27.5%, unemployment 2.7% instead of 0.8%), but it still meets all six goals. Its costs are real but mild: deficits pass 3% and the DPR rejects about one APBN, and schools and clinics barely improve. A further step would be upkeep for finished power plants and digital or water builds, which roads already pay. That changes costs players see, so it is left for a decision.
+- **The good first picks never keep the lights on.** One solar build cannot keep up with the growth the other picks create, so energy is the goal they miss. This is intended: the "Energy is falling" prompt teaches the second power build.
+- **The budget goal is rarely missed.** Only tax relief or very expensive portfolios break it. It works as a "don't be reckless" goal, not a hard one.
+
+
 ## Update, 10 October 2026: beginner and education pass
 
 These means come from `npm run balance:quarter` (seeds 19, 73 and 997, calm and with shocks) after this pass. The script now skips new launches while a rejected APBN freezes them. Before that fix it stopped with an error, because the DPR can reject the budget.

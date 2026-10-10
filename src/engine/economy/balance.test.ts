@@ -8,13 +8,17 @@ import {
   deficitPremium,
   initialQuarter,
   activeIds,
+  FRICTIONAL_UNEMPLOYMENT,
+  readinessReturn,
+  tightLabourScale,
   isFinished,
   resolveQuarter,
 } from "./engine";
 import { campaignGoals } from "./goals";
 import { powerNetworks } from "./power";
 import { parseQuarter, quarterEnvelope } from "./persistence";
-import type { PolicyId, QuarterGame } from "./types";
+import { policyById } from "./catalog";
+import { POLICY_IDS, type PolicyId, type QuarterGame } from "./types";
 
 function campaign(ids: PolicyId[], seed = 19, calm = true, quarters = 20) {
   let game = initialQuarter(seed);
@@ -68,6 +72,31 @@ describe("campaign balance", () => {
     );
     expect(campaignGoals(game).filter((g) => !g.met)).toEqual([]);
     expect(parseQuarter(JSON.stringify(quarterEnvelope(game)))).toEqual(game);
+  });
+
+  it("keeps a tight labour market above zero unemployment", () => {
+    const force = 100;
+    expect(tightLabourScale(90, force)).toBe(1);
+    // Demand for every worker fills only part of the gap below the floor.
+    const scale = tightLabourScale(force, force);
+    expect(100 * (1 - scale)).toBeGreaterThan(2);
+    expect(100 * (1 - scale)).toBeLessThan(FRICTIONAL_UNEMPLOYMENT);
+  });
+
+  it("gives diminishing returns to large foundation gains", () => {
+    expect(readinessReturn(0.95)).toBe(0.95);
+    expect(readinessReturn(1.02)).toBe(1.02);
+    expect(readinessReturn(1.1) - 1).toBeLessThan(0.08);
+    expect(readinessReturn(1.2)).toBeGreaterThan(readinessReturn(1.1));
+  });
+
+  it("does not let rolling through every build run away", () => {
+    // Players can launch each build once and refill the slot when it finishes.
+    const builds = POLICY_IDS.filter((id) => policyById[id].kind === "build");
+    const game = campaign(builds);
+    const now = aggregate(game);
+    expect(now.unemployment).toBeGreaterThan(2.5);
+    expect(now.realIncome).toBeLessThan(126);
   });
 
   it("lets completed power plants reverse reliability pressure", () => {

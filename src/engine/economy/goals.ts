@@ -104,8 +104,8 @@ export const goalExplanations: Record<string, Bilingual> = {
     id: "Persentase penduduk di bawah garis kemiskinan nasional. Turun 1,5 poin persentase berarti dari sekitar 8,7% menjadi 7,2%, kira-kira empat juta orang miskin lebih sedikit.",
   },
   jobs: {
-    en: "The share of people who want work but have none. Young people join the workforce every year, so businesses must keep hiring just to hold it steady.",
-    id: "Persentase orang yang ingin bekerja tetapi belum punya pekerjaan. Anak muda masuk angkatan kerja setiap tahun, jadi dunia usaha harus terus merekrut agar angkanya tidak naik.",
+    en: "The share of people who want work but have none. Young people join the workforce every year, so businesses must keep hiring just to hold it steady. Some people are always between jobs, so it rarely falls below about 3%.",
+    id: "Persentase orang yang ingin bekerja tetapi belum punya pekerjaan. Anak muda masuk angkatan kerja setiap tahun, jadi dunia usaha harus terus merekrut agar angkanya tidak naik. Selalu ada orang yang sedang pindah kerja, jadi angkanya jarang di bawah sekitar 3%.",
   },
   services: {
     en: "Foundations are Education, Infrastructure, Energy, Food and Health, each scored out of 100. They make every industry more productive. You can see them on the Economy screen.",
