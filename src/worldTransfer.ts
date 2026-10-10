@@ -23,6 +23,11 @@ import {
 } from "./structureLayout";
 import type { RegionId } from "./engine/economy/types";
 import { getLocalScenery, seedLocalScenery } from "./localScenery";
+import {
+  buildTransportNetwork,
+  seedTransportNetwork,
+  type TransportNetwork,
+} from "./transportNetwork";
 
 type Point2 = [number, number];
 type Point3 = [number, number, number];
@@ -96,6 +101,7 @@ const readSite = (s: ReturnType<typeof siteData>): Site => ({
 /** Only immutable scene data crosses the worker boundary; GPU resources stay on the main thread. */
 export function packWorld(world: WorldGeometry) {
   const network = buildRoadNetwork(world);
+  const transport = buildTransportNetwork(world);
   return {
     provinces: world.provinces.map((p) => ({
       id: p.id,
@@ -135,6 +141,18 @@ export function packWorld(world: WorldGeometry) {
         ] as const,
     ),
     localScenery: getLocalScenery(world),
+    transport: {
+      sea: transport.sea.map((r) => ({ ...r, points: r.points.map(point3) })),
+      rail: transport.rail.map((r) => ({ ...r, points: r.points.map(point3) })),
+      airports: transport.airports.map((a) => ({
+        ...a,
+        position: point3(a.position),
+      })),
+      fishing: transport.fishing.map((f) => ({
+        ...f,
+        position: point3(f.position),
+      })),
+    },
   };
 }
 export type PackedWorld = ReturnType<typeof packWorld>;
@@ -220,5 +238,24 @@ export function unpackWorld(data: PackedWorld): WorldGeometry {
     ),
   );
   seedLocalScenery(world, data.localScenery);
+  const transport: TransportNetwork = {
+    sea: data.transport.sea.map((r) => ({
+      ...r,
+      points: r.points.map((v) => new Vector3(...v)),
+    })),
+    rail: data.transport.rail.map((r) => ({
+      ...r,
+      points: r.points.map((v) => new Vector3(...v)),
+    })),
+    airports: data.transport.airports.map((a) => ({
+      ...a,
+      position: new Vector3(...a.position),
+    })),
+    fishing: data.transport.fishing.map((f) => ({
+      ...f,
+      position: new Vector3(...f.position),
+    })),
+  };
+  seedTransportNetwork(world, transport);
   return world;
 }

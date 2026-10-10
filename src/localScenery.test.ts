@@ -76,9 +76,10 @@ function fixture() {
     cities: [
       {
         id: "city",
+        province: "11",
         position: new Vector3(14, 1, 6),
         size: 1,
-        towers: [{ x: 14, z: 7.2, w: 0.24, h: 0.7, seed: 0.5 }],
+        towers: [{ x: 14, z: 7.2, w: 0.24, h: 0.7, seed: 0.5, grow: 0 }],
       },
     ],
   };

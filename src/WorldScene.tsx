@@ -15,13 +15,11 @@ import {
   Box3,
   CanvasTexture,
   Color,
-  ExtrudeGeometry,
   Group,
   InstancedMesh,
   Mesh,
   Object3D,
   SRGBColorSpace,
-  Shape,
   Vector2,
   Vector3,
 } from "three";
@@ -59,6 +57,10 @@ import { AmbientAnimationDriver } from "./ambientAnimation";
 import WorldCamera, { type CameraAction } from "./WorldCamera";
 import LocalSceneryScene from "./LocalSceneryScene";
 import WorldSun from "./WorldSun";
+import TransportScene from "./TransportScene";
+import CrisisScenery from "./CrisisScenery";
+import { buildTransportNetwork } from "./transportNetwork";
+import { planFleet, regionGrowth } from "./transportTraffic";
 
 export type { CameraAction } from "./WorldCamera";
 export type WorldSceneProps = {
@@ -473,89 +475,6 @@ function ShorelineGlow({
     </mesh>
   );
 }
-function boatHull(length: number, width: number, depth: number) {
-  const back = -length * 0.5,
-    half = width * 0.5;
-  const outline = new Shape()
-    .moveTo(back, -half * 0.85)
-    .lineTo(length * 0.15, -half)
-    .quadraticCurveTo(length * 0.38, -half * 0.8, length * 0.55, 0)
-    .quadraticCurveTo(length * 0.38, half * 0.8, length * 0.15, half)
-    .lineTo(back, half * 0.85)
-    .closePath();
-  const geometry = new ExtrudeGeometry(outline, {
-    depth,
-    bevelEnabled: false,
-    curveSegments: 3,
-  });
-  geometry.rotateX(-Math.PI / 2);
-  return geometry;
-}
-const SHIP_HULL = boatHull(2.4, 0.8, 0.22);
-const SHIP_DECK = boatHull(2.3, 0.7, 0.2);
-/** A decorative ship that cruises a slow circle in open water. */
-function Ship({
-  center,
-  radius,
-  speed,
-  phase,
-  reducedMotion,
-}: {
-  center: [number, number, number];
-  radius: number;
-  speed: number;
-  phase: number;
-  reducedMotion: boolean;
-}) {
-  const ship = useRef<Group>(null);
-  useFrame(({ clock }) => {
-    const group = ship.current;
-    if (!group) return;
-    const t = reducedMotion ? 0 : clock.elapsedTime;
-    const angle = phase + t * speed;
-    group.rotation.order = "YXZ";
-    group.position.set(
-      center[0] + Math.cos(angle) * radius,
-      center[1] + Math.sin(t * 1.7 + phase) * 0.04,
-      center[2] + Math.sin(angle) * radius,
-    );
-    group.rotation.set(
-      Math.sin(t * 1.3 + phase) * 0.03,
-      -angle - Math.PI / 2,
-      Math.sin(t * 1.7 + phase) * 0.025,
-    );
-  });
-  return (
-    <group ref={ship} scale={0.36}>
-      <mesh geometry={SHIP_HULL} position={[0, -0.06, 0]}>
-        <meshLambertMaterial color="#eb7057" flatShading />
-      </mesh>
-      <mesh geometry={SHIP_DECK} position={[0, 0.16, 0]}>
-        <meshLambertMaterial color="#fffaf0" flatShading />
-      </mesh>
-      <mesh position={[-0.5, 0.52, 0]}>
-        <boxGeometry args={[0.8, 0.5, 0.52]} />
-        <meshLambertMaterial color="#fffaf0" flatShading />
-      </mesh>
-      <mesh position={[-0.5, 0.8, 0]}>
-        <boxGeometry args={[0.9, 0.08, 0.6]} />
-        <meshLambertMaterial color="#247c5e" flatShading />
-      </mesh>
-      <mesh position={[-0.4, 0.58, 0]}>
-        <boxGeometry args={[0.3, 0.14, 0.56]} />
-        <meshLambertMaterial color="#5a7069" flatShading />
-      </mesh>
-      <mesh position={[-0.7, 1.0, 0]}>
-        <cylinderGeometry args={[0.1, 0.12, 0.34, 6]} />
-        <meshLambertMaterial color="#eb7057" flatShading />
-      </mesh>
-      <mesh position={[0.45, 0.3, 0]}>
-        <boxGeometry args={[0.5, 0.2, 0.4]} />
-        <meshLambertMaterial color="#247c5e" flatShading />
-      </mesh>
-    </group>
-  );
-}
 /** Plain, flat land for the neighbouring countries, beneath the playable islands. */
 function NeighbourLand({
   region,
@@ -627,6 +546,11 @@ function Contents(props: WorldSceneProps) {
   const layout = useMemo(
     () => layoutStructures(world, props.structures),
     [world, props.structures],
+  );
+  const growth = useMemo(() => regionGrowth(provinces), [provinces]);
+  const fleet = useMemo(
+    () => planFleet(buildTransportNetwork(world), provinces, props.structures),
+    [world, provinces, props.structures],
   );
   const { gl, invalidate, camera, size } = useThree();
   const provinceMeshes = useRef(new Map<string, Mesh>());
@@ -884,29 +808,22 @@ function Contents(props: WorldSceneProps) {
       <RoadScene
         world={world}
         provinces={provinces}
+        growth={growth}
+        rails={fleet.rail}
         reducedMotion={props.reducedMotion}
       />
-      <Ship
-        center={[-20, SEA_LEVEL + 0.2, -23]}
-        radius={3}
-        speed={0.12}
-        phase={0}
+      <TransportScene
+        world={world}
+        fleet={fleet}
         reducedMotion={props.reducedMotion}
       />
-      <Ship
-        center={[20, SEA_LEVEL + 0.2, 20]}
-        radius={3}
-        speed={0.1}
-        phase={2.1}
-        reducedMotion={props.reducedMotion}
-      />
-      <Ship
-        center={[35, SEA_LEVEL + 0.2, -13]}
-        radius={3}
-        speed={0.14}
-        phase={4.2}
-        reducedMotion={props.reducedMotion}
-      />
+      {layer === "landscape" && (
+        <CrisisScenery
+          world={world}
+          crises={props.crises}
+          reducedMotion={props.reducedMotion}
+        />
+      )}
       {transition && (
         <QuarterSceneEffects
           transition={transition}

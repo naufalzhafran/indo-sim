@@ -109,9 +109,10 @@ function fixture() {
     cities: [
       {
         id: "test-city",
+        province: "11",
         position: provinces[0].anchor.clone(),
         size: 0.7,
-        towers: [{ x: 0.5, z: 0.5, w: 0.2, h: 0.8, seed: 0.4 }],
+        towers: [{ x: 0.5, z: 0.5, w: 0.2, h: 0.8, seed: 0.4, grow: 0 }],
       },
     ],
     roads: [
