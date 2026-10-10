@@ -1667,6 +1667,23 @@ dialog.policy-workspace-dialog .dialog-content {
   align-items: center;
   gap: 4px 6px;
 }
+.eco-goal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  color: var(--q-muted);
+  font: 700 12px/1.4 var(--q-heading);
+}
+.eco-goal-tag {
+  padding: 0 8px;
+  border: 1px solid #a9d3bd;
+  border-radius: 999px;
+  background: #e8f5ee;
+  color: var(--q-green);
+  font-weight: 800;
+  white-space: nowrap;
+}
 .eco-kind-badge {
   display: inline-flex;
   align-items: center;

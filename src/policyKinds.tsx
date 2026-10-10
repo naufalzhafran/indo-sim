@@ -1,5 +1,6 @@
 import { useLanguage } from "./i18n";
-import type { Bilingual, PolicyKind } from "./engine/economy/types";
+import type { Bilingual, PolicyId, PolicyKind } from "./engine/economy/types";
+import { goalShortNames, policyGoals } from "./engine/economy/policyGoals";
 
 export const policyKindNames: Record<PolicyKind, Bilingual> = {
   program: { en: "Program", id: "Program" },
@@ -39,6 +40,21 @@ export function PolicyKindBadge({
   return (
     <span className="eco-kind-badge" data-kind={existing ? "existing" : kind}>
       {(existing ? existingName : policyKindNames[kind])[language]}
+    </span>
+  );
+}
+
+/** The mandate goals a policy helps most, as small chips. */
+export function GoalTags({ id }: { id: PolicyId }) {
+  const language = useLanguage();
+  return (
+    <span className="eco-goal-tags">
+      <span>{language === "en" ? "Helps" : "Membantu"}</span>
+      {policyGoals[id].map((goal) => (
+        <span key={goal} className="eco-goal-tag">
+          {goalShortNames[goal][language]}
+        </span>
+      ))}
     </span>
   );
 }

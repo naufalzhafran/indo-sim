@@ -826,6 +826,8 @@ export const quarterDeficit = (ledger: Ledger, metrics: Metrics) =>
   (4 / (metrics.gdp * metrics.priceIndex));
 /** Indonesia's legal deficit ceiling (UU 17/2003), as a share of annual GDP. */
 export const DEFICIT_LIMIT = 0.03;
+/** Poverty points cut per 1% of opening disposable income paid as targeted cash. */
+export const TARGETED_TRANSFER_POVERTY = 2.5;
 /** Annualized deficit of one monthly ledger as a share of nominal GDP. */
 export const deficitRatio = (ledger: Ledger, nominalGdp: number) =>
   Math.max(0, ledger.spending + ledger.interest - ledger.revenue) *
@@ -1628,10 +1630,13 @@ function advanceMonth(
     );
     const consumptionTarget = (b.initialGdp * 0.58 * p.realIncome) / 100;
     p.consumption = b.consumption + (consumptionTarget - b.consumption) * 0.35;
+    // Cash transfers reach the poorest households, so each rupiah lowers
+    // poverty far more than the same rise in average income.
     p.poverty = clamp(
       b.initialPoverty -
         (p.realIncome - 100) * 0.12 +
-        (p.unemployment - b.initialUnemployment) * 0.3,
+        (p.unemployment - b.initialUnemployment) * 0.3 -
+        (transfers / initialDisposable) * 100 * TARGETED_TRANSFER_POVERTY,
       0.3,
       65,
     );

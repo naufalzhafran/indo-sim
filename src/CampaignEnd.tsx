@@ -201,8 +201,8 @@ export function CampaignEnd({
             <h4>{t("No region left behind", "Tak ada wilayah tertinggal")}</h4>
             <p>
               {t(
-                "Real income rises and poverty falls in every region. This does not change your six-goal verdict.",
-                "Pendapatan riil naik dan kemiskinan turun di setiap wilayah. Ini tidak mengubah penilaian enam target utama.",
+                `Real income rises at least ${GOAL_TARGETS.income}% and poverty falls at least ${number(GOAL_TARGETS.poverty, 1)} points in every region. This does not change your six-goal verdict.`,
+                `Pendapatan riil naik minimal ${GOAL_TARGETS.income}% dan kemiskinan turun minimal ${number(GOAL_TARGETS.poverty, 1)} poin di setiap wilayah. Ini tidak mengubah penilaian enam target utama.`,
               )}
             </p>
           </div>

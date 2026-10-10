@@ -2,7 +2,7 @@ import { money, number } from "./components";
 import { useLanguage } from "./i18n";
 import { EconomyEmblem } from "./EconomyEmblem";
 import { PolicyKindBadge } from "./policyKinds";
-import { policyById } from "./engine/economy/catalog";
+import { foundationNames, policyById } from "./engine/economy/catalog";
 import { QUARTER_TREND_GROWTH } from "./engine/economy/engine";
 import { projectCompletionRewards } from "./engine/economy/projectRewards";
 import { GAME_REGIONS, regionForProvince } from "./engine/gameRegions";
@@ -339,14 +339,6 @@ export function QuarterDebrief({
     },
   ];
   const grade = objectives.filter((o) => o.met).length;
-  const verdict = [
-    t("A tough quarter", "Triwulan berat"),
-    t("A tough quarter", "Triwulan berat"),
-    t("A mixed quarter", "Triwulan campuran"),
-    t("A mixed quarter", "Triwulan campuran"),
-    t("A good quarter", "Triwulan yang baik"),
-    t("An outstanding quarter", "Triwulan gemilang"),
-  ][grade];
 
   // Group construction sites by policy so builds and facilities read as one card each.
   const priorProjects = new Map(
@@ -593,6 +585,42 @@ export function QuarterDebrief({
       : null,
   ].filter(Boolean);
 
+  // Lead with the main cause of this quarter's result, not a grade, so the
+  // player learns why the numbers moved.
+  const weakest = FOUNDATIONS.reduce((a, b) =>
+    after[b] - before[b] < after[a] - before[a] ? b : a,
+  );
+  const verdict =
+    ledger.funding < 0.999
+      ? t(
+          "Some programmes ran short of money, so they delivered less than planned.",
+          "Sebagian program kekurangan dana, jadi hasilnya lebih kecil dari rencana.",
+        )
+      : crisisRegions.size
+        ? t(
+            "A disruption hit the islands. Funded services help regions recover faster.",
+            "Gangguan melanda kepulauan. Layanan yang didanai membantu wilayah pulih lebih cepat.",
+          )
+        : jobsChange > 0.05
+          ? t(
+              "Unemployment rose: more people joined the workforce than businesses hired.",
+              "Pengangguran naik: lebih banyak orang masuk angkatan kerja daripada yang direkrut dunia usaha.",
+            )
+          : after[weakest] - before[weakest] < -0.1
+            ? t(
+                `${foundationNames[weakest].en} slipped: services wear down and need steady funding.`,
+                `${foundationNames[weakest].id} menurun: layanan aus seiring waktu dan butuh dana rutin.`,
+              )
+            : outputChange > QUARTER_TREND_GROWTH
+              ? t(
+                  "Output grew faster than the trend as your policies took effect.",
+                  "Output tumbuh lebih cepat dari tren karena kebijakan Anda mulai berdampak.",
+                )
+              : t(
+                  "A steady quarter: the economy grew with its trend.",
+                  "Triwulan stabil: ekonomi tumbuh sesuai trennya.",
+                );
+
   const finished = (site: Site) =>
     site.state === "completed" || site.state === "done";
   const rewardChips = (id: PolicyId) =>
@@ -620,8 +648,8 @@ export function QuarterDebrief({
         />
         <div className="debrief-verdict">
           <span className="debrief-kicker">
-            {t("Quarter results", "Hasil triwulan")} · {grade}/
-            {objectives.length} {t("medals", "medali")}
+            {t("This quarter", "Triwulan ini")} · {grade}/{objectives.length}{" "}
+            {t("checks met", "tercapai")}
           </span>
           <h3 id="debrief-verdict">{verdict}</h3>
           <p>{headline.join(" · ")}</p>
@@ -629,7 +657,7 @@ export function QuarterDebrief({
             {objectives.map((o) => (
               <li key={o.id} data-met={o.met}>
                 <span className="debrief-medal" aria-hidden="true">
-                  {o.met ? "✓" : "✕"}
+                  {o.met ? "✓" : "○"}
                 </span>
                 <span>
                   <strong>{o.name}</strong>
@@ -637,7 +665,7 @@ export function QuarterDebrief({
                     <span className="debrief-sr">
                       {o.met
                         ? t("Met: ", "Tercapai: ")
-                        : t("Missed: ", "Belum: ")}
+                        : t("Not met: ", "Belum: ")}
                     </span>
                     {o.value}
                   </small>

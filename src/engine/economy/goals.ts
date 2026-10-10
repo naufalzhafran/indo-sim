@@ -93,6 +93,34 @@ export const goalLessons: Record<
   },
 };
 
+/** Plain-language explanations of each goal for first-time players. */
+export const goalExplanations: Record<string, Bilingual> = {
+  income: {
+    en: "Real income is what an average person can buy after prices and taxes. 18% over five years is about 3.4% a year.",
+    id: "Pendapatan riil adalah apa yang bisa dibeli rata-rata orang setelah harga dan pajak. 18% dalam lima tahun kira-kira 3,4% per tahun.",
+  },
+  poverty: {
+    en: "The share of people below the national poverty line. Cutting 1.5 percentage points means going from about 8.7% to 7.2%, roughly four million fewer poor people.",
+    id: "Persentase penduduk di bawah garis kemiskinan nasional. Turun 1,5 poin persentase berarti dari sekitar 8,7% menjadi 7,2%, kira-kira empat juta orang miskin lebih sedikit.",
+  },
+  jobs: {
+    en: "The share of people who want work but have none. Young people join the workforce every year, so businesses must keep hiring just to hold it steady.",
+    id: "Persentase orang yang ingin bekerja tetapi belum punya pekerjaan. Anak muda masuk angkatan kerja setiap tahun, jadi dunia usaha harus terus merekrut agar angkanya tidak naik.",
+  },
+  services: {
+    en: "Foundations are Education, Infrastructure, Energy, Food and Health, each scored out of 100. They make every industry more productive. You can see them on the Economy screen.",
+    id: "Fondasi adalah Pendidikan, Infrastruktur, Energi, Pangan, dan Kesehatan, masing-masing bernilai 0–100. Fondasi membuat setiap industri lebih produktif. Lihat di layar Ekonomi.",
+  },
+  energy: {
+    en: "How many homes have electricity and how reliable it is. A growing economy uses more power, so new plants are needed just to keep up.",
+    id: "Seberapa banyak rumah mendapat listrik dan seberapa andal pasokannya. Ekonomi yang tumbuh memakai lebih banyak listrik, jadi pembangkit baru dibutuhkan agar tidak tertinggal.",
+  },
+  budget: {
+    en: "GDP is the value of everything Indonesia produces in a year, and debt is measured against it. The law caps debt at 60% of GDP and the yearly deficit at 3%. Your programmes must also be fully paid in the last quarter.",
+    id: "PDB adalah nilai semua yang dihasilkan Indonesia dalam setahun, dan utang diukur terhadapnya. Undang-undang membatasi utang 60% PDB dan defisit tahunan 3%. Program Anda juga harus didanai penuh pada triwulan terakhir.",
+  },
+};
+
 export function campaignVerdict(achieved: number): Bilingual {
   if (achieved >= 6)
     return { en: "Full mandate achieved", id: "Seluruh mandat tercapai" };
@@ -112,9 +140,11 @@ export function regionalAchievement(game: QuarterGame) {
       nameId: region.nameId,
       income: (region.realIncome / before.realIncome - 1) * 100,
       poverty: before.poverty - region.poverty,
+      // Every region must reach the national income and poverty targets.
       met:
-        region.realIncome > before.realIncome &&
-        region.poverty < before.poverty,
+        (region.realIncome / before.realIncome - 1) * 100 >=
+          GOAL_TARGETS.income &&
+        before.poverty - region.poverty >= GOAL_TARGETS.poverty,
     };
   });
   return {

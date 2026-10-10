@@ -95,6 +95,18 @@ dialog:is(.national-economy-dialog, .policy-workspace-dialog) .dialog-content {
   font: 900 18px var(--q-heading);
   color: var(--q-ink);
 }
+.national-step {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--q-green);
+  color: #fff;
+  font: 900 13px var(--q-heading);
+  vertical-align: 2px;
+}
 .national-economy h2:focus-visible {
   outline: 3px solid var(--q-green);
   outline-offset: 3px;

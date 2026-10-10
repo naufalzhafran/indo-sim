@@ -2,7 +2,8 @@ import { useId, useLayoutEffect, useRef, useState } from "react";
 import { GameSelect } from "./GameSelect";
 import { StatHelp } from "./StatHelp";
 import { PolicyProjects } from "./PolicyProjects";
-import { PolicyKindBadge, policyKindNames } from "./policyKinds";
+import { GoalTags, PolicyKindBadge, policyKindNames } from "./policyKinds";
+import { starterPolicies } from "./engine/economy/policyGoals";
 import { EconomyEmblem } from "./EconomyEmblem";
 import { money, number } from "./components";
 import { useLanguage } from "./i18n";
@@ -270,7 +271,9 @@ export function EconomyPolicies({
   >("briefing");
   const [category, setCategory] = useState("all");
   const [kind, setKind] = useState("all");
-  const [filter, setFilter] = useState<"all" | "active" | "planned">("all");
+  const [filter, setFilter] = useState<
+    "all" | "starter" | "active" | "planned"
+  >("all");
   const scroller = useRef<HTMLDivElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   const listPosition = useRef(0);
@@ -421,6 +424,7 @@ export function EconomyPolicies({
             : t("Add to plan", "Tambah");
   const filterCount = {
     all: policies.length,
+    starter: starterPolicies.length,
     active: active.length,
     planned: launches.length,
   };
@@ -474,9 +478,11 @@ export function EconomyPolicies({
       (category === "all" || policy.category === category) &&
       (kind === "all" || policy.kind === kind) &&
       (filter === "all" ||
-        (filter === "active"
-          ? active.includes(policy.id)
-          : launches.includes(policy.id)))
+        (filter === "starter"
+          ? starterPolicies.includes(policy.id)
+          : filter === "active"
+            ? active.includes(policy.id)
+            : launches.includes(policy.id)))
     );
   });
   const status = (id: PolicyId) =>
@@ -998,7 +1004,9 @@ export function EconomyPolicies({
                 className="eco-filter-row"
                 aria-label={t("Filter policies", "Saring kebijakan")}
               >
-                {(["all", "active", "planned"] as const).map((value) => (
+                {(
+                  ["all", "starter", "active", "planned"] as const
+                ).map((value) => (
                   <button
                     key={value}
                     type="button"
@@ -1007,9 +1015,11 @@ export function EconomyPolicies({
                   >
                     {value === "all"
                       ? t("All", "Semua")
-                      : value === "active"
-                        ? t("Active", "Aktif")
-                        : t("New planned", "Rencana baru")}
+                      : value === "starter"
+                        ? t("Good first picks", "Pilihan awal")
+                        : value === "active"
+                          ? t("Active", "Aktif")
+                          : t("New planned", "Rencana baru")}
                     <small>{filterCount[value]}</small>
                   </button>
                 ))}
@@ -1157,6 +1167,7 @@ export function EconomyPolicies({
                           )}
                       </div>
                       <p>{policy.purpose[language]}</p>
+                      <GoalTags id={policy.id} />
                       <PolicyEffects policy={policy} />
                     </div>
                     <div className="eco-policy-meta">

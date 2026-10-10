@@ -16,8 +16,14 @@ describe("campaign ending", () => {
     expect(campaignVerdict(count as number).en).toBe(label);
     expect(campaignVerdict(count as number).id).toBeTruthy();
   });
-  it("requires both income growth and poverty reduction in every region", () => {
+  it("requires every region to reach the national income and poverty targets", () => {
     const game = initialQuarter(73);
+    expect(regionalAchievement(game).count).toBe(0);
+    for (const province of game.simulation.provinces) {
+      province.realIncome *= 1.1;
+      province.poverty -= 1;
+    }
+    // Smaller gains than the national targets do not count.
     expect(regionalAchievement(game).count).toBe(0);
     for (const province of game.simulation.provinces) {
       province.realIncome *= 1.1;

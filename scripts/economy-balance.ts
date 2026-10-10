@@ -188,9 +188,13 @@ for (const scenario of scenarios)
           .slice(0, Math.min(strategy.policies.length, (quarter + 1) * 2))
           .filter((id) => !isFinished(game, id));
         const running = activeIds(game);
+        // A rejected APBN freezes new launches; running policies continue.
+        const frozen = game.politics.frozenUntil > game.simulation.month;
         plan.policies = [
           ...wanted.filter((id) => running.includes(id)),
-          ...wanted.filter((id) => !running.includes(id)).slice(0, 2),
+          ...(frozen
+            ? []
+            : wanted.filter((id) => !running.includes(id)).slice(0, 2)),
         ].slice(0, 8);
         if (strategy.taxes)
           for (const id of TAX_IDS) plan.taxes[id] = strategy.taxes;

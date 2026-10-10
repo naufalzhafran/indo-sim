@@ -573,7 +573,7 @@ export type ApprovalInputs = {
 export const APPROVAL_BASE = 55;
 export const APPROVAL_SPEED = 0.3;
 /** Approval needed at the end of the term for the re-election objective. */
-export const REELECTION_APPROVAL = 50;
+export const REELECTION_APPROVAL = 60;
 
 const recent = (months: number[], now: number) =>
   months.filter((m) => m > now - 12 && m <= now).length;

@@ -355,11 +355,11 @@
   padding: 10px 0;
   border-bottom: 1px solid var(--q-line);
 }
-.campaign-mandate strong,
-.campaign-mandate span {
+.campaign-mandate li > strong,
+.campaign-mandate li > span {
   display: block;
 }
-.campaign-mandate span {
+.campaign-mandate li > span {
   color: var(--q-muted);
   font-size: 14px;
   margin-top: 3px;

@@ -192,7 +192,7 @@ The DPR should never block a player who leaves taxes alone and keeps the deficit
 - **State:** `QuarterGame` gains `politics` (approval, softened taxes, recent tax changes and shortfalls, approval terms, last votes). It is optional in the save schema, and older saves load with the opening politics state.
 - **Engine hooks:** `validatePlan` blocks launches during a freeze; `resolveQuarter` resolves bills before applying taxes (a failed bill keeps the old level) and runs the APBN vote at the end of Q3; `previewQuarter` returns the forecast so the draft can show it.
 - **UI:** a `ParliamentPanel` in the existing panel system (party table, group filters, bill tabs and breakdown), two stat chips, group impact chips and a bill row in `TaxPolicies.tsx`, and a vote section in `QuarterRecap.tsx`. English and Indonesian strings through the existing `t()` pattern.
-- **Mandate:** the six goals stay as they are. Approval adds one optional named objective, "Re-election 2029: approval at least 50% at the end", next to "No region left behind".
+- **Mandate:** the six goals stay as they are. Approval adds one optional named objective, "Re-election 2029: approval at least 60% at the end" (raised from 50% on 2026-10-10, because 50% was reached by doing nothing), next to "No region left behind".
 
 ### Coordination with the open rebalance PR
 

@@ -1,20 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { initialQuarter } from "./engine/economy/engine";
-import { campaignGoals } from "./engine/economy/goals";
+import { campaignGoals, goalExplanations } from "./engine/economy/goals";
 import { policies as catalog, policyById } from "./engine/economy/catalog";
 import type { PolicyId } from "./engine/economy/types";
 import { LanguageSwitcher, useLanguage } from "./i18n";
 import { Modal, money, number } from "./components";
 import { StatHelp } from "./StatHelp";
-
-const shortlist: PolicyId[] = [
-  "bos",
-  "plts",
-  "pkh",
-  "kur",
-  "water",
-  "food-reserves",
-];
+import { REELECTION_APPROVAL } from "./engine/politics";
+import { GoalTags } from "./policyKinds";
+import { starterPolicies } from "./engine/economy/policyGoals";
 
 export function CampaignSetup({
   canCancel,
@@ -105,7 +99,12 @@ export function CampaignSetup({
               <ol className="campaign-mandate">
                 {campaignGoals(opening).map((goal) => (
                   <li key={goal.id}>
-                    <strong>{goal.label[language]}</strong>
+                    <strong>
+                      <StatHelp
+                        label={goal.label[language]}
+                        description={goalExplanations[goal.id][language]}
+                      />
+                    </strong>
                     <span>{goal.target[language]}</span>
                   </li>
                 ))}
@@ -122,8 +121,8 @@ export function CampaignSetup({
                 </h4>
                 <p>
                   {t(
-                    "Raise real income and reduce poverty in all nine regions. This achievement is separate from your six-goal mandate.",
-                    "Naikkan pendapatan riil dan turunkan kemiskinan di kesembilan wilayah. Pencapaian ini terpisah dari enam target mandat Anda.",
+                    "Reach the income and poverty targets in all nine regions, not just on average. Regional budgets decide who benefits. This achievement is separate from your six-goal mandate.",
+                    "Capai target pendapatan dan kemiskinan di kesembilan wilayah, bukan hanya rata-rata nasional. Anggaran wilayah menentukan siapa yang merasakan manfaatnya. Pencapaian ini terpisah dari enam target mandat Anda.",
                   )}
                 </p>
               </section>
@@ -139,8 +138,8 @@ export function CampaignSetup({
                 </h4>
                 <p>
                   {t(
-                    "Finish with public approval of at least 50%. Tax changes and each year's APBN need DPR votes, and approval moves how parties vote.",
-                    "Akhiri dengan kepuasan publik minimal 50%. Perubahan pajak dan APBN tiap tahun butuh suara DPR, dan kepuasan publik memengaruhi suara partai.",
+                    `Finish with public approval of at least ${REELECTION_APPROVAL}%. Tax changes and each year's APBN need DPR votes, and approval moves how parties vote.`,
+                    `Akhiri dengan kepuasan publik minimal ${REELECTION_APPROVAL}%. Perubahan pajak dan APBN tiap tahun butuh suara DPR, dan kepuasan publik memengaruhi suara partai.`,
                   )}
                 </p>
               </section>
@@ -169,7 +168,7 @@ export function CampaignSetup({
                 )}
               </p>
               <div className="campaign-policy-list">
-                {shortlist.map((id) => {
+                {starterPolicies.map((id) => {
                   const policy = policyById[id];
                   const selected = policies.includes(id);
                   return (
@@ -194,6 +193,7 @@ export function CampaignSetup({
                         </span>
                       </span>
                       <span>{policy.purpose[language]}</span>
+                      <GoalTags id={id} />
                       <small>{policy.tradeoff[language]}</small>
                       <small>
                         {policy.build
@@ -265,14 +265,14 @@ export function CampaignSetup({
               </div>
               <label className="economy-seed">
                 <StatHelp
-                  label={t("Campaign seed", "Benih permainan")}
+                  label={t("Starting world number", "Nomor dunia awal")}
                   description={t(
-                    "The same seed reproduces the same starting campaign. Your decisions still change its outcomes. Enter a whole number from 0 to 4294967295.",
-                    "Benih yang sama menghasilkan awal permainan yang sama. Keputusan Anda tetap mengubah hasilnya. Masukkan bilangan bulat dari 0 hingga 4294967295.",
+                    "Picks the starting world, including when disruptions strike. Keep the default, or reuse a friend's number to play the same world and compare choices. Enter a whole number from 0 to 4294967295.",
+                    "Menentukan dunia awal, termasuk kapan gangguan terjadi. Biarkan angka bawaan, atau pakai nomor teman untuk memainkan dunia yang sama dan membandingkan pilihan. Masukkan bilangan bulat dari 0 hingga 4294967295.",
                   )}
                 />
                 <input
-                  aria-label={t("Campaign seed", "Benih permainan")}
+                  aria-label={t("Starting world number", "Nomor dunia awal")}
                   inputMode="numeric"
                   value={seed}
                   disabled={busy}
