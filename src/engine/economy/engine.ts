@@ -14,6 +14,12 @@ import {
   type TaxSettings,
 } from "../taxes";
 import {
+  initialPolitics,
+  updateApproval,
+  voteOnBills,
+  type PoliticsState,
+} from "../politics";
+import {
   foundationNames,
   industries,
   industryById,
@@ -145,9 +151,18 @@ function sharesFor(id: string): Record<IndustryId, number> {
   ) as Record<IndustryId, number>;
 }
 
-function rates(settings: TaxSettings): TaxBreakdown {
+function rates(
+  settings: TaxSettings,
+  softened: PoliticsState["softened"] = {},
+): TaxBreakdown {
   return Object.fromEntries(
-    taxDefinitions.map((d) => [d.id, d.rates[settings[d.id]] / 100]),
+    taxDefinitions.map((d) => {
+      const previous = softened[d.id];
+      const rate = previous
+        ? (d.rates[settings[d.id]] + d.rates[previous]) / 2
+        : d.rates[settings[d.id]];
+      return [d.id, rate / 100];
+    }),
   ) as TaxBreakdown;
 }
 
@@ -227,8 +242,9 @@ function assessTaxes(
   p: ProvinceEconomy,
   settings: TaxSettings,
   priceIndex: number,
+  softened: PoliticsState["softened"] = {},
 ) {
-  const r = rates(settings),
+  const r = rates(settings, softened),
     bases = rawTaxBases(p, priceIndex);
   const taxes = zeroTaxes();
   for (const id of TAX_IDS)
@@ -390,6 +406,7 @@ export function initialQuarter(seed = 2025): QuarterGame {
     regionalSpending: Object.fromEntries(
       POLICY_IDS.map((id) => [id, defaultLevels()]),
     ) as QuarterPlan["regionalSpending"],
+    politics: initialPolitics(),
     receipt: null,
   };
   simulation.history = [aggregate(game)];
@@ -412,9 +429,7 @@ export const launchCount = (game: QuarterGame, plan: QuarterPlan) =>
     );
   }).length;
 export const projectsOf = (game: QuarterGame, id: PolicyId): Project[] =>
-  game.simulation.projects.filter(
-    (project) => project.id.split(":")[0] === id,
-  );
+  game.simulation.projects.filter((project) => project.id.split(":")[0] === id);
 /** Monthly construction payment for one regional site, in nominal money. */
 const installment = (project: Project) =>
   project.completed
@@ -449,8 +464,7 @@ export function policyQuarterCost(
   const cost = { setup: 0, service: 0, construction: 0, idle: 0, total: 0 };
   if (def.kind === "program") {
     if (selected) {
-      cost.setup =
-        (runtime ? runtime.startupRemaining : def.setupCost) * price;
+      cost.setup = (runtime ? runtime.startupRemaining : def.setupCost) * price;
       cost.service = def.quarterlyCost * price;
     }
   } else if (!runtime?.finished) {
@@ -528,15 +542,19 @@ export function validatePlan(game: QuarterGame, plan: QuarterPlan): string[] {
     Array.isArray(plan.policies) &&
     plan.policies.some((id) => isFinished(game, id))
   )
-    errors.push(
-      "A completed one-time build cannot be launched again.",
-    );
+    errors.push("A completed one-time build cannot be launched again.");
   if (
     !plan.taxes ||
     Object.keys(plan.taxes).length !== TAX_IDS.length ||
     TAX_IDS.some((id) => !TAX_LEVELS.includes(plan.taxes[id]))
   )
     errors.push("Choose a valid level for all six taxes.");
+  if (
+    plan.soften !== undefined &&
+    (!Array.isArray(plan.soften) ||
+      plan.soften.some((id) => !TAX_IDS.includes(id)))
+  )
+    errors.push("Choose valid taxes to soften.");
   if (
     !plan.regionalSpending ||
     Object.keys(plan.regionalSpending).length !== POLICY_IDS.length ||
@@ -722,6 +740,7 @@ function advanceMonth(
       beforeMap.get(p.id)!,
       game.taxes,
       before.priceIndex,
+      game.politics.softened,
     );
     p.taxBases = assessed.bases;
     p.taxes = assessed.taxes;
@@ -764,7 +783,8 @@ function advanceMonth(
         .filter((x) => built.has(x.region))
         .map((x) => ({
           ...x,
-          amount: ((rate * def.quarterlyCost) / 3) * x.share * appropriationPrice,
+          amount:
+            ((rate * def.quarterlyCost) / 3) * x.share * appropriationPrice,
         })),
     );
   }
@@ -1035,7 +1055,7 @@ function advanceMonth(
     pools.set(key, pool);
   }
   const standard = rates(defaultTaxes()),
-    current = rates(game.taxes);
+    current = rates(game.taxes, game.politics.softened);
   for (const p of s.provinces) {
     const b = beforeMap.get(p.id)!,
       d = pillarById.get(p.id)!,
@@ -1591,10 +1611,7 @@ function advanceMonth(
     s.events.push({
       month: s.month,
       kind: "project",
-      title: bi(
-        `${def.name} completed`,
-        `${def.name} selesai`,
-      ),
+      title: bi(`${def.name} completed`, `${def.name} selesai`),
       detail: bi(
         "All regional construction is finished. Its gains are permanent and the policy has ended.",
         "Seluruh pembangunan wilayah selesai. Manfaatnya permanen dan kebijakan telah berakhir.",
@@ -1607,7 +1624,8 @@ function advanceMonth(
     const p = s.provinces.find((p) => p.id === crisis.province)!;
     const response = inputs.get(p.id)!;
     // Completed builds keep helping: their permanent gains add standing resilience.
-    const built = (key: BuiltGainKey) => 0.1 * Math.max(0, p.builtGains[key] ?? 0);
+    const built = (key: BuiltGainKey) =>
+      0.1 * Math.max(0, p.builtGains[key] ?? 0);
     const resilience =
       crisis.kind === "harvest"
         ? channel(response, "irrigation") +
@@ -1701,7 +1719,34 @@ function executeQuarter(
     for (const region of regionsBefore)
       for (const id of TAX_IDS) region.taxes[id] *= 3;
   }
-  game.taxes = { ...plan.taxes };
+  // Each tax change is a DPR bill; a failed bill keeps the current level.
+  const votes = voteOnBills(
+    original.taxes,
+    plan.taxes,
+    original.politics.approval,
+    plan.soften ?? [],
+  );
+  const politics = game.politics;
+  for (const vote of votes) {
+    s.events.push({
+      month: s.month,
+      kind: "policy",
+      title: bi(
+        `DPR ${vote.passed ? "passes" : "rejects"} ${taxDefinitions.find((d) => d.id === vote.tax)!.name.en}`,
+        `DPR ${vote.passed ? "menyetujui" : "menolak"} ${taxDefinitions.find((d) => d.id === vote.tax)!.name.id}`,
+      ),
+      detail: bi(
+        `${vote.yes} of 580 seats voted yes; 291 were needed.`,
+        `${vote.yes} dari 580 kursi setuju; dibutuhkan 291.`,
+      ),
+    });
+    if (!vote.passed) continue;
+    game.taxes[vote.tax] = vote.to;
+    if (vote.softened) politics.softened[vote.tax] = vote.from;
+    else delete politics.softened[vote.tax];
+    (vote.increase ? politics.taxRises : politics.taxCuts).push(s.month);
+  }
+  politics.lastVotes = votes;
   game.regionalSpending = clone(plan.regionalSpending);
   for (const runtime of game.policies)
     runtime.active = plan.policies.includes(runtime.id);
@@ -1858,6 +1903,17 @@ function executeQuarter(
         `Penerimaan Rp ${ledger.revenue.toFixed(1).replace(".", ",")}T, dengan belanja dan bunga Rp ${(ledger.spending + ledger.interest).toFixed(1).replace(".", ",")}T.`,
       ),
     });
+  const window = s.history[Math.max(0, s.history.length - 13)];
+  game.politics = updateApproval(game.politics, {
+    month: s.month,
+    incomeNow: after.realIncome,
+    incomeThen: window.realIncome,
+    windowMonths: after.month - window.month,
+    inflation: after.inflation,
+    unemploymentChange: after.unemployment - s.history[0].unemployment,
+    activePolicies: activeIds(game),
+    funding: ledger.funding,
+  });
   game.receipt = {
     from: original.simulation.month,
     to: s.month,

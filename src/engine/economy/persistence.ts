@@ -1,6 +1,7 @@
 import { z } from "zod";
 import baseline from "../../data/baseline.json" with { type: "json" };
 import { TAX_IDS, TAX_LEVELS } from "../taxes";
+import { PARTY_IDS, VOTER_GROUPS, initialPolitics } from "../politics";
 import { aggregate, summarizeEconomyRegions } from "./engine";
 import { policyById } from "./catalog";
 import {
@@ -60,6 +61,79 @@ export const planSchema = z
       .refine((ids) => new Set(ids).size === ids.length),
     taxes,
     regionalSpending,
+    soften: z.array(z.enum(TAX_IDS)).max(TAX_IDS.length).optional(),
+  })
+  .strict();
+
+const taxLevel = z.enum(TAX_LEVELS);
+const months = z.array(month).max(200);
+const politics = z
+  .object({
+    approval: finite.min(0).max(100),
+    softened: exactRecord(TAX_IDS, taxLevel).partial(),
+    taxRises: months,
+    taxCuts: months,
+    shortfalls: months,
+    terms: z
+      .array(
+        z
+          .object({
+            id: z.enum([
+              "income",
+              "inflation",
+              "unemployment",
+              "taxRises",
+              "taxCuts",
+              "programmes",
+              "shortfalls",
+            ]),
+            value: finite,
+          })
+          .strict(),
+      )
+      .max(20),
+    target: finite.min(0).max(100),
+    previousApproval: finite.min(0).max(100),
+    lastVotes: z
+      .array(
+        z
+          .object({
+            tax: z.enum(TAX_IDS),
+            from: taxLevel,
+            to: taxLevel,
+            increase: z.boolean(),
+            softened: z.boolean(),
+            yes: finite.int().min(0).max(580),
+            passed: z.boolean(),
+            parties: z
+              .array(
+                z
+                  .object({
+                    party: z.enum(PARTY_IDS),
+                    loyalty: finite,
+                    approval: finite,
+                    groups: z
+                      .array(
+                        z
+                          .object({
+                            group: z.enum(VOTER_GROUPS),
+                            value: finite,
+                          })
+                          .strict(),
+                      )
+                      .max(VOTER_GROUPS.length),
+                    pileUp: finite,
+                    total: finite,
+                    yes: z.boolean(),
+                    softenFlips: z.boolean(),
+                  })
+                  .strict(),
+              )
+              .length(PARTY_IDS.length),
+          })
+          .strict(),
+      )
+      .max(TAX_IDS.length),
   })
   .strict();
 
@@ -129,23 +203,24 @@ const province = z
     taxes: taxAmounts,
     policySpending,
     policyAssets: policySpending,
-    builtGains: z
-      .record(
-        z.union([
-          z.enum([
-            "infrastructure",
-            "water",
-            "healthAccess",
-            "healthStatus",
-            "electrification",
-          ]),
-          z.enum(INDUSTRY_IDS.map((id) => `industry:${id}`) as [
+    builtGains: z.record(
+      z.union([
+        z.enum([
+          "infrastructure",
+          "water",
+          "healthAccess",
+          "healthStatus",
+          "electrification",
+        ]),
+        z.enum(
+          INDUSTRY_IDS.map((id) => `industry:${id}`) as [
             `industry:${(typeof INDUSTRY_IDS)[number]}`,
             ...`industry:${(typeof INDUSTRY_IDS)[number]}`[],
-          ]),
-        ]),
-        finite.min(-100).max(100),
-      ),
+          ],
+        ),
+      ]),
+      finite.min(-100).max(100),
+    ),
     drivers: z.array(z.string().max(500)).max(100),
   })
   .strict();
@@ -314,6 +389,8 @@ const stateSchema = z
       .max(POLICY_IDS.length),
     taxes,
     regionalSpending,
+    // Optional so campaigns saved before the DPR existed still load.
+    politics: politics.optional(),
     receipt: receipt.nullable(),
   })
   .strict();
@@ -608,6 +685,7 @@ export function parseQuarter(raw: string): QuarterGame {
       { cause: parsed.error.issues },
     );
   const game = parsed.data.state as QuarterGame;
+  game.politics ??= initialPolitics();
   validateGame(game);
   for (const project of game.simulation.projects) {
     if (Math.abs(project.progress - 100) <= 1e-10) {

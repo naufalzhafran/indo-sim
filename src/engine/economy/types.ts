@@ -1,5 +1,6 @@
 import type { Province, Project, Crisis } from "../../worldTypes";
 import type { TaxSettings, TaxId } from "../taxes";
+import type { PoliticsState } from "../politics";
 
 export const FOUNDATIONS = [
   "education",
@@ -308,6 +309,8 @@ export type QuarterPlan = {
   policies: PolicyId[];
   taxes: TaxSettings;
   regionalSpending: Record<PolicyId, RegionalSpending>;
+  /** Tax increases sent to the DPR in softened form. */
+  soften?: TaxId[];
 };
 export type QuarterReceipt = {
   from: number;
@@ -326,5 +329,6 @@ export type QuarterGame = {
   policies: PolicyRuntime[];
   taxes: TaxSettings;
   regionalSpending: Record<PolicyId, RegionalSpending>;
+  politics: PoliticsState;
   receipt: QuarterReceipt | null;
 };
