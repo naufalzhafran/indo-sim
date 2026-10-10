@@ -97,9 +97,12 @@ export type Tower = {
   w: number;
   h: number;
   seed: number;
+  /** Economic growth (0–1 of the full expansion) at which this tower appears; 0 for the opening skyline. */
+  grow: number;
 };
 export type City = {
   id: string;
+  province: string;
   position: Vector3;
   size: number;
   towers: Tower[];
@@ -177,7 +180,7 @@ function edgeDistance(x: number, y: number, ring: Vector2[]) {
   return best;
 }
 
-function planner(world: WorldGeometry) {
+export function landPlanner(world: WorldGeometry) {
   const islands = world.coastlines.map((c) => {
     const xs = c.shape.map((p) => p.x),
       ys = c.shape.map((p) => p.y);
@@ -212,7 +215,7 @@ function planner(world: WorldGeometry) {
   return { onLand, island };
 }
 
-type Planner = ReturnType<typeof planner>;
+type Planner = ReturnType<typeof landPlanner>;
 
 /** Cheapest land route between two points: favours lowlands and avoids the coast. */
 function route(
@@ -366,7 +369,7 @@ export function seedRoadNetwork(world: WorldGeometry, network: RoadNetwork) {
 export function buildRoadNetwork(world: WorldGeometry): RoadNetwork {
   let network = cache.get(world);
   if (network) return network;
-  const plan = planner(world);
+  const plan = landPlanner(world);
   // Cities sit on the nearest inland ground, so each one stands on its island.
   const cities = new Map<string, { city: City; map: Vector2 }>();
   for (const [id, lon, lat, size] of CITIES) {
@@ -386,6 +389,7 @@ export function buildRoadNetwork(world: WorldGeometry): RoadNetwork {
     cities.set(id, {
       city: {
         id,
+        province: "",
         size,
         position: new Vector3(found.x, height, -found.y),
         towers: [],
@@ -412,6 +416,8 @@ export function buildRoadNetwork(world: WorldGeometry): RoadNetwork {
     }
     return best;
   };
+  for (const { city, map } of cities.values())
+    city.province = owner(map.x, map.y);
   const roads: Road[] = [];
   const used = new Set<string>();
   for (const [a, b] of CORRIDORS) {
@@ -508,6 +514,33 @@ export function buildRoadNetwork(world: WorldGeometry): RoadNetwork {
         w,
         h: (0.22 + hashed(4) * 0.3) * (0.5 + city.size * core * 1.3),
         seed: hashed(5),
+        grow: 0,
+      });
+    }
+    // Suburbs held in reserve: they fill in as the region's economy grows.
+    const extra = Math.round(4 + city.size * 8);
+    for (let i = 0; i < extra; i++) {
+      const hashed = (a: number) =>
+        Math.abs(Math.sin(c * 39.346 + i * 11.135 + a * 7.7) * 24634.6345) % 1;
+      const angle = hashed(1) * Math.PI * 2,
+        reach = 0.2 + Math.sqrt(hashed(2)) * (0.45 + city.size * 0.7);
+      const x = city.position.x + Math.cos(angle) * reach,
+        z = city.position.z + Math.sin(angle) * reach;
+      const w = 0.11 + hashed(3) * 0.09;
+      if (
+        !plan.onLand(x, -z, 0.15) ||
+        nearPoint(roadPoints, x, z, 0.1 + w * 0.6) ||
+        city.towers.some((t) => Math.hypot(t.x - x, t.z - z) < (t.w + w) * 0.6)
+      )
+        continue;
+      const core = Math.max(0.25, 1 - reach / (0.6 + city.size * 0.7));
+      city.towers.push({
+        x,
+        z,
+        w,
+        h: (0.2 + hashed(4) * 0.28) * (0.5 + city.size * core * 1.2),
+        seed: hashed(5),
+        grow: (i + 0.5) / extra,
       });
     }
   });

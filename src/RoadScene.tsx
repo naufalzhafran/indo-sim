@@ -30,6 +30,11 @@ import {
 } from "./roadTraffic";
 import { baseWorldZoom } from "./worldCameraMath";
 import type { Province } from "./worldTypes";
+import { regionForProvince } from "./engine/gameRegions";
+import type { RegionId } from "./engine/economy/types";
+import type { RailLine } from "./transportNetwork";
+import { transportGeometry } from "./transportModels";
+import { growthProgress } from "./transportTraffic";
 
 const ROAD_LIFT = 0.03;
 const LINE_LIFT = 0.04;
@@ -39,12 +44,15 @@ const ROAD_COLOR: Record<RoadClass, string> = {
   toll: "#62736f",
 };
 const VEHICLE_COLORS = ["#eb7057", "#fffaf0", "#247c5e", "#f2b84b", "#4d9fb5"];
+const TRUCK_COLORS = ["#fffaf0", "#eb7057", "#4d9fb5", "#f2b84b", "#fffaf0"];
+/** Trucks share the road vehicles' slots; this caps their own buffer. */
+const MAX_TRUCKS = 70;
 
-type Strip = { positions: number[] };
-/** A flat ribbon draped over the road's ground points. */
-function addRibbon(
+export type Strip = { positions: number[] };
+/** A flat ribbon draped over a road's (or railway's) ground points. */
+export function addRibbon(
   strip: Strip,
-  road: Road,
+  road: Pick<Road, "points">,
   from: number,
   to: number,
   half: number,
@@ -95,7 +103,7 @@ function addRibbon(
     );
   }
 }
-function stripGeometry(strip: Strip) {
+export function stripGeometry(strip: Strip) {
   if (!strip.positions.length) return null;
   const geometry = new BufferGeometry();
   geometry.setAttribute(
@@ -116,13 +124,19 @@ const unit = (a: number, b: number) => Math.abs(hash(a, b));
 export default function RoadNetwork({
   world,
   provinces,
+  growth,
+  rails,
   reducedMotion,
 }: {
   world: WorldGeometry;
   provinces: Province[];
+  /** Each region's output against the opening year; cities and freight grow with it. */
+  growth: Map<RegionId, number>;
+  /** Railways in service, which towers keep clear of. */
+  rails: RailLine[];
   reducedMotion: boolean;
 }) {
-  const { camera, invalidate, size } = useThree();
+  const { camera, gl, invalidate, size } = useThree();
   const network = useMemo(() => buildRoadNetwork(world), [world]);
   // Rebuild only when a province changes road class, not on every stat tick.
   const infraKey = roadClassKey(provinces);
@@ -198,38 +212,66 @@ export default function RoadNetwork({
 
   // Cities: little clusters of towers, bigger for the larger cities.
   const cityMesh = useRef<InstancedMesh>(null);
+  // Growth only re-lays the skyline when a region moves a visible step.
+  const growthKey = [...growth]
+    .map(([id, ratio]) => `${id}:${Math.round(growthProgress(ratio) * 20)}`)
+    .join("|");
+  // Keyed by line, so a re-planned fleet with the same railways keeps the skyline.
+  const railKey = rails.map((line) => line.id).join("|");
+  const railPoints = useMemo(
+    () => rails.flatMap((line) => line.points.filter((_, i) => i % 2 === 0)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [railKey],
+  );
   const buildings = useMemo(() => {
     const palette = ["#fffaf0", "#cfe9e0", "#f5c9a8", "#9fcfc4", "#ffe2a3"];
-    return network.cities.flatMap((city) =>
-      city.towers.map((tower) => {
-        let ground = -Infinity;
-        for (const [dx, dz] of [
-          [0, 0],
-          [1, 0],
-          [-1, 0],
-          [0, 1],
-          [0, -1],
-        ])
-          ground = Math.max(
-            ground,
-            world.surfaceHeight(
-              new Vector2(
-                tower.x + dx * tower.w * 0.5,
-                -(tower.z + dz * tower.w * 0.5),
-              ),
+    const progress = (city: (typeof network.cities)[number]) => {
+      const region = regionForProvince(city.province)?.id as RegionId;
+      return Math.round(growthProgress(growth.get(region) ?? 1) * 20) / 20;
+    };
+    return network.cities.flatMap((city) => {
+      const grown = progress(city);
+      return city.towers
+        .filter(
+          (tower) =>
+            tower.grow <= grown &&
+            !railPoints.some(
+              (p) =>
+                Math.abs(p.x - tower.x) < tower.w + 0.06 &&
+                Math.abs(p.z - tower.z) < tower.w + 0.06,
             ),
-          );
-        return {
-          x: tower.x,
-          z: tower.z,
-          y: Math.max(0.03, ground) + 0.004,
-          w: tower.w,
-          h: tower.h,
-          color: palette[Math.floor(tower.seed * palette.length)],
-        };
-      }),
-    );
-  }, [network, world]);
+        )
+        .map((tower) => {
+          let ground = -Infinity;
+          for (const [dx, dz] of [
+            [0, 0],
+            [1, 0],
+            [-1, 0],
+            [0, 1],
+            [0, -1],
+          ])
+            ground = Math.max(
+              ground,
+              world.surfaceHeight(
+                new Vector2(
+                  tower.x + dx * tower.w * 0.5,
+                  -(tower.z + dz * tower.w * 0.5),
+                ),
+              ),
+            );
+          return {
+            x: tower.x,
+            z: tower.z,
+            y: Math.max(0.03, ground) + 0.004,
+            w: tower.w,
+            // Growing cities build upwards as well as outwards.
+            h: tower.h * (1 + grown * 0.3),
+            color: palette[Math.floor(tower.seed * palette.length)],
+          };
+        });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [network, world, growthKey, railPoints]);
   useLayoutEffect(() => {
     const mesh = cityMesh.current;
     if (!mesh) return;
@@ -247,11 +289,25 @@ export default function RoadNetwork({
     mesh.instanceMatrix.needsUpdate = true;
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     mesh.computeBoundingSphere();
+    // Towers cast the cached sun shadows, so a changed skyline re-bakes them.
+    gl.shadowMap.needsUpdate = true;
     invalidate();
-  }, [buildings, invalidate]);
+  }, [buildings, gl, invalidate]);
 
   // Vehicles: busier, faster traffic on better roads.
   const carMesh = useRef<InstancedMesh>(null);
+  const truckMesh = useRef<InstancedMesh>(null);
+  /** Share of road vehicles that are freight trucks, higher in growing regions. */
+  const truckShare = useMemo(() => {
+    const byProvince = new Map(
+      provinces.map((p) => {
+        const region = regionForProvince(p.id)?.id as RegionId;
+        return [p.id, 0.16 + growthProgress(growth.get(region) ?? 1) * 0.18];
+      }),
+    );
+    return (province: string) => byProvince.get(province) ?? 0.16;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [growthKey, provinces.length]);
   const carTransform = useMemo(() => new Object3D(), []);
   const traffic = useMemo(() => buildTrafficPlan(runs), [runs]);
   const animationTime = useRef(0);
@@ -264,13 +320,16 @@ export default function RoadNetwork({
       color: new Color(),
       visible: new Uint8Array(traffic.groups.length),
       slots: new Int32Array(MAX_VEHICLES).fill(-1),
+      truckSlots: new Int32Array(MAX_TRUCKS).fill(-1),
       time: Number.NaN,
     }),
-    [traffic],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [traffic, truckShare],
   );
   const place = (time: number) => {
-    const mesh = carMesh.current;
-    if (!mesh) return;
+    const mesh = carMesh.current,
+      trucks = truckMesh.current;
+    if (!mesh || !trucks) return;
     const frame = trafficFrame;
     camera.updateMatrixWorld();
     frame.viewProjection.multiplyMatrices(
@@ -295,12 +354,21 @@ export default function RoadNetwork({
     const localScale = Math.min(1, Math.max(0, (zoomRatio - 4) / 2));
     const transform = carTransform;
     let count = 0,
-      colorsChanged = false;
-    for (let i = 0; i < traffic.vehicles.length && count < MAX_VEHICLES; i++) {
+      truckCount = 0,
+      colorsChanged = false,
+      truckColorsChanged = false;
+    for (
+      let i = 0;
+      i < traffic.vehicles.length &&
+      (count < MAX_VEHICLES || truckCount < MAX_TRUCKS);
+      i++
+    ) {
       const vehicle = traffic.vehicles[i];
       if (vehicle.local && localScale === 0) break;
       if (!frame.visible[vehicle.group]) continue;
       const group = traffic.groups[vehicle.group];
+      const truck = unit(i, 9) < truckShare(group.run.province);
+      if (truck ? truckCount >= MAX_TRUCKS : count >= MAX_VEHICLES) continue;
       const heading = sampleTrafficVehicle(
         vehicle,
         group,
@@ -316,6 +384,22 @@ export default function RoadNetwork({
         (vehicle.local ? localScale : 1);
       transform.scale.setScalar(vehicleSize);
       transform.updateMatrix();
+      if (truck) {
+        // The truck model stands on its wheels; the car box is centred.
+        transform.position.y -= 0.035 * vehicleSize;
+        transform.updateMatrix();
+        trucks.setMatrixAt(truckCount, transform.matrix);
+        if (frame.truckSlots[truckCount] !== i) {
+          trucks.setColorAt(
+            truckCount,
+            frame.color.set(TRUCK_COLORS[vehicle.color]),
+          );
+          frame.truckSlots[truckCount] = i;
+          truckColorsChanged = true;
+        }
+        truckCount++;
+        continue;
+      }
       mesh.setMatrixAt(count, transform.matrix);
       if (frame.slots[count] !== i) {
         mesh.setColorAt(count, frame.color.set(VEHICLE_COLORS[vehicle.color]));
@@ -328,15 +412,20 @@ export default function RoadNetwork({
     if (count) mesh.instanceMatrix.needsUpdate = true;
     if (colorsChanged && mesh.instanceColor)
       mesh.instanceColor.needsUpdate = true;
+    trucks.count = truckCount;
+    if (truckCount) trucks.instanceMatrix.needsUpdate = true;
+    if (truckColorsChanged && trucks.instanceColor)
+      trucks.instanceColor.needsUpdate = true;
   };
   useLayoutEffect(() => {
     const mesh = carMesh.current;
-    if (!mesh) return;
+    if (!mesh || !truckMesh.current) return;
     mesh.instanceMatrix.setUsage(DynamicDrawUsage);
+    truckMesh.current.instanceMatrix.setUsage(DynamicDrawUsage);
     place(animationTime.current);
     invalidate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [traffic, invalidate]);
+  }, [trafficFrame, invalidate]);
   useFrame(({ clock }) => {
     if (!reducedMotion) animationTime.current = clock.elapsedTime;
     place(animationTime.current);
@@ -398,6 +487,14 @@ export default function RoadNetwork({
       >
         <boxGeometry args={[0.16, 0.06, 0.08]} />
         <meshLambertMaterial flatShading />
+      </instancedMesh>
+      <instancedMesh
+        key={`trucks-${traffic.vehicles.length}`}
+        ref={truckMesh}
+        args={[transportGeometry("truck"), undefined, MAX_TRUCKS]}
+        frustumCulled={false}
+      >
+        <meshLambertMaterial vertexColors flatShading />
       </instancedMesh>
     </group>
   );

@@ -72,7 +72,7 @@ const SEA_LINKS: [RegionId, RegionId][] = [
 
 // ---------------------------------------------------------------- geometry
 
-const tint = (geometry: BufferGeometry, color: string) => {
+export const tint = (geometry: BufferGeometry, color: string) => {
   const base = geometry.index ? geometry.toNonIndexed() : geometry;
   const c = new Color(color),
     count = base.attributes.position.count,
@@ -83,7 +83,7 @@ const tint = (geometry: BufferGeometry, color: string) => {
   return base;
 };
 /** `y` is the bottom of every shape, so parts stack naturally. */
-const box = (
+export const box = (
   w: number,
   h: number,
   d: number,
@@ -94,7 +94,7 @@ const box = (
   ry = 0,
 ) =>
   tint(new BoxGeometry(w, h, d).rotateY(ry).translate(x, y + h / 2, z), color);
-const cyl = (
+export const cyl = (
   rt: number,
   rb: number,
   h: number,
@@ -122,7 +122,7 @@ const roof = (
       .translate(x, y + h / 2, z),
     color,
   );
-const cone = (
+export const cone = (
   r: number,
   h: number,
   seg: number,
@@ -140,7 +140,7 @@ const ball = (
   sy = 1,
 ) =>
   tint(new SphereGeometry(r, 8, 5).scale(1, sy, 1).translate(x, y, z), color);
-const gem = (
+export const gem = (
   r: number,
   x: number,
   y: number,
