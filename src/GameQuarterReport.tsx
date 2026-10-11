@@ -5,7 +5,8 @@ import { EconomyEmblem } from "./EconomyEmblem";
 import { EconomyReport } from "./EconomyReport";
 import { QuarterAnalysis } from "./QuarterAnalysis";
 import { TreasuryFlow } from "./TreasuryFlow";
-import { PolicySpending, QuarterDebrief } from "./QuarterDebrief";
+import { QuarterDebrief } from "./QuarterDebrief";
+import { PolicySpending, RevenueBreakdown } from "./BudgetBreakdown";
 import { StatHelp } from "./StatHelp";
 import { foundationNames, industries } from "./engine/economy/catalog";
 import {
@@ -495,6 +496,7 @@ export function GameQuarterReport({
                 />
               </section>
               <div className="debrief-column">
+                <RevenueBreakdown game={game} />
                 <PolicySpending game={game} />
                 <section className="report-board">
                   <h3>
