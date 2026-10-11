@@ -1741,6 +1741,10 @@ for (const language of ["en", "id"] as const)
           .getByRole("tab", { name: t(en, id), exact: true })
           .click();
         if (en === "4 Budget") {
+          await expect(
+            page.getByTestId("revenue-breakdown").locator(".budget-rows li"),
+          ).toHaveCount(7);
+          await expect(page.getByTestId("policy-spending")).toBeVisible();
           const flow = page.getByTestId("treasury-flow");
           await expect(flow).toHaveAttribute("data-playing", "false");
           await expect(flow).toHaveAttribute("data-step", "4");
