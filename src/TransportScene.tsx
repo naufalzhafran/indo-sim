@@ -39,13 +39,13 @@ const CRUISE = 2.6;
 const LOCOMOTIVE = new Color("#eb7057"),
   CARRIAGE = new Color("#fffaf0");
 
-/** Steel lines on a gravel bed beside the roads. */
+/** Steel lines on a gravel bed, laid apart from the roads. */
 function Railways({ lines }: { lines: RailLine[] }) {
   const geometry = useMemo(() => {
     const bed: Strip = { positions: [] },
       steel: Strip = { positions: [] };
-    // Lines beside a shared road trunk run on the same track; lay it once.
-    const ranges = unsharedRanges(lines, 0.1);
+    // Where lines meet they share track; lay it once.
+    const ranges = unsharedRanges(lines, 0.1, 3);
     lines.forEach((line, index) => {
       for (const [from, to] of ranges[index]) {
         addRibbon(bed, line, from, to, 0.034, 0, RAIL_LIFT);

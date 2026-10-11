@@ -439,15 +439,21 @@ function smooth(path: Vector2[], plan: Planner) {
 /**
  * Stretches each path shares with an earlier path, as [from, to] point ranges
  * to draw. Roads merge into trunks, so this keeps a shared trunk to one ribbon;
- * each kept range reaches one point into the trunk so the ribbons still meet.
+ * each kept range reaches `overlap` points into the trunk so the ribbons meet.
  */
 export function unsharedRanges(
   paths: readonly { points: readonly { x: number; z: number }[] }[],
   radius = 0.12,
+  overlap = 2,
 ): [number, number][][] {
   const grid: PointGrid = new Map();
   return paths.map((path) => {
     const shared = path.points.map((p) => nearPoint(grid, p.x, p.z, radius));
+    // Points that sit right on an earlier path: a drawn piece runs back to one
+    // so it meets the trunk instead of stopping just short of it.
+    const joined = path.points.map((p) =>
+      nearPoint(grid, p.x, p.z, JOIN_RADIUS),
+    );
     for (const p of path.points) {
       const key = `${Math.floor(p.x / CELL)},${Math.floor(p.z / CELL)}`;
       const cell = grid.get(key);
@@ -460,8 +466,10 @@ export function unsharedRanges(
       if (shared[i]) continue;
       let j = i;
       while (j < last && !shared[j + 1]) j++;
-      const from = Math.max(0, i - 1),
-        to = Math.min(last, j + 1);
+      let from = Math.max(0, i - overlap),
+        to = Math.min(last, j + overlap);
+      while (from > 0 && !joined[from] && i - from < MAX_JOIN) from--;
+      while (to < last && !joined[to] && to - j < MAX_JOIN) to++;
       if (to > from) ranges.push([from, to]);
       i = j;
     }
@@ -470,6 +478,8 @@ export function unsharedRanges(
 }
 
 type PointGrid = Map<string, [number, number][]>;
+const JOIN_RADIUS = 0.03;
+const MAX_JOIN = 10;
 const CELL = 0.5;
 function roadGrid(points: { x: number; z: number }[]): PointGrid {
   const grid: PointGrid = new Map();

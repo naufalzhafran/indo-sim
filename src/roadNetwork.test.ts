@@ -9,6 +9,7 @@ import {
   roadRuns,
   unsharedRanges,
 } from "./roadNetwork";
+import { looseEnds } from "./looseEnds.testUtil";
 
 const map = JSON.parse(
   readFileSync(
@@ -73,6 +74,10 @@ describe("road network", () => {
     const covered = drawn[index].reduce((sum, [a, b]) => sum + b - a, 0);
     expect(covered).toBeLessThan(network.roads[index].points.length / 2);
     expect(drawn[0]).toEqual([[0, network.roads[0].points.length - 1]]);
+  });
+  it("leaves no gap where a road leaves a shared trunk", () => {
+    const cities = network.cities.map((c) => c.position);
+    expect(looseEnds(network.roads, cities)).toEqual([]);
   });
   it("classifies roads by infrastructure", () => {
     expect(roadClassFor(80)).toBe("toll");
