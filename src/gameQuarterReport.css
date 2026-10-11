@@ -123,48 +123,6 @@ dialog.economy-report .dialog-content {
   gap: 18px;
   align-items: start;
 }
-.report-delivery-flow {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  margin: 24px 0;
-}
-.report-delivery-flow > div {
-  position: relative;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-  padding: 12px 6px;
-  background: var(--q-cream);
-  border: 2px solid #b7ceb0;
-  border-radius: 12px;
-  box-shadow: 0 4px 0 #c3d6b8;
-}
-.report-delivery-flow > div + div::before {
-  content: "";
-  position: absolute;
-  width: 18px;
-  height: 9px;
-  border-top: 2px solid #afc5a2;
-  border-bottom: 2px solid #afc5a2;
-  background: #d4e6c9;
-  right: 100%;
-  top: 40%;
-}
-.report-delivery-flow .economy-emblem {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 8px;
-}
-.report-delivery-flow strong {
-  font: 900 15px var(--q-heading);
-}
-.report-delivery-flow small {
-  font-size: 12px;
-  margin-top: 6px;
-  color: var(--q-muted);
-}
 .report-decision-list {
   list-style: none;
   padding: 0;
@@ -484,73 +442,10 @@ dialog.economy-report .dialog-content {
   margin-bottom: 16px;
   font-size: 14px;
 }
-.report-balance-result[data-active] {
-  border-color: var(--q-green);
-}
-.report-settlement-flow {
-  display: block;
-  width: 100%;
-  margin-bottom: 16px;
-}
-.report-settlement-flow rect {
-  fill: var(--q-cream);
-  stroke: #aac9b4;
-  stroke-width: 2;
-}
-.report-settlement-flow path {
-  fill: none;
-  stroke: var(--q-green);
-  stroke-width: 2;
-}
-.report-settlement-flow text {
-  fill: var(--q-ink);
-  font-size: 14px;
-  font-weight: 700;
-  font-family: "Source Sans 3", sans-serif;
-  font-variant-numeric: tabular-nums;
-}
-.report-settlement-flow .report-settlement-trace {
-  stroke-width: 4;
-  stroke-dasharray: 7 9;
-  animation: treasury-money-flow 900ms linear infinite;
-}
 @media (prefers-reduced-motion: reduce) {
-  .report-waterfall .report-flow-trace,
-  .report-settlement-flow .report-settlement-trace {
+  .report-waterfall .report-flow-trace {
     animation: none;
   }
-}
-.report-balance-result {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #e5efdc;
-  padding: 12px;
-  border: 2px solid #b7ceb0;
-  border-radius: 12px;
-}
-.report-balance-result strong {
-  margin-left: auto;
-  white-space: nowrap;
-  font-size: 22px;
-}
-.report-finance-flow {
-  display: grid;
-  gap: 14px;
-  margin: 22px 0;
-}
-.report-finance-flow > div {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--q-cream);
-  padding: 10px 14px;
-  border: 2px solid #b7ceb0;
-  border-radius: 12px;
-  box-shadow: 0 3px 0 #c3d6b8;
-}
-.report-finance-flow b {
-  margin-left: auto;
 }
 .report-funding-meter {
   height: 20px;
@@ -687,59 +582,61 @@ dialog.economy-report .dialog-content {
   color: var(--q-ink);
   font-weight: 600;
 }
-.debrief-medals {
+.debrief-results {
+  grid-column: 1 / -1;
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
 }
-.debrief-medals li {
+.debrief-results li {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
-  padding: 8px 10px;
+  padding: 10px 12px;
   border: 2px solid #b7ceb0;
   border-radius: 12px;
   background: var(--q-cream);
   box-shadow: 0 3px 0 #c3d6b8;
   min-width: 0;
 }
-.debrief-medals li > span:last-child {
+.debrief-results .economy-emblem {
+  flex: none;
+  width: 40px;
+  height: 40px;
+}
+.debrief-results li > span {
   display: grid;
+  gap: 2px;
   min-width: 0;
 }
-.debrief-medals strong {
+.debrief-results strong {
   font: 800 14px/1.2 var(--q-heading);
-}
-.debrief-medals small {
   color: var(--q-muted);
+}
+.debrief-results b {
+  font: 900 18px/1.2 var(--q-heading);
+  color: var(--q-ink);
+}
+.debrief-results li[data-tone="good"] b {
+  color: #1a6b4f;
+}
+.debrief-results li[data-tone="bad"] b {
+  color: #ae4734;
+}
+.debrief-results li[data-tone="good"] {
+  border-color: #8fc4a6;
+}
+.debrief-results li[data-tone="bad"] {
+  border-color: #e3b1a3;
+  box-shadow: 0 3px 0 #e5c4b8;
+}
+.debrief-results small {
+  color: var(--q-ink);
   font-size: 13px;
-}
-.debrief-medal {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  font: 900 16px var(--q-heading);
-  background: #ffd866;
-  color: #5b4206;
-  border: 2px solid #d9a23a;
-  box-shadow: 0 2px 0 #c18d2b;
-}
-.debrief-medals li[data-met="false"] {
-  border-style: dashed;
-  background: #f6f2e8;
-  box-shadow: none;
-}
-.debrief-medals li[data-met="false"] .debrief-medal {
-  background: #e9ece6;
-  color: #7a5045;
-  border-color: #c8cfc6;
-  box-shadow: none;
+  line-height: 1.35;
 }
 .debrief-sr {
   position: absolute;
@@ -750,53 +647,6 @@ dialog.economy-report .dialog-content {
   white-space: nowrap;
 }
 
-/* Live flow: each step carries its quarter value. */
-.debrief .report-delivery-flow {
-  margin: 8px 0 14px;
-  gap: 18px;
-}
-.debrief .report-delivery-flow > div {
-  padding: 10px 6px 12px;
-  animation: debrief-pop 360ms cubic-bezier(0.3, 1.4, 0.6, 1) both;
-}
-.debrief .report-delivery-flow > div + div::before {
-  content: none;
-}
-.debrief .report-delivery-flow > div + div::after {
-  content: "";
-  position: absolute;
-  right: calc(100% + 1px);
-  top: calc(34% - 4px);
-  width: 20px;
-  height: 20px;
-  background: var(--q-green);
-  clip-path: polygon(0 35%, 55% 35%, 55% 5%, 100% 50%, 55% 95%, 55% 65%, 0 65%);
-}
-.debrief .report-delivery-flow .economy-emblem {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 4px;
-}
-.debrief .report-delivery-flow b {
-  margin-top: 4px;
-  font: 900 18px var(--q-heading);
-  white-space: nowrap;
-}
-.debrief .report-delivery-flow > div[data-tone="good"] b {
-  color: #1a6b4f;
-}
-.debrief .report-delivery-flow > div[data-tone="bad"] b {
-  color: #ae4734;
-}
-.debrief .report-delivery-flow small {
-  margin-top: 2px;
-}
-@keyframes debrief-pop {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.96);
-  }
-}
 .debrief-decisions {
   list-style: none;
   margin: 0;
@@ -1204,7 +1054,6 @@ li[data-status="serving"] .debrief-progress > span:last-child {
   font-weight: 700;
 }
 @media (prefers-reduced-motion: reduce) {
-  .debrief .report-delivery-flow > div,
   .debrief-progress > span:last-child,
   .debrief-map-pin {
     animation: none;
@@ -1226,4 +1075,9 @@ li[data-status="serving"] .debrief-progress > span:last-child {
   .economy-report .debrief .debrief-hero h3 {
     font-size: 21px;
   }
+}
+.report-budget-lead {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--q-ink);
 }

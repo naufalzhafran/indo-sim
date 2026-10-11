@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { money, number } from "./components";
 import { useLanguage } from "./i18n";
-import { EconomyEmblem } from "./EconomyEmblem";
 
 export function TreasuryFlow({
   entries,
@@ -57,16 +56,16 @@ export function TreasuryFlow({
       "Penerimaan pajak menambah dana yang tersedia untuk belanja triwulan ini.",
     ),
     t(
-      "Non-tax receipts join taxes to form total revenue. They do not add government debt.",
-      "Penerimaan selain pajak digabung dengan pajak menjadi total penerimaan. Penerimaan ini tidak menambah utang pemerintah.",
+      "Other income, such as natural resource fees and profits from state companies. It is not borrowed money.",
+      "Penerimaan lain, seperti royalti sumber daya alam dan laba BUMN. Ini bukan uang pinjaman.",
     ),
     t(
-      "Services and programme delivery use revenue. This is actual spending; programme funding determines how much requested delivery was funded.",
-      "Layanan dan pelaksanaan program menggunakan penerimaan. Ini belanja aktual; pendanaan program menentukan porsi pelaksanaan yang didanai.",
+      "Schools, clinics, salaries and your programmes are paid from this money.",
+      "Sekolah, klinik, gaji pegawai, dan program Anda dibayar dari uang ini.",
     ),
     t(
-      "Interest uses the remaining revenue to service debt. It does not repay the debt principal.",
-      "Bunga menggunakan sisa penerimaan untuk membayar biaya utang. Pembayaran ini tidak melunasi pokok utang.",
+      "Interest is the cost of past borrowing. Paying it does not make the debt itself smaller.",
+      "Bunga adalah biaya dari pinjaman lama. Membayarnya tidak mengurangi jumlah utang.",
     ),
     balance >= 0
       ? t(
@@ -170,48 +169,7 @@ export function TreasuryFlow({
           <b>{money(step < 4 ? rows[step].end : balance)}</b>
         </span>
       </div>
-      <svg
-        className="report-settlement-flow"
-        viewBox="0 0 600 110"
-        role="img"
-        aria-label={`${t("Budget balance", "Saldo anggaran")} ${money(balance)}, ${t("Debt change", "Perubahan utang")} ${money(borrowing - repayment)}, ${t("Cash change", "Perubahan kas")} ${money(cashAfter - cashBefore)}`}
-      >
-        <path d="M180 55H240V26H300 M240 55V84H300" />
-        {playing && step === 4 && (
-          <path
-            className="report-settlement-trace"
-            d="M180 55H240V26H300 M240 55V84H300"
-          />
-        )}
-        <rect x="2" y="30" width="178" height="50" rx="8" />
-        <rect x="300" y="2" width="298" height="48" rx="8" />
-        <rect x="300" y="60" width="298" height="48" rx="8" />
-        <text x="16" y="50">
-          {t("Budget balance", "Saldo anggaran")}
-        </text>
-        <text x="16" y="69">
-          {money(balance)}
-        </text>
-        <text x="314" y="22">
-          {t("Debt change", "Perubahan utang")}
-        </text>
-        <text x="314" y="41">
-          {money(borrowing - repayment)}
-        </text>
-        <text x="314" y="80">
-          {t("Cash change", "Perubahan kas")}
-        </text>
-        <text x="314" y="99">
-          {money(cashAfter - cashBefore)}
-        </text>
-      </svg>
       <div className="report-flow-controls">
-        <span>
-          {t(
-            "Revenue → services → interest → debt / cash",
-            "Penerimaan → layanan → bunga → utang / kas",
-          )}
-        </span>
         {!reduced && (
           <button
             onClick={() => {
@@ -227,14 +185,6 @@ export function TreasuryFlow({
               : t("Replay flow", "Putar ulang alur")}
           </button>
         )}
-      </div>
-      <div
-        className="report-balance-result"
-        data-active={step === 4 || undefined}
-      >
-        <EconomyEmblem kind="investment" />
-        <span>{t("Quarter budget balance", "Saldo anggaran triwulan")}</span>
-        <strong>{money(balance)}</strong>
       </div>
     </div>
   );

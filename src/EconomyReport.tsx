@@ -1,10 +1,8 @@
 import { money, number } from "./components";
-import { translate, useLanguage } from "./i18n";
+import { useLanguage } from "./i18n";
 import { CampaignGoals } from "./CampaignGoals";
 import { PowerReport } from "./PowerReport";
-import { QuarterAnalysis } from "./QuarterAnalysis";
-import { recapLabels, recapConsequences } from "./QuarterRecap";
-import { policyName, type QuarterVisualTransition } from "./quarterVisual";
+import { policyName } from "./quarterVisual";
 import { foundationNames } from "./engine/economy/catalog";
 import { taxDefinitions } from "./engine/taxes";
 import {
@@ -24,11 +22,9 @@ const incomeIndex = (metrics: Metrics, initial: Metrics) =>
 
 export function EconomyReport({
   game,
-  recap,
   onRegion,
 }: {
   game: QuarterGame;
-  recap?: QuarterVisualTransition | null;
   onRegion: (id: RegionId) => void;
 }) {
   const language = useLanguage();
@@ -61,10 +57,10 @@ export function EconomyReport({
   const ledger = receipt.ledger;
   const fromLabel = final
     ? t("Start of term", "Awal masa jabatan")
-    : t("Quarter opening", "Awal triwulan");
+    : t("Start of quarter", "Awal triwulan");
   const toLabel = final
     ? t("End of year five", "Akhir tahun kelima")
-    : t("Quarter closing", "Akhir triwulan");
+    : t("End of quarter", "Akhir triwulan");
   const metrics: {
     key: string;
     label: string;
@@ -153,7 +149,7 @@ export function EconomyReport({
                 "Five-year development report",
                 "Laporan pembangunan lima tahun",
               )
-            : t("Your quarter in review", "Tinjauan triwulan Anda")}
+            : t("All numbers for this quarter", "Semua angka triwulan ini")}
         </h2>
         <p>
           {final
@@ -162,100 +158,12 @@ export function EconomyReport({
                 "Bandingkan kondisi awal negara dengan hasil masa jabatan Anda. Kemajuan memiliki beberapa dimensi; tidak ada satu skor gabungan.",
               )
             : t(
-                "Actual results after three months of policy delivery, business decisions and outside events.",
-                "Hasil aktual setelah tiga bulan pelaksanaan kebijakan, keputusan usaha, dan peristiwa luar.",
+                "Reference tables with every figure. The earlier pages explain what they mean.",
+                "Tabel rujukan berisi semua angka. Halaman sebelumnya menjelaskan artinya.",
               )}
         </p>
       </header>
       {final && <CampaignGoals game={game} />}
-      <QuarterAnalysis game={game} />
-      {!!recap?.callouts.length && (
-        <section>
-          <h3>
-            {t("What happened on the islands", "Yang terjadi di kepulauan")}
-          </h3>
-          <ul className="q-report-milestones eco-event-list">
-            {recap.callouts.map((callout, index) => (
-              <li key={`${callout.province}-${callout.event}-${index}`}>
-                <strong>
-                  {language === "id"
-                    ? (callout.nameId ?? callout.name)
-                    : callout.name}
-                  :{" "}
-                  {language === "id"
-                    ? (recapLabels[callout.label] ?? translate(callout.label))
-                    : callout.label}
-                </strong>
-                {callout.detail && <p>{translate(callout.detail)}</p>}
-                {callout.before !== undefined &&
-                  callout.after !== undefined && (
-                    <p>
-                      {number(callout.before, 2)}
-                      {callout.unit} → {number(callout.after, 2)}
-                      {callout.unit}
-                    </p>
-                  )}
-                {callout.beforeState && callout.afterState && (
-                  <p>
-                    {language === "id"
-                      ? (recapLabels[callout.beforeState] ??
-                        translate(callout.beforeState))
-                      : callout.beforeState}{" "}
-                    →{" "}
-                    {language === "id"
-                      ? (recapLabels[callout.afterState] ??
-                        translate(callout.afterState))
-                      : callout.afterState}
-                  </p>
-                )}
-                <p>
-                  {recapConsequences[callout.event][language === "id" ? 1 : 0]}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-      {recap && !recap.partial && (
-        <section className="q-report-decisions">
-          <h3>{t("Decisions carried out", "Keputusan yang dijalankan")}</h3>
-          <ul className="eco-event-list">
-            {recap.decisions.launched.map((id) => (
-              <li key={id}>
-                {t("Launched", "Diluncurkan")}:{" "}
-                <strong>{policyName(id)}</strong>
-              </li>
-            ))}
-            {recap.decisions.ended.map((id) => (
-              <li key={id}>
-                {t("Ended", "Dihentikan")}: <strong>{policyName(id)}</strong>
-              </li>
-            ))}
-            {recap.decisions.taxesChanged && (
-              <li>{t("Tax settings changed.", "Pengaturan pajak berubah.")}</li>
-            )}
-            {recap.decisions.allocationChanged && (
-              <li>
-                {t(
-                  "Programme budgets were redistributed across regions.",
-                  "Anggaran program dialokasikan ulang antarwilayah.",
-                )}
-              </li>
-            )}
-            {!recap.decisions.launched.length &&
-              !recap.decisions.ended.length &&
-              !recap.decisions.taxesChanged &&
-              !recap.decisions.allocationChanged && (
-                <li>
-                  {t(
-                    "Kept the previous quarter’s plan. Existing programmes continued delivering their effects.",
-                    "Rencana triwulan sebelumnya dipertahankan. Program berjalan terus memberi dampak.",
-                  )}
-                </li>
-              )}
-          </ul>
-        </section>
-      )}
       <section>
         <h3>
           {final
@@ -542,71 +450,6 @@ export function EconomyReport({
             })}
           </tbody>
         </table>
-      </section>
-      <section>
-        <h3>{t("What drove the quarter", "Penggerak triwulan ini")}</h3>
-        {receipt.effects && (
-          <>
-            <p className="eco-impact-note">
-              {t(
-                "The plan contribution compares your choices with continuing the previous settings under the same events. Existing policies, economic adjustment and outside events make up the remaining change.",
-                "Kontribusi rencana membandingkan pilihan Anda dengan melanjutkan pengaturan sebelumnya pada peristiwa yang sama. Kebijakan berjalan, penyesuaian ekonomi, dan peristiwa luar menjelaskan perubahan lainnya.",
-              )}
-            </p>
-            <table className="eco-data-table">
-              <thead>
-                <tr>
-                  <th scope="col">{t("Basic service", "Layanan dasar")}</th>
-                  <th scope="col">
-                    {t("This plan’s contribution", "Kontribusi rencana ini")}
-                  </th>
-                  <th scope="col">
-                    {t("Continuing conditions", "Kondisi berlanjut")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {FOUNDATIONS.map((foundation) => {
-                  const planChange =
-                    receipt.effects!.decisions[foundation] ?? 0;
-                  const continuing = receipt.effects!.world[foundation] ?? 0;
-                  return (
-                    <tr key={foundation}>
-                      <th scope="row">
-                        {foundationNames[foundation][language]}
-                      </th>
-                      <td>
-                        {planChange > 0 ? "+" : ""}
-                        {number(planChange, 2)}
-                      </td>
-                      <td>
-                        {continuing > 0 ? "+" : ""}
-                        {number(continuing, 2)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </>
-        )}
-        {receipt.events.length ? (
-          <ul className="eco-event-list">
-            {receipt.events.map((event, index) => (
-              <li key={`${event.month}-${event.kind}-${index}`}>
-                <strong>{event.title[language]}</strong>
-                <p>{event.detail[language]}</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>
-            {t(
-              "No major outside events. Outcomes reflect ongoing services, the policy portfolio and business adjustment.",
-              "Tidak ada peristiwa luar besar. Hasil mencerminkan layanan rutin, pilihan kebijakan, dan penyesuaian usaha.",
-            )}
-          </p>
-        )}
       </section>
       {!final && <CampaignGoals game={game} />}
       <PowerReport game={game} />
