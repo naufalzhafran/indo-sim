@@ -8,7 +8,7 @@ export const goalShortNames: Record<GoalId, Bilingual> = {
   income: { en: "Income", id: "Pendapatan" },
   poverty: { en: "Poverty", id: "Kemiskinan" },
   jobs: { en: "Jobs", id: "Lapangan kerja" },
-  services: { en: "Basic services", id: "Layanan dasar" },
+  services: { en: "Basic services", id: "Layanan" },
   energy: { en: "Power", id: "Listrik" },
   budget: { en: "Budget", id: "Anggaran" },
 };
