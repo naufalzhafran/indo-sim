@@ -1815,6 +1815,22 @@ test("quarter playback runs once and subsequent reviews open the report", async 
   const recap = page.locator(".q-recap");
   await expect(recap).toBeVisible();
   await expect(recap).toHaveAttribute("data-done", "true", { timeout: 25000 });
+  // The playback ends on the whole-country result, with nothing cut off.
+  await expect(
+    recap.getByRole("tab", { name: /Whole country$/ }),
+  ).toHaveAttribute("aria-selected", "true");
+  await expect(recap.locator(".q-impact-results > li")).toHaveCount(4);
+  for (const tab of ["What happened", "Regions", "Whole country"]) {
+    await recap.getByRole("tab", { name: new RegExp(`${tab}$`) }).click();
+    expect(
+      await recap
+        .locator(".q-recap-stage")
+        .evaluate((node) => node.scrollHeight <= node.clientHeight),
+    ).toBe(true);
+  }
+  await expect(
+    recap.getByRole("button", { name: "Plan next quarter", exact: true }),
+  ).toBeVisible();
   await recap.getByRole("button", { name: "Read report", exact: true }).click();
   await expect(page.getByTestId("quarter-report")).toBeVisible();
   await expect(recap).toHaveCount(0);

@@ -15,34 +15,48 @@ import {
 } from "./engine/gameRegions";
 import { industries, policyById } from "./engine/economy/catalog";
 
-/** Each located event gets its own beat on the map. */
-export const EVENT_STEP_MS = 1700;
-/** A calm quarter still gets a short beat before the national results. */
+/**
+ * Each located event gets its own beat on the map, long enough for a first-time
+ * player to read the card and find the place.
+ */
+export const EVENT_STEP_MS = 2600;
+/** A calm quarter still gets a short beat before the regions and results. */
 export const QUIET_EVENTS_MS = 1600;
-export const IMPACT_MS = 5200;
-export const REGION_STEP_MS = 700;
-export const REGION_HOLD_MS = 700;
+/** The national results count up, then stay on screen until the player moves on. */
+export const IMPACT_MS = 2600;
+/** Only the regions worth a look (strongest, needs attention) get a beat. */
+export const REGION_STEP_MS = 2600;
+/** With no region to point out, the regions act is a short pause. */
+export const QUIET_REGIONS_MS = 1200;
 
-export type QuarterAct = "events" | "impact" | "regions";
+export type QuarterAct = "events" | "regions" | "impact";
+/** Local to national: the player ends on the whole-country result. */
 export const QUARTER_ACTS: readonly QuarterAct[] = [
   "events",
-  "impact",
   "regions",
+  "impact",
 ];
+
+/** The regions the playback stops at, in map order. */
+export const regionTour = (transition: QuarterVisualTransition) =>
+  transition.regions.filter((region) => region.tag);
 
 export function quarterTimeline(transition: QuarterVisualTransition) {
   const events = transition.callouts.length
     ? transition.callouts.length * EVENT_STEP_MS
     : QUIET_EVENTS_MS;
-  const regions =
-    transition.regions.length * REGION_STEP_MS +
-    (transition.regions.length ? REGION_HOLD_MS : 0);
+  const tour = regionTour(transition).length;
+  const regions = transition.regions.length
+    ? tour
+      ? tour * REGION_STEP_MS
+      : QUIET_REGIONS_MS
+    : 0;
   const acts = {
     events: { start: 0, duration: events },
-    impact: { start: events, duration: IMPACT_MS },
-    regions: { start: events + IMPACT_MS, duration: regions },
+    regions: { start: events, duration: regions },
+    impact: { start: events + regions, duration: IMPACT_MS },
   } satisfies Record<QuarterAct, { start: number; duration: number }>;
-  return { acts, total: events + IMPACT_MS + regions };
+  return { acts, total: events + regions + IMPACT_MS };
 }
 
 export type PlaybackFocus = {
@@ -69,11 +83,11 @@ export function getQuarterPlayback(
   const elapsed = Math.max(0, Math.min(total, elapsedMs));
   const done = elapsedMs >= total;
   const act: QuarterAct =
-    elapsed < acts.impact.start
+    elapsed < acts.regions.start
       ? "events"
-      : elapsed < acts.regions.start || !transition.regions.length
-        ? "impact"
-        : "regions";
+      : elapsed < acts.impact.start
+        ? "regions"
+        : "impact";
   const local = elapsed - acts[act].start;
   const actProgress = done ? 1 : clamp(local / acts[act].duration);
   let step = -1,
@@ -96,17 +110,11 @@ export function getQuarterPlayback(
         callout.event === "project-completed" ||
         callout.event === "crisis-resolved",
     };
-  } else if (act === "regions" && transition.regions.length) {
-    step = Math.min(
-      transition.regions.length - 1,
-      Math.floor(local / REGION_STEP_MS),
-    );
-    const last = step === transition.regions.length - 1;
-    stepPhase = clamp(
-      (local - step * REGION_STEP_MS) /
-        (last ? REGION_STEP_MS + REGION_HOLD_MS : REGION_STEP_MS),
-    );
-    const region = transition.regions[step];
+  } else if (act === "regions" && regionTour(transition).length) {
+    const tour = regionTour(transition);
+    step = Math.min(tour.length - 1, Math.floor(local / REGION_STEP_MS));
+    stepPhase = clamp(local / REGION_STEP_MS - step);
+    const region = tour[step];
     focus = {
       province: region.province,
       region: region.id,
@@ -220,6 +228,8 @@ export type RegionResult = {
   score: number;
   /** Headline measures that clearly worsened. */
   setbacks: number;
+  /** Headline measures that clearly improved. */
+  gains: number;
   tag?: "best" | "attention";
 };
 
@@ -265,6 +275,7 @@ export type VisualCallout = {
   layer?: Overlay;
   projectId?: string;
   crisisId?: string;
+  crisisKind?: Crisis["kind"];
   beforeState?: string;
   afterState?: string;
 };
@@ -405,6 +416,7 @@ export function buildQuarterVisualTransition(
         kind: "crisis",
         event,
         crisisId: c.after.id,
+        crisisKind: c.after.kind,
         direction:
           event === "crisis-resolved" ||
           event === "crisis-recovery" ||
@@ -583,6 +595,7 @@ export function buildRegionResults(
         score:
           gdpChange * 0.5 - poverty * 4 - unemployment * 4 + foundationMean,
         setbacks: bad,
+        gains: good,
       };
     });
   if (results.length > 1) {

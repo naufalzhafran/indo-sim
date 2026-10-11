@@ -7,11 +7,14 @@ import { foundationNames } from "./engine/economy/catalog";
 import { taxDefinitions } from "./engine/taxes";
 import { partyById } from "./engine/politics";
 import { FOUNDATIONS, type Foundation } from "./engine/economy/types";
+import { EconomyEmblem } from "./EconomyEmblem";
+import { quarterResults } from "./quarterResults";
 import {
   getQuarterPlayback,
   policyName,
   quarterTimeline,
   QUARTER_ACTS,
+  regionTour,
   smooth,
   type QuarterAct,
   type QuarterVisualTransition,
@@ -72,31 +75,64 @@ export const recapConsequences: Record<
     "Risiko meningkat di wilayah ini",
   ],
   "crisis-active": [
-    "Slows local services and output",
-    "Memperlambat layanan dan hasil daerah",
+    "Slows local services and the local economy",
+    "Memperlambat layanan dan ekonomi daerah",
   ],
   "crisis-improved": [
     "Damage is easing; recovery continues",
     "Kerusakan mereda; pemulihan berlanjut",
   ],
   "crisis-worsened": [
-    "Slows local services and output",
-    "Memperlambat layanan dan hasil daerah",
+    "Slows local services and the local economy",
+    "Memperlambat layanan dan ekonomi daerah",
   ],
   "province-changed": ["", ""],
 };
 
+/**
+ * What speeds recovery from a disruption, following the engine: harvest
+ * shocks respond to irrigation and food storage, floods to transport and
+ * water, and other disruptions to health and nutrition. Recovery also slows
+ * when programmes are not fully paid.
+ */
+const crisisHelp = (kind: VisualCallout["crisisKind"]): [string, string] =>
+  kind === "harvest"
+    ? [
+        "Irrigation and food storage programmes here speed recovery.",
+        "Program irigasi dan cadangan pangan di sini mempercepat pemulihan.",
+      ]
+    : kind === "flood"
+      ? [
+          "Road and clean water programmes here speed recovery.",
+          "Program jalan dan air bersih di sini mempercepat pemulihan.",
+        ]
+      : [
+          "Health and nutrition programmes here speed recovery.",
+          "Program kesehatan dan gizi di sini mempercepat pemulihan.",
+        ];
+const needsHelp = new Set<VisualCallout["event"]>([
+  "crisis-warning",
+  "crisis-active",
+  "crisis-worsened",
+]);
+
 const actNames: Record<QuarterAct, [string, string]> = {
   events: ["What happened", "Yang terjadi"],
-  impact: ["National impact", "Dampak nasional"],
   regions: ["Regions", "Wilayah"],
+  impact: ["Whole country", "Seluruh negeri"],
 };
 
 const verdictNames = {
   improving: ["Improving", "Membaik"],
   mixed: ["Mixed", "Campuran"],
+  steady: ["Steady", "Stabil"],
   slipping: ["Slipping", "Menurun"],
 } as const;
+/** A region where nothing clearly moved reads as steady, not mixed. */
+const verdictKey = (region: RegionResult) =>
+  region.verdict === "mixed" && !region.gains && !region.setbacks
+    ? "steady"
+    : region.verdict;
 
 const tone = (value: number, threshold = 0.005, lowerIsBetter = false) =>
   Math.abs(value) < threshold
@@ -139,6 +175,7 @@ export default function QuarterRecap({
   const close = useRef<HTMLButtonElement>(null);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const { acts, total } = quarterTimeline(transition);
+  const tour = regionTour(transition);
 
   useEffect(() => {
     recap.current?.scrollIntoView({
@@ -176,7 +213,8 @@ export default function QuarterRecap({
     transition,
   );
   const done = playback.done;
-  const shown: QuarterAct = done ? (pinnedAct ?? "regions") : playback.act;
+  // The playback ends on the whole-country result, and it stays there.
+  const shown: QuarterAct = done ? (pinnedAct ?? "impact") : playback.act;
   const order = QUARTER_ACTS.indexOf(playback.act);
   const actFill = (act: QuarterAct) =>
     done || QUARTER_ACTS.indexOf(act) < order
@@ -184,7 +222,7 @@ export default function QuarterRecap({
       : act === playback.act
         ? playback.actProgress
         : 0;
-  /** Numbers count up during the first part of their act. */
+  /** Results appear during the first part of their act. */
   const reveal = (act: QuarterAct) =>
     done || QUARTER_ACTS.indexOf(act) < order
       ? 1
@@ -227,12 +265,11 @@ export default function QuarterRecap({
     .filter((event) => event.kind === "crisis" || event.kind === "project")
     .slice(0, 2);
   const tourStep = playback.act === "regions" && !done ? playback.step : -1;
-  const attention = transition.regions.find((r) => r.tag === "attention");
   const spotlight: RegionResult | undefined =
     tourStep >= 0
-      ? transition.regions[tourStep]
+      ? tour[tourStep]
       : (transition.regions.find((r) => r.id === spot) ??
-        attention ??
+        transition.regions.find((r) => r.tag === "attention") ??
         transition.regions.find((r) => r.tag === "best") ??
         transition.regions[0]);
 
@@ -299,18 +336,19 @@ export default function QuarterRecap({
           ))}
         </div>
         <div className="q-recap-actions">
-          {receipt && (
+          {/* While it plays, skipping is the only side step offered. */}
+          {receipt && done && (
             <button onClick={onReport}>
               {t("Read report", "Baca laporan")}
             </button>
           )}
           {!done && (
             <button ref={skip} onClick={() => finishPlayback("impact")}>
-              {t("Skip animation", "Lewati animasi")}
+              {t("Skip to results", "Langsung ke hasil")}
             </button>
           )}
           <button ref={close} className="q-recap-continue" onClick={onFinish}>
-            {t("Continue", "Lanjutkan")}
+            {t("Plan next quarter", "Rencana berikutnya")}
           </button>
         </div>
       </div>
@@ -405,6 +443,9 @@ export default function QuarterRecap({
                       ) : null}
                       <span className="q-recap-meaning">
                         {pick(recapConsequences[callout.event])}
+                        {callout.kind === "crisis" &&
+                          needsHelp.has(callout.event) &&
+                          `. ${pick(crisisHelp(callout.crisisKind))}`}
                       </span>
                     </div>
                   </li>
@@ -443,7 +484,7 @@ export default function QuarterRecap({
                 )}
               </div>
             )}
-            <aside className="q-debrief-news">
+            <section className="q-debrief-news">
               <h3>{t("Across the nation", "Di seluruh negeri")}</h3>
               {transition.news.length ? (
                 <ul>
@@ -461,8 +502,22 @@ export default function QuarterRecap({
                   )}
                 </p>
               )}
-            </aside>
+            </section>
           </div>
+        )}
+        {shown === "regions" && spotlight && (
+          <RegionsAct
+            transition={transition}
+            spotlight={spotlight}
+            touring={tourStep >= 0}
+            t={t}
+            signed={signed}
+            onRegion={onRegion}
+            onPick={(region) => {
+              setSpot(region);
+              if (!done) finishPlayback("regions");
+            }}
+          />
         )}
         {shown === "impact" &&
           (receipt ? (
@@ -480,119 +535,205 @@ export default function QuarterRecap({
               )}
             </p>
           ))}
-        {shown === "regions" && spotlight && (
-          <div className="q-debrief-regions">
-            <article
-              className="q-region-spot"
-              data-verdict={spotlight.verdict}
-              aria-live={tourStep >= 0 ? "off" : "polite"}
-            >
-              <div className="q-region-spot-head">
-                <h3>{place(spotlight)}</h3>
-                <span className="q-verdict" data-verdict={spotlight.verdict}>
-                  <Verdict verdict={spotlight.verdict} />
-                  {pick(verdictNames[spotlight.verdict])}
-                </span>
-                {spotlight.tag && (
-                  <span className="q-region-tag" data-tag={spotlight.tag}>
-                    {spotlight.tag === "best"
-                      ? t("Strongest quarter", "Triwulan terkuat")
-                      : t("Needs attention", "Perlu perhatian")}
-                  </span>
-                )}
-                <button
-                  className="q-region-open"
-                  onClick={() => onRegion(spotlight.id)}
-                >
-                  {t("Open region", "Buka wilayah")}
-                </button>
-              </div>
-              <dl className="q-region-stats">
-                <div>
-                  <dt>{t("Output", "Output")}</dt>
-                  <dd data-tone={tone(spotlight.gdpChange, 0.01)}>
-                    {signed(spotlight.gdpChange, 2)}%
-                  </dd>
-                </div>
-                <div>
-                  <dt>{t("Poverty", "Kemiskinan")}</dt>
-                  <dd data-tone={tone(spotlight.poverty, 0.005, true)}>
-                    {number(spotlight.after.poverty, 1)}%{" "}
-                    <small>({signed(spotlight.poverty, 2)})</small>
-                  </dd>
-                </div>
-                <div>
-                  <dt>{t("Unemployment", "Pengangguran")}</dt>
-                  <dd data-tone={tone(spotlight.unemployment, 0.005, true)}>
-                    {number(spotlight.after.unemployment, 1)}%{" "}
-                    <small>({signed(spotlight.unemployment, 2)})</small>
-                  </dd>
-                </div>
-                <div>
-                  <dt>{t("Programme spending", "Belanja program")}</dt>
-                  <dd>{money(spotlight.spending)}</dd>
-                </div>
-              </dl>
-              <ul
-                className="q-region-foundations"
-                aria-label={t("Basic services changes", "Perubahan layanan dasar")}
-              >
-                {FOUNDATIONS.map((f) => (
-                  <li key={f} data-tone={tone(spotlight.foundations[f], 0.01)}>
-                    {foundationNames[f][language]}{" "}
-                    <b>{signed(spotlight.foundations[f], 2)}</b>
-                  </li>
-                ))}
-              </ul>
-              <p className="q-region-programmes">
-                {spotlight.programmes.length
-                  ? `${t("Main programmes", "Program utama")}: ${spotlight.programmes.map(policyName).join(", ")}`
-                  : t(
-                      "No programme spending reached this region.",
-                      "Tidak ada belanja program yang mencapai wilayah ini.",
-                    )}
-              </p>
-            </article>
-            <ul
-              className="q-region-chips"
-              aria-label={t("All regions", "Semua wilayah")}
-            >
-              {transition.regions.map((region, index) => (
-                <li key={region.id}>
-                  <button
-                    aria-pressed={spotlight.id === region.id}
-                    data-pending={
-                      tourStep >= 0 && index > tourStep ? true : undefined
-                    }
-                    data-verdict={region.verdict}
-                    onClick={() => {
-                      setSpot(region.id);
-                      if (!done) finishPlayback("regions");
-                    }}
-                  >
-                    <Verdict verdict={region.verdict} />
-                    <span className="q-region-chip-name">{place(region)}</span>
-                    <span
-                      className="q-region-chip-value"
-                      data-tone={tone(region.gdpChange, 0.01)}
-                    >
-                      {signed(region.gdpChange, 1)}%
-                    </span>
-                    {region.tag && (
-                      <span className="sr-only">
-                        {region.tag === "best"
-                          ? t(", strongest quarter", ", triwulan terkuat")
-                          : t(", needs attention", ", perlu perhatian")}
-                      </span>
-                    )}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
     </section>
+  );
+}
+
+function RegionsAct({
+  transition,
+  spotlight,
+  touring,
+  t,
+  signed,
+  onRegion,
+  onPick,
+}: {
+  transition: QuarterVisualTransition;
+  spotlight: RegionResult;
+  touring: boolean;
+  t: (en: string, id: string) => string;
+  signed: (value: number, digits?: number) => string;
+  onRegion: (region: string) => void;
+  onPick: (region: string) => void;
+}) {
+  const language = useLanguage();
+  const pick = (pair: readonly [string, string]) =>
+    pair[language === "id" ? 1 : 0];
+  const place = (region: { name: string; nameId?: string }) =>
+    language === "id" ? (region.nameId ?? region.name) : region.name;
+  const key = verdictKey(spotlight);
+  const points = t("points", "poin");
+
+  // The same thresholds the verdict uses, said in words.
+  const foundationMean =
+    FOUNDATIONS.reduce((sum, f) => sum + spotlight.foundations[f], 0) /
+    FOUNDATIONS.length;
+  const better: string[] = [],
+    worse: string[] = [];
+  if (spotlight.gdpChange >= 0.1)
+    better.push(t("the economy grew", "ekonomi tumbuh"));
+  else if (spotlight.gdpChange <= -0.1)
+    worse.push(t("the economy shrank", "ekonomi menyusut"));
+  if (spotlight.poverty <= -0.05)
+    better.push(t("poverty fell", "kemiskinan turun"));
+  else if (spotlight.poverty >= 0.05)
+    worse.push(t("poverty rose", "kemiskinan naik"));
+  if (spotlight.unemployment <= -0.05)
+    better.push(t("unemployment fell", "pengangguran turun"));
+  else if (spotlight.unemployment >= 0.05)
+    worse.push(t("unemployment rose", "pengangguran naik"));
+  if (foundationMean >= 0.05)
+    better.push(t("basic services improved", "layanan dasar membaik"));
+  else if (foundationMean <= -0.05)
+    worse.push(t("basic services wore down", "layanan dasar menurun"));
+  const list = (items: string[]) =>
+    items.length < 2
+      ? (items[0] ?? "")
+      : `${items.slice(0, -1).join(", ")}${t(" and ", ", dan ")}${items.at(-1)}`;
+  const capital = (value: string) =>
+    value.charAt(0).toUpperCase() + value.slice(1);
+  const reason =
+    better.length && worse.length
+      ? `${capital(list(better))}${t(", but ", ", tetapi ")}${list(worse)}.`
+      : better.length
+        ? `${capital(list(better))}.`
+        : worse.length
+          ? `${capital(list(worse))}.`
+          : t(
+              "Little changed here this quarter.",
+              "Hanya sedikit perubahan di sini triwulan ini.",
+            );
+  const services = FOUNDATIONS.filter(
+    (f) => Math.abs(spotlight.foundations[f]) >= 0.05,
+  );
+
+  return (
+    <div className="q-debrief-regions">
+      <article
+        className="q-region-spot"
+        data-verdict={spotlight.verdict}
+        aria-live={touring ? "off" : "polite"}
+      >
+        <div className="q-region-spot-head">
+          <h3>{place(spotlight)}</h3>
+          <span className="q-verdict" data-verdict={spotlight.verdict}>
+            <Verdict verdict={spotlight.verdict} />
+            {pick(verdictNames[key])}
+          </span>
+          {spotlight.tag && (
+            <span className="q-region-tag" data-tag={spotlight.tag}>
+              {spotlight.tag === "best"
+                ? t("Strongest quarter", "Triwulan terkuat")
+                : t("Needs attention", "Perlu perhatian")}
+            </span>
+          )}
+          <button
+            className="q-region-open"
+            onClick={() => onRegion(spotlight.id)}
+          >
+            {t("Open region", "Buka wilayah")}
+          </button>
+        </div>
+        <p className="q-region-reason">{reason}</p>
+        <dl className="q-region-stats">
+          <div>
+            <dt>{t("Economy", "Ekonomi")}</dt>
+            <dd data-tone={tone(spotlight.gdpChange, 0.1)}>
+              {signed(spotlight.gdpChange, 1)}%
+            </dd>
+          </div>
+          <div>
+            <dt>{t("Poverty", "Kemiskinan")}</dt>
+            <dd data-tone={tone(spotlight.poverty, 0.05, true)}>
+              {number(spotlight.after.poverty, 1)}%{" "}
+              <small>
+                {Math.abs(spotlight.poverty) < 0.05
+                  ? t("steady", "tetap")
+                  : `${signed(spotlight.poverty, 1)} ${points}`}
+              </small>
+            </dd>
+          </div>
+          <div>
+            <dt>{t("Unemployment", "Pengangguran")}</dt>
+            <dd data-tone={tone(spotlight.unemployment, 0.05, true)}>
+              {number(spotlight.after.unemployment, 1)}%{" "}
+              <small>
+                {Math.abs(spotlight.unemployment) < 0.05
+                  ? t("steady", "tetap")
+                  : `${signed(spotlight.unemployment, 1)} ${points}`}
+              </small>
+            </dd>
+          </div>
+        </dl>
+        <p className="q-region-programmes">
+          {services.length ? (
+            <>
+              {t("Basic services", "Layanan dasar")}:{" "}
+              {services.map((f, index) => (
+                <span key={f} data-tone={tone(spotlight.foundations[f], 0.05)}>
+                  {index > 0 && ", "}
+                  {foundationNames[f][language]}{" "}
+                  {signed(spotlight.foundations[f], 1)}
+                </span>
+              ))}
+              {". "}
+            </>
+          ) : (
+            t("Basic services held steady. ", "Layanan dasar stabil. ")
+          )}
+          {spotlight.programmes.length
+            ? `${t("Programmes here", "Program di sini")}: ${spotlight.programmes.map(policyName).join(", ")} (${money(spotlight.spending)}).`
+            : t(
+                "No programme money reached this region yet.",
+                "Belum ada dana program yang sampai ke wilayah ini.",
+              )}
+        </p>
+      </article>
+      <div className="q-region-list">
+        <div className="q-region-legend">
+          <StatHelp
+            label={t("All regions", "Semua wilayah")}
+            description={t(
+              "Each region is judged on four things: the economy, poverty, unemployment and basic services. Improving: something got clearly better and nothing got clearly worse. Mixed: some better, some worse. Slipping: more got worse than better. Steady: nothing moved much. Very small changes count as steady.",
+              "Setiap wilayah dinilai dari empat hal: ekonomi, kemiskinan, pengangguran, dan layanan dasar. Membaik: ada yang jelas membaik dan tidak ada yang jelas memburuk. Campuran: sebagian membaik, sebagian memburuk. Menurun: lebih banyak yang memburuk. Stabil: tidak banyak bergerak. Perubahan sangat kecil dihitung stabil.",
+            )}
+          />
+          {(["improving", "mixed", "slipping"] as const).map((verdict) => (
+            <span key={verdict}>
+              <Verdict verdict={verdict} />
+              {pick(verdictNames[verdict])}
+            </span>
+          ))}
+        </div>
+        <ul
+          className="q-region-chips"
+          aria-label={t("All regions", "Semua wilayah")}
+        >
+          {transition.regions.map((region) => (
+            <li key={region.id}>
+              <button
+                aria-pressed={spotlight.id === region.id}
+                data-verdict={region.verdict}
+                onClick={() => onPick(region.id)}
+              >
+                <Verdict verdict={region.verdict} />
+                <span className="q-region-chip-name">{place(region)}</span>
+                <span className="sr-only">
+                  {", "}
+                  {pick(verdictNames[verdictKey(region)])}
+                  {region.tag === "best"
+                    ? t(", strongest quarter", ", triwulan terkuat")
+                    : region.tag === "attention"
+                      ? t(", needs attention", ", perlu perhatian")
+                      : ""}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 }
 
@@ -628,12 +769,11 @@ function ImpactAct({
 }) {
   const language = useLanguage();
   const receipt = transition.national!;
-  const { before, after } = receipt;
-  const plan = receipt.effects?.decisions,
-    ongoing = receipt.effects?.world;
-  const counted = (from: number, to: number) => from + (to - from) * reveal;
+  const plan = receipt.effects?.decisions;
   const decisions = transition.decisions;
   const foundationName = (f: Foundation) => foundationNames[f][language];
+  // The same plain results the report opens with, so both say the same thing.
+  const { results, verdict } = quarterResults(receipt, language);
 
   const best = plan
     ? [...FOUNDATIONS].sort((a, b) => (plan[b] ?? 0) - (plan[a] ?? 0))[0]
@@ -649,118 +789,31 @@ function ImpactAct({
       Number(decisions.taxesChanged) +
       Number(decisions.allocationChanged) >
     0;
-  const headline =
+  const programmeMoney = Object.values(receipt.ledger.policySpending).reduce(
+    (sum, value) => sum + (value ?? 0),
+    0,
+  );
+  // Tie the result to the player's own choices, the step a beginner needs most.
+  const yourPart =
     best && bestValue >= 0.02
       ? t(
-          `Your decisions lifted ${foundationName(best)} the most (${signed(bestValue, 2)}).`,
-          `Keputusan Anda paling banyak menaikkan ${foundationName(best).toLowerCase()} (${signed(bestValue, 2)}).`,
+          `Your decisions helped ${foundationName(best).toLowerCase()} the most (${signed(bestValue, 2)} points).`,
+          `Keputusan Anda paling membantu ${foundationName(best).toLowerCase()} (${signed(bestValue, 2)} poin).`,
         )
       : changed
         ? t(
-            "Your changes are still rolling out. Most of their effect arrives in later quarters.",
-            "Perubahan Anda masih berjalan. Sebagian besar dampaknya tiba pada triwulan berikutnya.",
+            "Your changes take time. Most of their effect arrives in later quarters.",
+            "Perubahan Anda butuh waktu. Sebagian besar dampaknya tiba pada triwulan berikutnya.",
           )
-        : transition.partial
+        : programmeMoney < 0.05
           ? t(
-              "Most change came from ongoing programmes and conditions.",
-              "Sebagian besar perubahan berasal dari program berjalan dan kondisi.",
+              "No programmes are running yet. Choose some in Policies & taxes to start changing these numbers.",
+              "Belum ada program yang berjalan. Pilih program di Kebijakan & pajak untuk mulai mengubah angka ini.",
             )
           : t(
-              "No new decisions this quarter. Change came from ongoing programmes and conditions.",
-              "Tidak ada keputusan baru triwulan ini. Perubahan berasal dari program berjalan dan kondisi.",
+              "You kept the same plan, so the change came from programmes already running and outside events.",
+              "Anda mempertahankan rencana yang sama, jadi perubahan datang dari program berjalan dan peristiwa luar.",
             );
-  const slipping = [...FOUNDATIONS]
-    .map((f) => ({ f, change: after[f] - before[f] }))
-    .sort((a, b) => a.change - b.change)[0];
-  const watch =
-    after.poverty - before.poverty >= 0.05
-      ? t(
-          `Watch poverty: ${signed(after.poverty - before.poverty, 2)} pp.`,
-          `Perhatikan kemiskinan: ${signed(after.poverty - before.poverty, 2)} poin.`,
-        )
-      : after.unemployment - before.unemployment >= 0.05
-        ? t(
-            `Watch unemployment: ${signed(after.unemployment - before.unemployment, 2)} pp.`,
-            `Perhatikan pengangguran: ${signed(after.unemployment - before.unemployment, 2)} poin.`,
-          )
-        : slipping.change < -0.02
-          ? t(
-              `Watch ${foundationName(slipping.f).toLowerCase()}: ${signed(slipping.change, 2)}.`,
-              `Perhatikan ${foundationName(slipping.f).toLowerCase()}: ${signed(slipping.change, 2)}.`,
-            )
-          : "";
-
-  const outcomes = [
-    {
-      key: "gdp",
-      label: t("Output (GDP)", "Output (PDB)"),
-      value: `Rp ${number(counted(before.gdp, after.gdp), 0)}T`,
-      change: (after.gdp / before.gdp - 1) * 100,
-      planChange: plan ? ((plan.gdp ?? 0) / before.gdp) * 100 : undefined,
-      unit: "%",
-      digits: 2,
-      threshold: 0.01,
-      lowerIsBetter: false,
-    },
-    {
-      key: "poverty",
-      label: t("Poverty", "Kemiskinan"),
-      value: `${number(counted(before.poverty, after.poverty), 2)}%`,
-      change: after.poverty - before.poverty,
-      planChange: plan?.poverty,
-      unit: t(" pp", " poin"),
-      digits: 2,
-      threshold: 0.005,
-      lowerIsBetter: true,
-    },
-    {
-      key: "unemployment",
-      label: t("Unemployment", "Pengangguran"),
-      value: `${number(counted(before.unemployment, after.unemployment), 2)}%`,
-      change: after.unemployment - before.unemployment,
-      planChange: plan?.unemployment,
-      unit: t(" pp", " poin"),
-      digits: 2,
-      threshold: 0.005,
-      lowerIsBetter: true,
-    },
-    {
-      key: "balance",
-      label: t("Quarter budget balance", "Saldo anggaran triwulan"),
-      value: (() => {
-        const balance = counted(before.balance, after.balance);
-        return `${balance < 0 ? "−" : ""}${money(Math.abs(balance))}`;
-      })(),
-      change: after.balance - before.balance,
-      planChange: plan?.balance,
-      unit: "T",
-      digits: 1,
-      threshold: 0.05,
-      lowerIsBetter: false,
-    },
-  ];
-  const scale = Math.max(
-    0.25,
-    ...FOUNDATIONS.map(
-      (f) => Math.abs(plan?.[f] ?? 0) + Math.abs(ongoing?.[f] ?? 0),
-    ),
-  );
-  /** Two stacked segments that grow out from the centre line. */
-  const segments = (planValue: number, ongoingValue: number) => {
-    const width = (value: number) => (Math.abs(value) / scale) * 50 * reveal;
-    let right = 50,
-      left = 50;
-    return [
-      { kind: "plan", value: planValue },
-      { kind: "ongoing", value: ongoingValue },
-    ].map(({ kind, value }) => {
-      const size = width(value);
-      const start = value >= 0 ? right : left - size;
-      if (value >= 0) right += size;
-      else left -= size;
-      return { kind, start, size, negative: value < 0 };
-    });
-  };
 
   // Approval starts high after the election and drifts down in the first year.
   const honeymoon =
@@ -770,10 +823,8 @@ function ImpactAct({
   return (
     <div className="q-debrief-impact">
       <div className="q-impact-summary">
-        <p className="q-impact-headline">
-          {headline}
-          {watch && <span> {watch}</span>}
-        </p>
+        <p className="q-impact-headline">{verdict}</p>
+        <p className="q-impact-yours">{yourPart}</p>
         <p className="q-impact-decisions">
           <span>{t("Your decisions", "Keputusan Anda")}:</span>{" "}
           {changed ? (
@@ -824,12 +875,7 @@ function ImpactAct({
             </>
           ) : (
             <span className="q-decision-chip" data-kind="none">
-              {transition.partial
-                ? t("No new launches", "Tidak ada peluncuran baru")
-                : t(
-                    "Kept last quarter's plan",
-                    "Melanjutkan rencana sebelumnya",
-                  )}
+              {t("No changes", "Tidak ada perubahan")}
             </span>
           )}
           {transition.politics?.deal && (
@@ -856,115 +902,64 @@ function ImpactAct({
               ({transition.politics.budget.yes}/580)
             </span>
           )}
-          {transition.politics && (
-            <>
-              {/* Approval is the public's reaction, not one of the player's decisions. */}
-              <span className="q-impact-mood">
-                {t("Public mood", "Suasana publik")}:
-              </span>{" "}
-              <span
-                className="q-decision-chip"
-                data-kind={
-                  transition.politics.approval <
-                    transition.politics.approvalBefore - 0.5 && !honeymoon
-                    ? "end"
-                    : "none"
-                }
-              >
-                {t("Approval", "Kepuasan")}{" "}
-                {number(transition.politics.approvalBefore, 0)}% →{" "}
-                {number(transition.politics.approval, 0)}%
-                {honeymoon && t(" · honeymoon fading", " · bulan madu memudar")}
-              </span>
-            </>
-          )}
         </p>
-        <dl className="q-impact-outcomes">
-          {outcomes.map((outcome) => {
-            const direction = tone(
-              outcome.change,
-              outcome.threshold,
-              outcome.lowerIsBetter,
-            );
-            return (
-              <div key={outcome.key}>
-                <dt>{outcome.label}</dt>
-                <dd>
-                  <strong>{outcome.value}</strong>{" "}
-                  <span className="q-impact-change" data-tone={direction}>
-                    {signed(outcome.change * reveal, outcome.digits)}
-                    {outcome.unit}
-                  </span>
-                </dd>
-                {outcome.planChange !== undefined &&
-                  Math.abs(outcome.planChange) >= outcome.threshold && (
-                    <dd className="q-impact-plan">
-                      {t("Your decisions", "Keputusan Anda")}{" "}
-                      {signed(outcome.planChange, outcome.digits)}
-                      {outcome.unit}
-                    </dd>
-                  )}
-              </div>
-            );
-          })}
-        </dl>
-      </div>
-      <div className="q-impact-foundations">
-        <div className="q-impact-legend">
-          <h3>
+        {transition.politics && (
+          <p className="q-impact-decisions">
+            {/* Approval is the public's reaction, not one of the player's decisions. */}
             <StatHelp
-              label={t("Basic services", "Layanan dasar")}
+              label={t("Public approval", "Kepuasan publik")}
               description={t(
-                "Each change is split in two. Your decisions compares this quarter's plan with keeping last quarter's settings under the same events. Ongoing covers programmes already running, economic adjustment and outside events.",
-                "Setiap perubahan dibagi dua. Keputusan Anda membandingkan rencana triwulan ini dengan mempertahankan pengaturan sebelumnya pada peristiwa yang sama. Berjalan mencakup program yang sudah berjalan, penyesuaian ekonomi, dan peristiwa luar.",
+                "The share of people happy with the government. It reacts to incomes, prices, jobs, taxes, visible programmes and unpaid bills. It starts high after an election and drifts toward a normal level in the first year. Very low approval makes DPR votes harder to win.",
+                "Persentase warga yang puas dengan pemerintah. Angka ini bereaksi pada pendapatan, harga, pekerjaan, pajak, program yang terlihat, dan tagihan yang tidak terbayar. Angkanya tinggi setelah pemilu lalu bergerak ke tingkat biasa pada tahun pertama. Kepuasan yang sangat rendah membuat suara DPR lebih sulit didapat.",
               )}
             />
-          </h3>
-          <span data-kind="plan">{t("Your decisions", "Keputusan Anda")}</span>
-          <span data-kind="ongoing">
-            {t("Ongoing & conditions", "Berjalan & kondisi")}
-          </span>
-        </div>
-        <ul>
-          {FOUNDATIONS.map((f) => {
-            const total = after[f] - before[f];
-            return (
-              <li key={f}>
-                <span className="q-impact-name">{foundationName(f)}</span>
-                <b className="q-impact-value">
-                  {number(counted(before[f], after[f]), 1)}
-                </b>
-                <span className="q-impact-change" data-tone={tone(total, 0.01)}>
-                  {signed(total * reveal, 2)}
-                </span>
-                <span className="q-impact-bar" aria-hidden="true">
-                  {segments(plan?.[f] ?? 0, ongoing?.[f] ?? total).map(
-                    (segment) => (
-                      <span
-                        key={segment.kind}
-                        data-kind={segment.kind}
-                        data-negative={segment.negative || undefined}
-                        style={{
-                          left: `${segment.start}%`,
-                          width: `${segment.size}%`,
-                        }}
-                      />
-                    ),
-                  )}
-                </span>
-                {plan && (
-                  <span className="sr-only">
-                    {t("Your decisions", "Keputusan Anda")}{" "}
-                    {signed(plan[f] ?? 0, 2)},{" "}
-                    {t("ongoing and conditions", "berjalan dan kondisi")}{" "}
-                    {signed(ongoing?.[f] ?? 0, 2)}
-                  </span>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+            <span
+              className="q-decision-chip"
+              data-kind={
+                transition.politics.approval <
+                  transition.politics.approvalBefore - 0.5 && !honeymoon
+                  ? "end"
+                  : "none"
+              }
+            >
+              {number(transition.politics.approvalBefore, 0)}% →{" "}
+              {number(transition.politics.approval, 0)}%
+              {honeymoon &&
+                t(" · normal after an election", " · wajar setelah pemilu")}
+            </span>
+          </p>
+        )}
       </div>
+      <ul
+        className="q-impact-results"
+        aria-label={t("What it meant for people", "Artinya bagi warga")}
+      >
+        {results.slice(0, 4).map((result, index) => (
+          <li
+            key={result.id}
+            data-tone={result.tone}
+            style={{
+              opacity: Math.max(0, Math.min(1, reveal * 4 - index)),
+            }}
+          >
+            <EconomyEmblem kind={result.kind} />
+            <span>
+              <strong>{result.name}</strong>
+              <b>
+                {result.value}
+                <span className="sr-only">
+                  {result.tone === "good"
+                    ? t(" (better)", " (membaik)")
+                    : result.tone === "bad"
+                      ? t(" (worse)", " (memburuk)")
+                      : ""}
+                </span>
+              </b>
+              <small>{result.text}</small>
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

@@ -16,7 +16,7 @@ import {
   IMPACT_MS,
   QUIET_EVENTS_MS,
   quarterTimeline,
-  REGION_HOLD_MS,
+  QUIET_REGIONS_MS,
   REGION_STEP_MS,
 } from "./quarterVisual";
 
@@ -305,7 +305,9 @@ describe("quarter presentation", () => {
     const best = transition.regions.filter((r) => r.tag === "best");
     expect(best.length).toBeLessThanOrEqual(1);
     expect(best.every((r) => r.verdict === "improving")).toBe(true);
-    expect(transition.regions.filter((r) => r.tag === "attention")).toHaveLength(1);
+    expect(
+      transition.regions.filter((r) => r.tag === "attention"),
+    ).toHaveLength(1);
     expect(transition.news.length).toBeLessThanOrEqual(3);
   });
 });
@@ -334,16 +336,22 @@ describe("quarter playback", () => {
     after.simulation.projects = [{ ...project, progress: 60 }];
     before.simulation.crises = [crisis];
     after.simulation.crises = [{ ...crisis, resolved: true }];
+    // Kalimantan gains and Papua slips, so the tour stops at those two.
+    for (const province of after.simulation.provinces) {
+      const region = regionForProvince(province.id)?.id;
+      if (region === "kalimantan") province.education += 2;
+      if (region === "papua") province.health -= 2;
+    }
     return buildQuarterVisualTransition(before, after);
   };
-  it("plays events, then national impact, then a tour of every region", () => {
+  it("plays events, then the regions worth a look, then the national result", () => {
     const transition = quarter();
     const { acts, total } = quarterTimeline(transition);
     expect(acts.events.duration).toBe(2 * EVENT_STEP_MS);
-    expect(acts.impact.start).toBe(acts.events.duration);
-    expect(total).toBe(
-      2 * EVENT_STEP_MS + IMPACT_MS + 9 * REGION_STEP_MS + REGION_HOLD_MS,
-    );
+    expect(acts.regions.start).toBe(acts.events.duration);
+    expect(acts.regions.duration).toBe(2 * REGION_STEP_MS);
+    expect(acts.impact.start).toBe(acts.regions.start + acts.regions.duration);
+    expect(total).toBe(2 * EVENT_STEP_MS + 2 * REGION_STEP_MS + IMPACT_MS);
     expect(getQuarterPlayback(0, transition)).toMatchObject({
       act: "events",
       step: 0,
@@ -354,17 +362,34 @@ describe("quarter playback", () => {
       step: 1,
       focus: { badge: "2", celebrate: false },
     });
+    expect(
+      getQuarterPlayback(acts.regions.start + 10, transition),
+    ).toMatchObject({
+      act: "regions",
+      step: 0,
+      focus: { region: "kalimantan", wholeRegion: true, badge: "up" },
+    });
+    expect(
+      getQuarterPlayback(acts.regions.start + REGION_STEP_MS, transition),
+    ).toMatchObject({
+      act: "regions",
+      step: 1,
+      focus: { region: "papua", badge: "down" },
+    });
     const impact = getQuarterPlayback(acts.impact.start + 10, transition);
     expect(impact).toMatchObject({ act: "impact", step: -1, focus: null });
-    const tour = getQuarterPlayback(
-      acts.regions.start + 2 * REGION_STEP_MS,
-      transition,
+  });
+  it("pauses briefly on the regions when none stands out", () => {
+    const before = initialQuarter();
+    const transition = buildQuarterVisualTransition(
+      before,
+      structuredClone(before),
     );
-    expect(tour).toMatchObject({
-      act: "regions",
-      step: 2,
-      focus: { region: "kalimantan", wholeRegion: true },
-    });
+    const { acts } = quarterTimeline(transition);
+    expect(acts.regions.duration).toBe(QUIET_REGIONS_MS);
+    expect(
+      getQuarterPlayback(acts.regions.start + 10, transition),
+    ).toMatchObject({ act: "regions", step: -1, focus: null });
   });
   it("shifts map colours during the impact act and clamps the endpoints", () => {
     const transition = quarter();
