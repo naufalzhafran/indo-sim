@@ -1,5 +1,6 @@
 import { Vector2, Vector3 } from "three";
 import { projectCoordinate, type WorldGeometry } from "./mapGeometry";
+import { gradeTerrain } from "./terrainGrading";
 
 /** Major cities the road network connects: [id, lon, lat, size 0.6–1]. */
 const CITIES: [string, number, number, number][] = [
@@ -260,6 +261,10 @@ export function landPlanner(world: WorldGeometry) {
 }
 
 type Planner = ReturnType<typeof landPlanner>;
+const routeCaches = new WeakMap<
+  Planner,
+  { land: Map<number, Map<string, boolean>>; height: Map<string, number> }
+>();
 
 /** Cheapest land route between two points: favours lowlands and avoids the coast. */
 function route(
@@ -269,6 +274,8 @@ function route(
   to: Vector2,
   margin: number,
   used: Set<string>,
+  /** Extra cost for ground to keep away from, such as another network's roads. */
+  penalty: (x: number, y: number) => number = () => 1,
 ): Vector2[] | null {
   const key = (ix: number, iy: number) => `${ix},${iy}`;
   // A grid shared by every road, so later roads can join earlier ones exactly.
@@ -282,9 +289,17 @@ function route(
   ];
   const h = (ix: number, iy: number) =>
     Math.hypot(ix - goal[0], iy - goal[1]) * GRID * 0.4;
-  const valid = new Map<string, boolean>();
+  // Land tests and heights on the shared grid are reused by every route.
+  let caches = routeCaches.get(plan);
+  if (!caches)
+    routeCaches.set(plan, (caches = { land: new Map(), height: new Map() }));
+  let valid = caches.land.get(margin);
+  if (!valid) caches.land.set(margin, (valid = new Map()));
+  const startKey = key(start[0], start[1]),
+    goalKey = key(goal[0], goal[1]);
   const ok = (ix: number, iy: number) => {
     const k = key(ix, iy);
+    if (k === startKey || k === goalKey) return true;
     let v = valid.get(k);
     if (v === undefined) {
       const p = at(ix, iy);
@@ -293,15 +308,50 @@ function route(
     }
     return v;
   };
-  valid.set(key(start[0], start[1]), true);
-  valid.set(key(goal[0], goal[1]), true);
+  const heightAt = (ix: number, iy: number, p: Vector2) => {
+    const k = key(ix, iy);
+    let v = caches.height.get(k);
+    if (v === undefined) {
+      v = Math.max(0, world.surfaceHeight(p));
+      caches.height.set(k, v);
+    }
+    return v;
+  };
   let guard = 0;
+  // A binary heap keyed on f; entries made stale by a cheaper visit are skipped.
+  const push = (node: (typeof open)[number]) => {
+    open.push(node);
+    for (let i = open.length - 1; i > 0;) {
+      const parentIndex = (i - 1) >> 1;
+      if (open[parentIndex].f <= open[i].f) break;
+      [open[parentIndex], open[i]] = [open[i], open[parentIndex]];
+      i = parentIndex;
+    }
+  };
+  const pop = () => {
+    const top = open[0],
+      last = open.pop()!;
+    if (open.length) {
+      open[0] = last;
+      for (let i = 0; ;) {
+        const l = i * 2 + 1,
+          r = l + 1;
+        let m = i;
+        if (l < open.length && open[l].f < open[m].f) m = l;
+        if (r < open.length && open[r].f < open[m].f) m = r;
+        if (m === i) break;
+        [open[m], open[i]] = [open[i], open[m]];
+        i = m;
+      }
+    }
+    return top;
+  };
+  const closed = new Set<string>();
   while (open.length && guard++ < 120000) {
-    let best = 0;
-    for (let i = 1; i < open.length; i++)
-      if (open[i].f < open[best].f) best = i;
-    const cur = open.splice(best, 1)[0];
+    const cur = pop();
     const ck = key(cur.ix, cur.iy);
+    if (closed.has(ck)) continue;
+    closed.add(ck);
     if (cur.ix === goal[0] && cur.iy === goal[1]) {
       const path: Vector2[] = [];
       let k: string | undefined = ck;
@@ -320,23 +370,50 @@ function route(
           ny = cur.iy + dy;
         if (!ok(nx, ny)) continue;
         const p = at(nx, ny);
-        const height = Math.max(0, world.surfaceHeight(new Vector2(p.x, p.y)));
+        const height = heightAt(nx, ny, p);
         // Roads already built are cheap to follow, so routes merge into trunks.
         const step =
           Math.hypot(dx, dy) *
           GRID *
           (1 + height * 1.6) *
-          (used.has(key(nx, ny)) ? 0.15 : 1);
+          (used.has(key(nx, ny)) ? 0.15 : 1) *
+          penalty(p.x, p.y);
         const next = (cost.get(ck) ?? 0) + step;
         const nk = key(nx, ny);
         if (next < (cost.get(nk) ?? Infinity)) {
           cost.set(nk, next);
           parent.set(nk, ck);
-          open.push({ ix: nx, iy: ny, f: next + h(nx, ny) });
+          push({ ix: nx, iy: ny, f: next + h(nx, ny) });
         }
       }
   }
   return null;
+}
+
+/**
+ * A smooth overland route between two map points that keeps clear of the
+ * roads where it can, for railways. Lines laid earlier (in `used`) are cheap
+ * to follow, so railways meet and share track rather than run side by side.
+ */
+export function routeAwayFromRoads(
+  world: WorldGeometry,
+  plan: Planner,
+  network: RoadNetwork,
+  from: Vector2,
+  to: Vector2,
+  clearance: number,
+  used: Set<string>,
+) {
+  const penalty = (x: number, y: number) =>
+    onRoadOrCity(network, x, -y, clearance, 0) ? 8 : 1;
+  const grid =
+    route(world, plan, from, to, MARGIN, used, penalty) ??
+    route(world, plan, from, to, 0.04, used, penalty) ??
+    route(world, plan, from, to, 0, used, penalty);
+  if (!grid) return null;
+  grid[0] = from.clone();
+  grid[grid.length - 1] = to.clone();
+  return smooth(grid, plan);
 }
 
 /** Rounds the grid path's corners without leaving the land. */
@@ -554,7 +631,6 @@ export function buildRoadNetwork(world: WorldGeometry): RoadNetwork {
           provinces.slice(i).find(Boolean) ??
           provinces.slice(0, i).reverse().find(Boolean) ??
           "";
-    drapeOver(world, points, DECK_HALF_WIDTH);
     roads.push({
       id: `${a}-${b}`,
       points,
@@ -563,6 +639,16 @@ export function buildRoadNetwork(world: WorldGeometry): RoadNetwork {
       provinces,
     });
   }
+  // Level a road bed into the hills, then lay each road on its graded ground.
+  gradeTerrain(world, roads);
+  const probe = new Vector2();
+  for (const road of roads) {
+    for (const p of road.points)
+      p.y = Math.max(0.03, world.surfaceHeight(probe.set(p.x, -p.z)));
+    drapeOver(world, road.points, DECK_HALF_WIDTH);
+  }
+  for (const { city, map } of cities.values())
+    city.position.y = Math.max(0.03, world.surfaceHeight(map));
   network = {
     cities: [...cities.values()].map((c) => c.city),
     roads,

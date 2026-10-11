@@ -9,6 +9,7 @@ import {
   drapeOver,
   landPlanner,
   onRoadOrCity,
+  routeAwayFromRoads,
   type Road,
 } from "./roadNetwork";
 import { regionForProvince } from "./engine/gameRegions";
@@ -222,7 +223,8 @@ const STEP = 0.3;
 /** Railways are sampled finely enough to follow the hills between points. */
 const RAIL_STEP = 0.14;
 const CELL = 0.25;
-const RAIL_OFFSET = 0.17;
+/** Stations and track keep at least this far from a road's centre line. */
+const RAIL_ROAD_CLEARANCE = 0.26;
 /** Half the gravel bed's width, which the track must clear. */
 const RAIL_HALF_WIDTH = 0.04;
 
@@ -601,15 +603,54 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
 
   // Rail runs beside each road corridor, on the side with more room.
   const rail: RailLine[] = [];
-  const cityAt = (id: string) => {
+  const railCells = new Set<string>();
+  // Each city's railway station stands apart from its road junction, so trains
+  // and cars never share the same spot. Every line calling there uses it.
+  const stations = new Map<string, Vector2>();
+  const stationAt = (id: string) => {
+    if (stations.has(id)) return stations.get(id)!;
     const city = roads.cities.find((c) => c.id === id);
-    return city && new Vector2(city.position.x, -city.position.z);
+    if (!city) return undefined;
+    const centre = new Vector2(city.position.x, -city.position.z);
+    let found = centre;
+    search: for (let r = 0.3; r <= 0.9; r += 0.05)
+      for (let k = 0; k < 24; k++) {
+        // Start the sweep inland of south, where the railways run.
+        const a =
+          -Math.PI / 2 + (k % 2 ? 1 : -1) * Math.ceil(k / 2) * (Math.PI / 12);
+        const x = centre.x + Math.cos(a) * r,
+          y = centre.y + Math.sin(a) * r;
+        if (!plan.onLand(x, y, 0.1)) continue;
+        if (onRoadOrCity(roads, x, -y, RAIL_ROAD_CLEARANCE, 0)) continue;
+        found = new Vector2(x, y);
+        break search;
+      }
+    stations.set(id, found);
+    return found;
   };
+  const cityOf = (p: Vector3) =>
+    roads.cities.reduce((best, c) =>
+      c.position.distanceTo(p) < best.position.distanceTo(p) ? c : best,
+    ).id;
   for (const [id, from, stops, to] of JAVA_RAIL) {
-    const start = cityAt(from),
-      end = typeof to === "string" ? cityAt(to) : projectCoordinate(to);
+    const start = stationAt(from),
+      end = typeof to === "string" ? stationAt(to) : projectCoordinate(to);
     if (!start || !end) continue;
-    const path = chaikin([start, ...stops.map(projectCoordinate), end], 3);
+    // Each leg between stops is routed overland, steering round the roads.
+    const waypoints = [start, ...stops.map(projectCoordinate), end];
+    const path: Vector2[] = [];
+    for (let i = 1; i < waypoints.length; i++) {
+      const leg = routeAwayFromRoads(
+        world,
+        plan,
+        roads,
+        waypoints[i - 1],
+        waypoints[i],
+        RAIL_ROAD_CLEARANCE,
+        railCells,
+      ) ?? [waypoints[i - 1], waypoints[i]];
+      path.push(...(i > 1 ? leg.slice(1) : leg));
+    }
     const line = samplePath(
       path,
       (p) => Math.max(0.03, world.surfaceHeight(p)),
@@ -622,8 +663,27 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
     // Java has its own inland railways, laid above.
     if (road.provinces.every((p) => regionForProvince(p)?.id === "java"))
       continue;
-    const line = railBeside(world, road, rail);
-    if (!line) continue;
+    const first = stationAt(cityOf(road.points[0])),
+      last = stationAt(cityOf(road.points[road.points.length - 1]));
+    if (!first || !last) continue;
+    const path = routeAwayFromRoads(
+      world,
+      plan,
+      roads,
+      first,
+      last,
+      RAIL_ROAD_CLEARANCE,
+      railCells,
+    );
+    if (!path) continue;
+    const line = samplePath(
+      path,
+      (p) => Math.max(0.03, world.surfaceHeight(p)),
+      RAIL_STEP,
+    );
+    // Cities whose stations coincide need no line of their own.
+    if (line.length < 1) continue;
+    drapeOver(world, line.points, RAIL_HALF_WIDTH);
     const counts = new Map<string, number>();
     for (const id of road.provinces) {
       const region = regionForProvince(id)?.id;
@@ -702,51 +762,6 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
   network = { sea: routes, rail, airports, fishing };
   cache.set(world, network);
   return network;
-}
-
-/** The road's centreline shifted sideways onto land, sampled like the road. */
-function railBeside(world: WorldGeometry, road: Road, laid: RailLine[]) {
-  if (road.points.length < 3) return null;
-  // Where roads share a trunk, follow the track already laid beside it, so the
-  // trunk carries one railway instead of one on each side.
-  const onTrack = (x: number, z: number) =>
-    laid.some((line) =>
-      line.points.some(
-        (q) => Math.abs(q.x - x) < 0.15 && Math.abs(q.z - z) < 0.15,
-      ),
-    );
-  const sideScore = (side: number) => {
-    let score = 0;
-    for (let i = 0; i < road.points.length; i += 2) {
-      const p = shifted(road, i, RAIL_OFFSET * side);
-      if (i % 4 === 0 && world.surfaceHeight(new Vector2(p.x, -p.z)) > 0.02)
-        score++;
-      if (onTrack(p.x, p.z)) score += 3;
-    }
-    return score;
-  };
-  const side = sideScore(1) >= sideScore(-1) ? 1 : -1;
-  const path: Vector2[] = [];
-  for (let i = 0; i < road.points.length; i++) {
-    const p = shifted(road, i, RAIL_OFFSET * side);
-    path.push(new Vector2(p.x, -p.z));
-  }
-  const line = samplePath(path, (p) => Math.max(0.03, world.surfaceHeight(p)));
-  drapeOver(world, line.points, RAIL_HALF_WIDTH);
-  return line;
-}
-function shifted(road: Road, i: number, offset: number) {
-  const a = road.points[Math.max(0, i - 2)],
-    b = road.points[Math.min(road.points.length - 1, i + 2)];
-  const dx = b.x - a.x,
-    dz = b.z - a.z,
-    length = Math.hypot(dx, dz) || 1;
-  const p = road.points[i];
-  return new Vector3(
-    p.x - (dz / length) * offset,
-    p.y,
-    p.z + (dx / length) * offset,
-  );
 }
 
 /** Position and heading at a distance along a path. */
