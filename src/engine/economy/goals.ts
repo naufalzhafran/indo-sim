@@ -67,8 +67,8 @@ export const goalLessons: Record<
       id: "Sekolah, layanan kesehatan, jalan, listrik, dan pasokan pangan membaik. Layanan dasar yang lebih baik membantu setiap industri berproduksi lebih banyak.",
     },
     missed: {
-      en: "Basic services barely improved. Services wear down and the population grows, so they need steady funding just to keep up.",
-      id: "Layanan dasar hampir tidak membaik. Layanan menurun seiring waktu dan penduduk bertambah, jadi perlu dana rutin agar tidak tertinggal.",
+      en: "Basic services did not improve enough. Services wear down and the population grows, so they need steady funding. Roads and power alone are not enough: schools or clinics must improve too.",
+      id: "Layanan dasar kurang membaik. Layanan menurun seiring waktu dan penduduk bertambah, jadi perlu dana rutin. Jalan dan listrik saja tidak cukup: sekolah atau puskesmas juga harus membaik.",
     },
   },
   energy: {
@@ -108,8 +108,8 @@ export const goalExplanations: Record<string, Bilingual> = {
     id: "Persentase orang yang ingin bekerja tetapi belum punya pekerjaan. Anak muda masuk angkatan kerja setiap tahun, jadi dunia usaha harus terus merekrut agar angkanya tidak naik. Selalu ada orang yang sedang pindah kerja, jadi angkanya jarang di bawah sekitar 3%.",
   },
   services: {
-    en: "Basic services are the five things every family and business relies on: schools (Education), roads and ports (Infrastructure), electricity (Energy), food supply (Food) and clinics (Health). Each is scored out of 100. When they improve, people and businesses can produce more. See them on the Economy screen.",
-    id: "Layanan dasar adalah lima hal yang diandalkan setiap keluarga dan usaha: sekolah (Pendidikan), jalan dan pelabuhan (Infrastruktur), listrik (Energi), pasokan makanan (Pangan), dan puskesmas (Kesehatan). Masing-masing bernilai 0–100. Jika membaik, warga dan usaha bisa berproduksi lebih banyak. Lihat di layar Ekonomi.",
+    en: "Basic services are the five things every family and business relies on: schools (Education), roads and ports (Infrastructure), electricity (Energy), food supply (Food) and clinics (Health). Each is scored out of 100. When they improve, people and businesses can produce more. One of the three that improve must be Education or Health, because skilled, healthy people matter as much as roads. See them on the Economy screen.",
+    id: "Layanan dasar adalah lima hal yang diandalkan setiap keluarga dan usaha: sekolah (Pendidikan), jalan dan pelabuhan (Infrastruktur), listrik (Energi), pasokan makanan (Pangan), dan puskesmas (Kesehatan). Masing-masing bernilai 0–100. Jika membaik, warga dan usaha bisa berproduksi lebih banyak. Salah satu dari tiga yang naik harus Pendidikan atau Kesehatan, karena orang yang terampil dan sehat sama pentingnya dengan jalan. Lihat di layar Ekonomi.",
   },
   energy: {
     en: "How many homes have electricity and how reliable it is. A growing economy uses more power, so new plants are needed just to keep up.",
@@ -163,6 +163,10 @@ export function campaignGoals(game: QuarterGame): CampaignGoal[] {
   const improved = FOUNDATIONS.filter(
     (key) => now[key] - opening[key] >= GOAL_TARGETS.foundationGain,
   ).length;
+  // People need schools and clinics, not only roads and power plants.
+  const humanCapital = (["education", "health"] as const).some(
+    (key) => now[key] - opening[key] >= GOAL_TARGETS.foundationGain,
+  );
   const protectedServices = FOUNDATIONS.every(
     (key) => now[key] >= opening[key] - GOAL_TARGETS.foundationLoss,
   );
@@ -209,12 +213,15 @@ export function campaignGoals(game: QuarterGame): CampaignGoal[] {
       id: "services",
       label: { en: "Better basic services", id: "Layanan dasar lebih baik" },
       target: {
-        en: "Raise 3 basic services by 2 points; none drops over 3",
-        id: "Naikkan 3 layanan dasar 2 poin; tak ada yang turun lebih dari 3",
+        en: "Raise 3 basic services by 2 points, including Education or Health; none drops over 3",
+        id: "Naikkan 3 layanan dasar 2 poin, termasuk Pendidikan atau Kesehatan; tak ada yang turun lebih dari 3",
       },
       value: improved,
       unit: "count",
-      met: improved >= GOAL_TARGETS.foundationCount && protectedServices,
+      met:
+        improved >= GOAL_TARGETS.foundationCount &&
+        humanCapital &&
+        protectedServices,
     },
     {
       id: "energy",

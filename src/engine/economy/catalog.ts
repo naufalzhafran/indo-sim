@@ -208,6 +208,12 @@ const endsWhenBuilt = (): PolicyConsequence =>
     bi("Ends when built", "Berhenti setelah selesai"),
     "up",
   );
+const buildUpkeep = (): PolicyConsequence =>
+  consequence(
+    bi("Public spending", "Belanja negara"),
+    bi("Upkeep after built", "Biaya rawat setelah jadi"),
+    "up",
+  );
 const idleUpkeep = (): PolicyConsequence =>
   consequence(
     bi("Idle upkeep", "Biaya menganggur"),
@@ -296,11 +302,11 @@ const policyConsequences: Record<PolicyId, PolicyConsequence[]> = {
   ],
   "embung-desa": [
     buildDisruption(industryById.agriculture.name),
-    endsWhenBuilt(),
+    buildUpkeep(),
   ],
   "pasar-desa": [
     buildDisruption(industryById.retail.name),
-    endsWhenBuilt(),
+    buildUpkeep(),
   ],
   brt: [
     buildDisruption(industryById.logistics.name),
@@ -329,15 +335,17 @@ const policyConsequences: Record<PolicyId, PolicyConsequence[]> = {
       foundationNames.energy,
       bi("Smaller capacity", "Kapasitas lebih kecil"),
     ),
-    endsWhenBuilt(),
+    buildUpkeep(),
   ],
   plta: [
     buildDisruption(industryById.agriculture.name),
     limitedBenefit(foundationNames.energy, bi("Long build", "Pembangunan lama")),
+    buildUpkeep(),
   ],
   pltp: [
     publicSpending(bi("High build cost", "Biaya bangun besar")),
     limitedBenefit(foundationNames.energy, bi("Long build", "Pembangunan lama")),
+    buildUpkeep(),
   ],
   pltu: [
     consequence(
@@ -362,10 +370,9 @@ const policyConsequences: Record<PolicyId, PolicyConsequence[]> = {
   water: [
     consequence(
       bi("Maintenance costs", "Biaya perawatan"),
-      bi("As assets grow", "Seiring penambahan aset"),
+      bi("After built", "Setelah jadi"),
       "up",
     ),
-    endsWhenBuilt(),
   ],
   irrigation: [
     buildDisruption(industryById.agriculture.name),
@@ -373,9 +380,10 @@ const policyConsequences: Record<PolicyId, PolicyConsequence[]> = {
       bi("Agriculture output", "Output pertanian"),
       bi("Limited by local farming", "Dibatasi pertanian setempat"),
     ),
+    buildUpkeep(),
   ],
   broadband: [
-    endsWhenBuilt(),
+    buildUpkeep(),
     limitedBenefit(
       bi("Industry output", "Output industri"),
       bi("Limited by skills & power", "Dibatasi keterampilan & listrik"),
@@ -414,6 +422,7 @@ const policyConsequences: Record<PolicyId, PolicyConsequence[]> = {
       bi("Tourism output", "Output pariwisata"),
       bi("Limited by demand & health", "Dibatasi permintaan & kesehatan"),
     ),
+    buildUpkeep(),
   ],
   "food-reserves": [
     idleUpkeep(),
@@ -1410,6 +1419,19 @@ const approvedMainImpacts: Partial<
   klinik: [up("health", "delayed")],
   "food-reserves": [up("food")],
 };
+/**
+ * Finished plants, dams, networks and markets need staff, repairs and spare
+ * parts. 2% of the build cost a quarter is a game assumption. Roads and rail
+ * already pay through the infrastructure maintenance in Other spending.
+ */
+export const BUILD_UPKEEP_SHARE = 0.02;
+const transportBuilds = new Set<PolicyId>([
+  "jalan-desa",
+  "brt",
+  "krl",
+  "mrt-lrt",
+  "kereta-antarkota",
+]);
 type Construction = {
   kind: "build" | "facility";
   disruption?: BuildDisruption[];
@@ -1499,6 +1521,8 @@ for (const policy of policies) {
     if (plan.kind === "build") {
       policy.quarterlyCost = 0;
       policy.effects = {};
+      if (!transportBuilds.has(policy.id))
+        policy.buildUpkeepShare = BUILD_UPKEEP_SHARE;
     } else policy.idleUpkeepShare = 0.15;
   }
   policy.source = verifiedSources[policy.id] ?? policy.source;

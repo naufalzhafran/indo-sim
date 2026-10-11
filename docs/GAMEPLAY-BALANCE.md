@@ -41,12 +41,33 @@ Means per strategy. Goal columns show how often each goal was met.
 
 Every policy played alone for five years meets 1 or 2 goals. None is useless and none wins alone.
 
-### Still open
+### Second pass: building everything is no longer the best answer
 
-- **Building everything is still the strongest route.** It no longer runs away (income +24% instead of +27.5%, unemployment 2.7% instead of 0.8%), but it still meets all six goals. Its costs are real but mild: deficits pass 3% and the DPR rejects about one APBN, and schools and clinics barely improve. A further step would be upkeep for finished power plants and digital or water builds, which roads already pay. That changes costs players see, so it is left for a decision.
+After the first pass, launching every build still met all six goals. Two more changes make it a real tradeoff:
+
+| Change | Why |
+| --- | --- |
+| **Upkeep for finished builds** (`BUILD_UPKEEP_SHARE` in `catalog.ts`). Finished power plants, dams, irrigation, water, broadband, markets and tourism access cost 2% of their build cost each quarter, paid in Other spending. Roads and rail already paid through infrastructure maintenance. The policy card shows "Upkeep when built". | Real plants and networks need staff, repairs and spare parts. Building is not a one-off cost. |
+| **The basic services goal needs people, not only concrete.** One of the three basic services that gain 2 points must be Education or Health. The goal text, its `?` explanation, the end-of-term lesson and the evidence line all say so. | Skilled, healthy workers matter as much as roads. Building everything barely moves schools or clinics. |
+
+Results after the second pass (same ~800 campaigns):
+
+| Strategy | Goals | Basic services met | Budget met | Debt |
+|---|---:|---:|---:|---:|
+| Every build, refilling slots | 5.0 (was 6.0) | 0% (was 100%) | 100% | 32.7% |
+| Good first picks, then refill slots (a mix of builds and programmes) | 6.0 | 100% | 100% | 33.9% |
+| Good first picks (6) | 5.0 | 100% | 100% | 34.1% |
+| Mixed eight | 5.0 | 100% | 100% | 34.6% |
+| Expensive eight | 4.1 (was 4.8) | 100% | 13% (was 75%) | 40.0% |
+| Random, refilling slots (80 runs) | 5.2 | 70% | 96% | 36.6% |
+| 8 random cards (80 runs) | 4.6 | 34% | 100% | 34.4% |
+
+The only route that meets all six goals on every seed now mixes builds with programmes: power and roads for growth and jobs, plus schools, clinics and family support for people.
+
+### Still open, by design
+
 - **The good first picks never keep the lights on.** One solar build cannot keep up with the growth the other picks create, so energy is the goal they miss. This is intended: the "Energy is falling" prompt teaches the second power build.
-- **The budget goal is rarely missed.** Only tax relief or very expensive portfolios break it. It works as a "don't be reckless" goal, not a hard one.
-
+- **The budget goal is rarely missed by sensible play.** Tax relief and very expensive portfolios break it. It works as a "don't be reckless" goal.
 
 ## Update, 10 October 2026: beginner and education pass
 

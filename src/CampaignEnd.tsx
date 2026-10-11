@@ -80,15 +80,20 @@ export function CampaignEnd({
     services: {
       start: "0 / 5",
       end: `${improved.length} / 5`,
-      detail: harmed.length
+      detail: !improved.some((key) => key === "education" || key === "health")
         ? t(
-            `Lost over 3 points: ${harmed.map((key) => foundationNames[key].en).join(", ")}`,
-            `Turun lebih dari 3 poin: ${harmed.map((key) => foundationNames[key].id).join(", ")}`,
+            "Neither Education nor Health gained 2 points",
+            "Pendidikan maupun Kesehatan tidak naik 2 poin",
           )
-        : t(
-            "No basic service dropped more than 3 points",
-            "Tidak ada layanan dasar yang turun lebih dari 3 poin",
-          ),
+        : harmed.length
+          ? t(
+              `Lost over 3 points: ${harmed.map((key) => foundationNames[key].en).join(", ")}`,
+              `Turun lebih dari 3 poin: ${harmed.map((key) => foundationNames[key].id).join(", ")}`,
+            )
+          : t(
+              "No basic service dropped more than 3 points",
+              "Tidak ada layanan dasar yang turun lebih dari 3 poin",
+            ),
     },
     energy: {
       start: points(opening.energy),

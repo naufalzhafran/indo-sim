@@ -996,8 +996,8 @@ export default function QuarterApp() {
                             <StatHelp
                               label={t("Other spending", "Belanja lainnya")}
                               description={t(
-                                "Ongoing government spending you inherit: salaries, transfers to regions, subsidies and existing programmes such as BOS, JKN, PKH and KUR. Choosing those policies expands them beyond this baseline.",
-                                "Belanja pemerintah yang sudah berjalan: gaji, transfer ke daerah, subsidi, dan program yang ada seperti BOS, JKN, PKH, dan KUR. Memilih kebijakan tersebut berarti memperluasnya di atas belanja dasar ini.",
+                                "Ongoing government spending you inherit: salaries, transfers to regions, subsidies and existing programmes such as BOS, JKN, PKH and KUR. Choosing those policies expands them beyond this baseline. It also pays upkeep for new roads and finished builds.",
+                                "Belanja pemerintah yang sudah berjalan: gaji, transfer ke daerah, subsidi, dan program yang ada seperti BOS, JKN, PKH, dan KUR. Memilih kebijakan tersebut berarti memperluasnya di atas belanja dasar ini. Belanja ini juga membayar perawatan jalan baru dan proyek yang sudah jadi.",
                               )}
                             />
                           </th>

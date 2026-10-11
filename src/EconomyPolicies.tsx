@@ -527,6 +527,10 @@ export function EconomyPolicies({
     (policy.idleUpkeepShare ?? 0) *
     policy.quarterlyCost *
     game.simulation.priceIndex;
+  const buildUpkeepFor = (policy: PolicyDefinition) =>
+    (policy.buildUpkeepShare ?? 0) *
+    (policy.build?.cost ?? 0) *
+    game.simulation.priceIndex;
   const requestedFor = (policy: PolicyDefinition) => costFor(policy).total;
   const sitesDone = (policy: PolicyDefinition) => {
     const projects = projectsOf(game, policy.id);
@@ -644,6 +648,21 @@ export function EconomyPolicies({
                         : t("Construction cost", "Biaya pembangunan")}
                     </span>
                     <strong>{money(constructionLeft(current))}</strong>
+                  </div>
+                )}
+                {!!current.buildUpkeepShare && (
+                  <div>
+                    <FactIcon kind="recurring" />
+                    <span>
+                      <StatHelp
+                        label={t("Upkeep when built", "Biaya rawat setelah jadi")}
+                        description={t(
+                          "Finished plants, dams and networks need staff and repairs. This is paid every quarter from Other spending, even after the build leaves your plan.",
+                          "Pembangkit, bendungan, dan jaringan yang sudah jadi butuh petugas dan perbaikan. Biaya ini dibayar tiap triwulan dari Belanja lainnya, walau proyek sudah keluar dari rencana.",
+                        )}
+                      />
+                    </span>
+                    <strong>{money(buildUpkeepFor(current))}</strong>
                   </div>
                 )}
                 {current.kind === "facility" && (
@@ -1211,7 +1230,9 @@ export function EconomyPolicies({
                             <span>
                               {policy.kind === "facility"
                                 ? `${t("Then", "Lalu")} ${money(recurringFor(policy))}/${t("qtr", "triwulan")}`
-                                : t("Ends when built", "Berhenti setelah selesai")}
+                                : policy.buildUpkeepShare
+                                  ? `${t("Upkeep", "Rawat")} ${money(buildUpkeepFor(policy))}/${t("qtr", "triwulan")}`
+                                  : t("Ends when built", "Berhenti setelah selesai")}
                             </span>
                           </>
                         )}

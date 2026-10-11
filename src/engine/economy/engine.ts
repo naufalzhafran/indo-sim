@@ -924,11 +924,19 @@ function advanceMonth(
     { region: RegionId; share: number; amount: number }[]
   >();
   let construction = 0;
+  let buildUpkeep = 0;
   for (const runtime of game.policies) {
     const def = policyById[runtime.id];
     if (def.kind === "program") continue;
     if (runtime.active)
       construction += sum(projectsOf(game, def.id).map(installment));
+    // Finished builds keep costing upkeep, whether or not the policy is selected.
+    if (def.buildUpkeepShare)
+      buildUpkeep += sum(
+        projectsOf(game, def.id)
+          .filter((project) => project.completed)
+          .map((project) => (project.cost * def.buildUpkeepShare!) / 3),
+      );
     if (def.kind !== "facility") continue;
     const built = builtRegions(game, def.id);
     const rate = runtime.active ? 1 : (def.idleUpkeepShare ?? 0);
@@ -958,7 +966,8 @@ function advanceMonth(
       ),
     ) *
     0.004 *
-    before.priceIndex;
+    before.priceIndex +
+    buildUpkeep;
   ledger.requested =
     inherited +
     maintenance +

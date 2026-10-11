@@ -97,6 +97,26 @@ describe("campaign balance", () => {
     const now = aggregate(game);
     expect(now.unemployment).toBeGreaterThan(2.5);
     expect(now.realIncome).toBeLessThan(126);
+    // Concrete alone does not improve schools or clinics enough.
+    expect(campaignGoals(game).find((g) => g.id === "services")!.met).toBe(
+      false,
+    );
+  });
+
+  it("charges upkeep for finished power plants but not for roads", () => {
+    expect(policyById.pltp.buildUpkeepShare).toBeGreaterThan(0);
+    expect(policyById["jalan-desa"].buildUpkeepShare).toBeUndefined();
+    const built = campaign(["pltp"], 19, true, 8);
+    expect(isFinished(built, "pltp")).toBe(true);
+    // Same world, minus the finished plant's upkeep: the request is lower.
+    const free = structuredClone(built);
+    free.simulation.projects = free.simulation.projects.filter(
+      (project) => !project.id.startsWith("pltp:"),
+    );
+    const next = (game: QuarterGame) =>
+      resolveQuarter(game, basePlan(game), { calm: true, attribution: false })
+        .receipt!.ledger.requested;
+    expect(next(built)).toBeGreaterThan(next(free));
   });
 
   it("lets completed power plants reverse reliability pressure", () => {

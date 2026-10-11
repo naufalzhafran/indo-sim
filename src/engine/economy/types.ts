@@ -136,6 +136,11 @@ export type PolicyDefinition = {
   build?: PolicyBuild;
   /** Share of the running cost charged while a facility sits idle. */
   idleUpkeepShare?: number;
+  /**
+   * Quarterly upkeep of a finished build, as a share of its construction
+   * cost. Roads and rail pay through infrastructure maintenance instead.
+   */
+  buildUpkeepShare?: number;
   /** Regions that can host this build; all regions when omitted. */
   eligibleRegions?: RegionId[];
   name: string;
