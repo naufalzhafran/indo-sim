@@ -19,6 +19,7 @@ import {
   buildRoadNetwork,
   roadClassKey,
   roadRuns,
+  unsharedRanges,
   type Road,
   type RoadClass,
 } from "./roadNetwork";
@@ -150,6 +151,7 @@ export default function RoadNetwork({
       network.roads.map((road) => ({ road, runs: roadRuns(road, infraOf) })),
     [network, infraOf],
   );
+  const drawn = useMemo(() => unsharedRanges(network.roads), [network]);
   const geometry = useMemo(() => {
     const body: Record<RoadClass, Strip> = {
       track: { positions: [] },
@@ -158,42 +160,51 @@ export default function RoadNetwork({
     };
     const lines: Strip = { positions: [] };
     const median: Strip = { positions: [] };
-    for (const { road, runs: list } of runs)
-      for (const run of list) {
-        const half = HALF_WIDTH[run.roadClass];
-        addRibbon(
-          body[run.roadClass],
-          road,
-          run.from,
-          run.to,
-          half,
-          0,
-          ROAD_LIFT,
-        );
-        if (run.roadClass === "national")
-          addRibbon(lines, road, run.from, run.to, 0.008, 0, LINE_LIFT);
-        if (run.roadClass === "toll") {
+    runs.forEach(({ road, runs: list }, index) => {
+      // A trunk several roads share is drawn once, by the first road on it.
+      for (const [start, end] of drawn[index])
+        for (const whole of list) {
+          const run = {
+            ...whole,
+            from: Math.max(whole.from, start),
+            to: Math.min(whole.to, end),
+          };
+          if (run.to <= run.from) continue;
+          const half = HALF_WIDTH[run.roadClass];
           addRibbon(
-            lines,
+            body[run.roadClass],
             road,
             run.from,
             run.to,
-            0.009,
-            half - 0.015,
-            LINE_LIFT,
+            half,
+            0,
+            ROAD_LIFT,
           );
-          addRibbon(
-            lines,
-            road,
-            run.from,
-            run.to,
-            0.009,
-            -half + 0.015,
-            LINE_LIFT,
-          );
-          addRibbon(median, road, run.from, run.to, 0.015, 0, LINE_LIFT);
+          if (run.roadClass === "national")
+            addRibbon(lines, road, run.from, run.to, 0.008, 0, LINE_LIFT);
+          if (run.roadClass === "toll") {
+            addRibbon(
+              lines,
+              road,
+              run.from,
+              run.to,
+              0.009,
+              half - 0.015,
+              LINE_LIFT,
+            );
+            addRibbon(
+              lines,
+              road,
+              run.from,
+              run.to,
+              0.009,
+              -half + 0.015,
+              LINE_LIFT,
+            );
+            addRibbon(median, road, run.from, run.to, 0.015, 0, LINE_LIFT);
+          }
         }
-      }
+    });
     return {
       track: stripGeometry(body.track),
       national: stripGeometry(body.national),
@@ -201,7 +212,7 @@ export default function RoadNetwork({
       lines: stripGeometry(lines),
       median: stripGeometry(median),
     };
-  }, [runs]);
+  }, [runs, drawn]);
   useEffect(
     () => () => {
       for (const g of Object.values(geometry)) g?.dispose();

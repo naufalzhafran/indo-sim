@@ -26,6 +26,7 @@ import { getLocalScenery, seedLocalScenery } from "./localScenery";
 import {
   buildTransportNetwork,
   seedTransportNetwork,
+  type Quay,
   type TransportNetwork,
 } from "./transportNetwork";
 
@@ -142,7 +143,14 @@ export function packWorld(world: WorldGeometry) {
     ),
     localScenery: getLocalScenery(world),
     transport: {
-      sea: transport.sea.map((r) => ({ ...r, points: r.points.map(point3) })),
+      sea: transport.sea.map((r) => ({
+        ...r,
+        points: r.points.map(point3),
+        quays: r.quays?.map((q) => ({
+          rotation: q.rotation,
+          position: point3(q.position),
+        })),
+      })),
       rail: transport.rail.map((r) => ({ ...r, points: r.points.map(point3) })),
       airports: transport.airports.map((a) => ({
         ...a,
@@ -239,9 +247,17 @@ export function unpackWorld(data: PackedWorld): WorldGeometry {
   );
   seedLocalScenery(world, data.localScenery);
   const transport: TransportNetwork = {
-    sea: data.transport.sea.map((r) => ({
+    sea: data.transport.sea.map(({ quays, ...r }) => ({
       ...r,
       points: r.points.map((v) => new Vector3(...v)),
+      ...(quays?.length === 2
+        ? {
+            quays: quays.map((q) => ({
+              rotation: q.rotation,
+              position: new Vector3(...q.position),
+            })) as [Quay, Quay],
+          }
+        : {}),
     })),
     rail: data.transport.rail.map((r) => ({
       ...r,

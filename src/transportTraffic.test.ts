@@ -44,6 +44,12 @@ const network: TransportNetwork = {
       ...line([0, 5], [20, 5]),
     },
     {
+      id: "tol-laut:makassar-ambon",
+      kind: "tol-laut",
+      regions: ["sulawesi", "maluku"],
+      ...line([0, 12], [25, 12]),
+    },
+    {
       id: "padangbai-lembar",
       kind: "ferry",
       regions: ["bali", "ntb"],
@@ -136,6 +142,27 @@ describe("fleet planning", () => {
     expect(busy.flights.length).toBeLessThanOrEqual(MAX_PLANES);
     // A flight never links an airport to itself.
     for (const f of busy.flights) expect(f.from).not.toBe(f.to);
+  });
+
+  it("sails Tol Laut ships only on lines both regions fund", () => {
+    expect(planFleet(network, provinces, []).tolLaut).toEqual([]);
+    expect(
+      planFleet(network, provinces, [funded("tol-laut", "sulawesi")]).tolLaut,
+    ).toEqual([]);
+    const building = planFleet(network, provinces, [
+      funded("tol-laut", "sulawesi"),
+      { ...funded("tol-laut", "maluku"), delivery: 0.3 },
+    ]);
+    expect(building.tolLaut).toHaveLength(1);
+    expect(network.sea[building.tolLaut[0].route].kind).toBe("tol-laut");
+    const built = planFleet(network, provinces, [
+      funded("tol-laut", "sulawesi"),
+      funded("tol-laut", "maluku"),
+    ]);
+    expect(built.tolLaut).toHaveLength(2);
+    // Tol Laut lines never add to the general cargo fleet's routes.
+    for (const ship of built.cargo)
+      expect(network.sea[ship.route].kind).toBe("cargo");
   });
 
   it("shuttles out and back with a pause at each end", () => {

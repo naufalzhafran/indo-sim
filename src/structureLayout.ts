@@ -1,4 +1,5 @@
 import { buildRoadNetwork, onRoadOrCity } from "./roadNetwork";
+import { buildTransportNetwork } from "./transportNetwork";
 import {
   BoxGeometry,
   BufferGeometry,
@@ -29,7 +30,7 @@ export type PolicyStructureInput = {
   /** Rollout readiness, 0 to 1; low values show as an unfinished build. */
   delivery: number;
 };
-export type StructureKind = PolicyId | "crane" | "ship";
+export type StructureKind = PolicyId | "crane";
 export type StructureItem = {
   position: Vector3;
   rotation: number;
@@ -40,8 +41,8 @@ export type StructureItem = {
 };
 export type SeaLane = {
   key: string;
-  from: Vector3;
-  to: Vector3;
+  /** The ships' sea route, sampled along open water from port to port. */
+  points: Vector3[];
   regions: [RegionId, RegionId];
   built: number;
 };
@@ -55,21 +56,6 @@ export type StructureLayout = {
 const COASTAL: PolicyId[] = ["tol-laut", "tourism-access"];
 const LEVEL_RANK = { low: 0, medium: 1, high: 2 };
 const LAND_SLOTS = 16;
-/** Which islands the Tol Laut ships link, as pairs of regions. */
-const SEA_LINKS: [RegionId, RegionId][] = [
-  ["sumatra", "java"],
-  ["sumatra", "kalimantan"],
-  ["java", "kalimantan"],
-  ["java", "bali"],
-  ["bali", "ntb"],
-  ["ntb", "ntt"],
-  ["ntt", "sulawesi"],
-  ["ntt", "maluku"],
-  ["kalimantan", "sulawesi"],
-  ["sulawesi", "maluku"],
-  ["maluku", "papua"],
-];
-
 // ---------------------------------------------------------------- geometry
 
 export const tint = (geometry: BufferGeometry, color: string) => {
@@ -561,16 +547,6 @@ const BLUEPRINTS: Record<StructureKind, () => BufferGeometry[]> = {
     box(0.04, 0.4, 0.04, 0.2, 1.0, 0.7, DEEP),
     box(0.2, 0.12, 0.2, 0.2, 0.9, 0.7, CORAL),
   ],
-  ship: () => [
-    box(0.6, 0.2, 1.7, 0, 0, 0, DEEP),
-    cone(0.3, 0.45, 4, 0, 0.05, 1.05, DEEP).rotateX(Math.PI / 2),
-    box(0.6, 0.06, 1.7, 0, 0.2, 0, CORAL),
-    box(0.4, 0.34, 0.4, 0, 0.26, -0.55, WHITE),
-    box(0.3, 0.1, 0.3, 0, 0.6, -0.55, TEAL),
-    box(0.38, 0.2, 0.3, 0, 0.26, 0.35, SKY),
-    box(0.38, 0.2, 0.3, 0, 0.26, 0.0, SUN),
-    box(0.38, 0.2, 0.3, 0, 0.46, 0.17, CORAL),
-  ],
 };
 const geometryCache = new Map<StructureKind, BufferGeometry>();
 /** One vertex-coloured geometry per kind, so each kind is a single draw call. */
@@ -839,13 +815,12 @@ export function layoutStructures(
       position: site.position,
       rotation: site.rotation,
       scale,
-      height: kind === "crane" || kind === "ship" ? 1 : height,
+      height: kind === "crane" ? 1 : height,
       region,
     });
     items.set(kind, list);
-    if (kind !== "ship") cleared.push(site.position);
-    if (build < 0.9 && kind !== "crane" && kind !== "ship")
-      add("crane", site, region, 1, scale);
+    cleared.push(site.position);
+    if (build < 0.9 && kind !== "crane") add("crane", site, region, 1, scale);
   };
   for (const region of GAME_REGIONS.map((r) => r.id as RegionId)) {
     const here = inputs
@@ -877,61 +852,32 @@ export function layoutStructures(
       add("tourism-access", far, region, tourism.delivery);
     }
   }
-  // Tol Laut: a port at each end of every sea link, with ships between them.
+  // Tol Laut: a port at each end of every line both regions fund. The ships
+  // themselves sail the same sea routes in the transport scene.
   const sea = new Map(
     inputs.filter((i) => i.policy === "tol-laut").map((i) => [i.region, i]),
   );
   const ports: Site[] = [];
-  const portFor = (region: RegionId, toward: RegionId, build: number) => {
-    const own = sites.get(region)!.coast;
-    const site = nearest(own, regionCentre(world, toward));
-    if (!site) return null;
-    if (!ports.some((p) => p.position.distanceTo(site.position) < 0.8)) {
-      ports.push(site);
-      add("tol-laut", site, region, build, 0.2);
-    }
-    return site;
+  const portAt = (region: RegionId, quay: Site, build: number) => {
+    if (ports.some((p) => p.position.distanceTo(quay.position) < 0.8)) return;
+    ports.push(quay);
+    add("tol-laut", quay, region, build, 0.2);
   };
-  for (const [a, b] of SEA_LINKS) {
-    const from = sea.get(a),
-      to = sea.get(b);
-    if (!from || !to) continue;
-    const start = portFor(a, b, from.delivery),
-      end = portFor(b, a, to.delivery);
-    if (!start || !end) continue;
-    // Berths lie off the quay, in open water in front of each port.
-    const berth = (s: Site) =>
-      new Vector3(
-        s.position.x + Math.sin(s.rotation) * 0.9,
-        0.05,
-        s.position.z + Math.cos(s.rotation) * 0.9,
-      );
-    lanes.push({
-      key: `${a}-${b}`,
-      from: berth(start),
-      to: berth(end),
-      regions: [a, b],
-      built: Math.min(from.delivery, to.delivery),
-    });
-  }
-  for (const lane of lanes) {
-    const heading = Math.atan2(
-      lane.to.x - lane.from.x,
-      lane.to.z - lane.from.z,
-    );
-    // A single ship per link, with a second once the route is mostly built.
-    [0.5, 0.25].slice(0, lane.built > 0.5 ? 2 : 1).forEach((t, i) => {
-      add(
-        "ship",
-        {
-          position: lane.from.clone().lerp(lane.to, t),
-          rotation: i ? heading + Math.PI : heading,
-        },
-        lane.regions[0],
-        1,
-        0.5,
-      );
-    });
-  }
+  if (sea.size >= 2)
+    for (const route of buildTransportNetwork(world).sea) {
+      if (route.kind !== "tol-laut" || !route.quays) continue;
+      const [a, b] = route.regions;
+      const from = sea.get(a),
+        to = sea.get(b);
+      if (!from || !to) continue;
+      portAt(a, route.quays[0], from.delivery);
+      portAt(b, route.quays[1], to.delivery);
+      lanes.push({
+        key: route.id,
+        points: route.points,
+        regions: [a, b],
+        built: Math.min(from.delivery, to.delivery),
+      });
+    }
   return { items, lanes, cleared };
 }

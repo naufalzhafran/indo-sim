@@ -126,10 +126,54 @@ export type Road = {
 };
 export type RoadNetwork = { cities: City[]; roads: Road[] };
 
+/**
+ * Lifts a path's ground points so a flat ribbon `half` wide on each side clears
+ * the faceted terrain: across its width and halfway to each neighbouring point.
+ * A light smoothing pass then softens steps without dipping back under a ridge.
+ */
+export function drapeOver(
+  world: Pick<WorldGeometry, "surfaceHeight">,
+  points: Vector3[],
+  half: number,
+) {
+  const probe = new Vector2();
+  const ground = (x: number, z: number) =>
+    world.surfaceHeight(probe.set(x, -z));
+  const floor = points.map((p, i) => {
+    const a = points[Math.max(0, i - 1)],
+      b = points[Math.min(points.length - 1, i + 1)];
+    const dx = b.x - a.x,
+      dz = b.z - a.z,
+      length = Math.hypot(dx, dz) || 1;
+    const nx = -dz / length,
+      nz = dx / length;
+    let top = p.y;
+    for (const t of [-0.5, -0.25, 0, 0.25, 0.5]) {
+      const neighbour = t < 0 ? a : b,
+        f = Math.abs(t);
+      const cx = p.x + (neighbour.x - p.x) * f,
+        cz = p.z + (neighbour.z - p.z) * f;
+      for (const side of [-1, -0.5, 0, 0.5, 1])
+        top = Math.max(
+          top,
+          ground(cx + nx * half * side, cz + nz * half * side),
+        );
+    }
+    return top;
+  });
+  for (let i = 0; i < points.length; i++) {
+    const before = floor[Math.max(0, i - 1)],
+      after = floor[Math.min(points.length - 1, i + 1)];
+    points[i].y = Math.max(floor[i], (before + 2 * floor[i] + after) / 4);
+  }
+}
+
 const GRID = 0.3;
 const MARGIN = 0.14;
 const SAMPLE = 0.14;
 const CITY_MARGIN = 0.55;
+/** Half the widest road plus a little verge, which the deck must clear. */
+const DECK_HALF_WIDTH = 0.12;
 const TOLL_AT = 66,
   NATIONAL_AT = 46;
 
@@ -315,6 +359,39 @@ function smooth(path: Vector2[], plan: Planner) {
   return points;
 }
 
+/**
+ * Stretches each path shares with an earlier path, as [from, to] point ranges
+ * to draw. Roads merge into trunks, so this keeps a shared trunk to one ribbon;
+ * each kept range reaches one point into the trunk so the ribbons still meet.
+ */
+export function unsharedRanges(
+  paths: readonly { points: readonly { x: number; z: number }[] }[],
+  radius = 0.12,
+): [number, number][][] {
+  const grid: PointGrid = new Map();
+  return paths.map((path) => {
+    const shared = path.points.map((p) => nearPoint(grid, p.x, p.z, radius));
+    for (const p of path.points) {
+      const key = `${Math.floor(p.x / CELL)},${Math.floor(p.z / CELL)}`;
+      const cell = grid.get(key);
+      if (cell) cell.push([p.x, p.z]);
+      else grid.set(key, [[p.x, p.z]]);
+    }
+    const ranges: [number, number][] = [];
+    const last = path.points.length - 1;
+    for (let i = 0; i <= last; i++) {
+      if (shared[i]) continue;
+      let j = i;
+      while (j < last && !shared[j + 1]) j++;
+      const from = Math.max(0, i - 1),
+        to = Math.min(last, j + 1);
+      if (to > from) ranges.push([from, to]);
+      i = j;
+    }
+    return ranges;
+  });
+}
+
 type PointGrid = Map<string, [number, number][]>;
 const CELL = 0.5;
 function roadGrid(points: { x: number; z: number }[]): PointGrid {
@@ -477,6 +554,7 @@ export function buildRoadNetwork(world: WorldGeometry): RoadNetwork {
           provinces.slice(i).find(Boolean) ??
           provinces.slice(0, i).reverse().find(Boolean) ??
           "";
+    drapeOver(world, points, DECK_HALF_WIDTH);
     roads.push({
       id: `${a}-${b}`,
       points,

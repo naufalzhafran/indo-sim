@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { POLICY_IDS } from "./engine/economy/types";
 import { structureGeometry, type StructureKind } from "./structureLayout";
 
-const kinds: StructureKind[] = [...POLICY_IDS, "crane", "ship"];
+const kinds: StructureKind[] = [...POLICY_IDS, "crane"];
 
 describe("policy structure models", () => {
   it.each(kinds)("builds a complete, renderable %s model", (kind) => {

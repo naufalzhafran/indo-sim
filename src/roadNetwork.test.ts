@@ -7,6 +7,7 @@ import {
   roadClassFor,
   roadClassKey,
   roadRuns,
+  unsharedRanges,
 } from "./roadNetwork";
 
 const map = JSON.parse(
@@ -39,6 +40,39 @@ describe("road network", () => {
         expect(
           world.surfaceHeight({ x: p.x, y: -p.z } as never),
         ).toBeGreaterThanOrEqual(0);
+  });
+  it("drapes each road deck above the terrain across its full width", () => {
+    const half = 0.105;
+    let worst = 0;
+    for (const road of network.roads)
+      for (let i = 0; i < road.points.length - 1; i++) {
+        const a = road.points[i],
+          b = road.points[i + 1];
+        const dx = b.x - a.x,
+          dz = b.z - a.z,
+          length = Math.hypot(dx, dz) || 1;
+        for (const f of [0, 0.5])
+          for (const side of [-1, 0, 1]) {
+            const x = a.x + dx * f - (dz / length) * half * side,
+              z = a.z + dz * f + (dx / length) * half * side;
+            const deck = a.y + (b.y - a.y) * f;
+            worst = Math.max(
+              worst,
+              world.surfaceHeight({ x, y: -z } as never) - deck,
+            );
+          }
+      }
+    // Ribbons sit ROAD_LIFT (0.03) above the deck, so terrain never shows through.
+    expect(worst).toBeLessThan(0.03);
+  });
+  it("draws a trunk several roads share only once", () => {
+    const drawn = unsharedRanges(network.roads);
+    const index = network.roads.findIndex(
+      (r) => r.id === "yogyakarta-surabaya",
+    );
+    const covered = drawn[index].reduce((sum, [a, b]) => sum + b - a, 0);
+    expect(covered).toBeLessThan(network.roads[index].points.length / 2);
+    expect(drawn[0]).toEqual([[0, network.roads[0].points.length - 1]]);
   });
   it("classifies roads by infrastructure", () => {
     expect(roadClassFor(80)).toBe("toll");

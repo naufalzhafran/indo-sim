@@ -15,6 +15,7 @@ import { box, cone, cyl, tint } from "./structureLayout";
  */
 export type TransportModel =
   | "cargo"
+  | "tol-laut"
   | "ferry"
   | "fishing"
   | "train"
@@ -95,6 +96,20 @@ const BLUEPRINTS: Record<TransportModel, () => BufferGeometry[]> = {
       cyl(0.03, 0.035, 0.1, 6, -0.45, 0.34, 0, CORAL),
     ];
   },
+  // Tol Laut: a white-hulled government freighter with a coral band and a
+  // short row of containers, so it reads apart from the coral cargo lines.
+  "tol-laut": () => [
+    hull(1.0, 0.28, 0.06, CORAL),
+    hull(0.96, 0.27, 0.07, CREAM).translate(0, 0.06, 0),
+    box(0.86, 0.025, 0.22, -0.05, 0.13, 0, TEAL),
+    box(0.12, 0.08, 0.19, 0.24, 0.155, 0, SUN),
+    box(0.12, 0.08, 0.19, 0.1, 0.155, 0, TEAL),
+    box(0.12, 0.08, 0.19, -0.04, 0.155, 0, CORAL),
+    box(0.2, 0.17, 0.21, -0.3, 0.155, 0, CREAM),
+    box(0.17, 0.02, 0.2, -0.3, 0.27, 0, GLASS),
+    box(0.22, 0.03, 0.23, -0.3, 0.325, 0, GREEN),
+    cyl(0.028, 0.032, 0.09, 6, -0.38, 0.35, 0, CORAL),
+  ],
   ferry: () => [
     hull(0.8, 0.26, 0.1, CREAM),
     box(0.62, 0.03, 0.2, -0.04, 0.1, 0, TEAL),

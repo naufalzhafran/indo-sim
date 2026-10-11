@@ -16,6 +16,7 @@ import {
   Vector3,
 } from "three";
 import { SEA_LEVEL, type WorldGeometry } from "./mapGeometry";
+import { unsharedRanges } from "./roadNetwork";
 import { addRibbon, stripGeometry, type Strip } from "./RoadScene";
 import { transportGeometry, type TransportModel } from "./transportModels";
 import {
@@ -43,12 +44,15 @@ function Railways({ lines }: { lines: RailLine[] }) {
   const geometry = useMemo(() => {
     const bed: Strip = { positions: [] },
       steel: Strip = { positions: [] };
-    for (const line of lines) {
-      const last = line.points.length - 1;
-      addRibbon(bed, line, 0, last, 0.034, 0, RAIL_LIFT);
-      addRibbon(steel, line, 0, last, 0.0045, 0.016, RAIL_LIFT + 0.004);
-      addRibbon(steel, line, 0, last, 0.0045, -0.016, RAIL_LIFT + 0.004);
-    }
+    // Lines beside a shared road trunk run on the same track; lay it once.
+    const ranges = unsharedRanges(lines, 0.1);
+    lines.forEach((line, index) => {
+      for (const [from, to] of ranges[index]) {
+        addRibbon(bed, line, from, to, 0.034, 0, RAIL_LIFT);
+        addRibbon(steel, line, from, to, 0.0045, 0.016, RAIL_LIFT + 0.004);
+        addRibbon(steel, line, from, to, 0.0045, -0.016, RAIL_LIFT + 0.004);
+      }
+    });
     return { bed: stripGeometry(bed), steel: stripGeometry(steel) };
   }, [lines]);
   useEffect(
@@ -132,6 +136,7 @@ export default function TransportScene({
   const { camera, size, invalidate } = useThree();
   const network = useMemo(() => buildTransportNetwork(world), [world]);
   const cargo = useRef<InstancedMesh>(null),
+    tolLaut = useRef<InstancedMesh>(null),
     ferries = useRef<InstancedMesh>(null),
     fishing = useRef<InstancedMesh>(null),
     trains = useRef<InstancedMesh>(null),
@@ -214,7 +219,8 @@ export default function TransportScene({
       mesh.count = plans.length;
       mesh.instanceMatrix.needsUpdate = true;
     };
-    ships(cargo.current, fleet.cargo, 3, 0.24, 1);
+    ships(cargo.current, fleet.cargo, 3, 0.16, 1);
+    ships(tolLaut.current, fleet.tolLaut, 4, 0.12, 0.9);
     ships(ferries.current, fleet.ferries, 3, 0.05, 0.7);
 
     // Fishing boats bob near the coast and only show up close.
@@ -338,6 +344,11 @@ export default function TransportScene({
         <meshLambertMaterial vertexColors flatShading />
       </instancedMesh>
       <Fleet model="cargo" capacity={fleet.cargo.length} meshRef={cargo} />
+      <Fleet
+        model="tol-laut"
+        capacity={fleet.tolLaut.length}
+        meshRef={tolLaut}
+      />
       <Fleet model="ferry" capacity={fleet.ferries.length} meshRef={ferries} />
       <Fleet
         model="fishing"

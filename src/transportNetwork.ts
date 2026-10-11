@@ -6,6 +6,7 @@ import {
 } from "./mapGeometry";
 import {
   buildRoadNetwork,
+  drapeOver,
   landPlanner,
   onRoadOrCity,
   type Road,
@@ -19,10 +20,14 @@ export type TransportPath = {
   distances: number[];
   length: number;
 };
+/** A spot on the shore for a harbour, facing its berth out at sea. */
+export type Quay = { position: Vector3; rotation: number };
 export type SeaRoute = TransportPath & {
   id: string;
-  kind: "cargo" | "ferry";
+  kind: "cargo" | "ferry" | "tol-laut";
   regions: [RegionId, RegionId];
+  /** The harbours at each end, for ports and their quays. */
+  quays?: [Quay, Quay];
 };
 export type RailLine = TransportPath & {
   id: string;
@@ -86,6 +91,22 @@ const CARGO_LINES: [string, string][] = [
   ["sorong", "jayapura"],
   ["ambon", "merauke"],
 ];
+/**
+ * Tol Laut lines, as [region, region, port, port]. Like the real programme they
+ * run from the Java and Makassar hubs out to the eastern and outer islands.
+ */
+export const TOL_LAUT_LINKS: [RegionId, RegionId, string, string][] = [
+  ["java", "sumatra", "tanjung-priok", "belawan"],
+  ["java", "kalimantan", "tanjung-perak", "banjarmasin"],
+  ["java", "bali", "tanjung-perak", "benoa"],
+  ["java", "ntb", "tanjung-perak", "lembar"],
+  ["java", "sulawesi", "tanjung-perak", "makassar"],
+  ["sulawesi", "ntt", "makassar", "kupang"],
+  ["sulawesi", "maluku", "makassar", "ambon"],
+  ["ntt", "maluku", "kupang", "ambon"],
+  ["maluku", "papua", "ambon", "merauke"],
+  ["sulawesi", "papua", "bitung", "jayapura"],
+];
 /** Short ferry crossings across the straits. */
 const FERRY_LINES: [string, string][] = [
   ["merak", "bakauheni"],
@@ -128,6 +149,8 @@ const AIRPORT_CITIES = [
 const STEP = 0.3;
 const CELL = 0.25;
 const RAIL_OFFSET = 0.17;
+/** Half the gravel bed's width, which the track must clear. */
+const RAIL_HALF_WIDTH = 0.04;
 
 function samplePath(path: Vector2[], height: (p: Vector2) => number) {
   const points: Vector3[] = [],
@@ -193,27 +216,33 @@ function waterGrid(
   for (let j = 0; j < height; j++)
     for (let i = 0; i < width; i++)
       land[j * width + i] = Number(onLand(minX + i * CELL, minY + j * CELL));
-  const blocked = new Uint8Array(width * height);
-  for (let j = 0; j < height; j++)
-    for (let i = 0; i < width; i++) {
-      let near = 0;
-      for (let dj = -1; dj <= 1 && !near; dj++)
-        for (let di = -1; di <= 1 && !near; di++) {
-          const x = i + di,
-            y = j + dj;
-          if (x >= 0 && y >= 0 && x < width && y < height)
-            near = land[y * width + x];
-        }
-      blocked[j * width + i] = near;
-    }
-  // Islets smaller than a cell block the cells their outlines touch, without the margin.
-  for (const coast of world.coastlines)
-    for (const p of coast.shape) {
-      const i = Math.round((p.x - minX) / CELL),
-        j = Math.round((p.y - minY) / CELL);
-      if (i >= 0 && j >= 0 && i < width && j < height)
-        blocked[j * width + i] = 1;
-    }
+  /** Cells within `reach` cells of land, plus islets smaller than a cell. */
+  const dilate = (reach: number) => {
+    const blocked = new Uint8Array(width * height);
+    for (let j = 0; j < height; j++)
+      for (let i = 0; i < width; i++) {
+        let near = 0;
+        for (let dj = -reach; dj <= reach && !near; dj++)
+          for (let di = -reach; di <= reach && !near; di++) {
+            const x = i + di,
+              y = j + dj;
+            if (x >= 0 && y >= 0 && x < width && y < height)
+              near = land[y * width + x];
+          }
+        blocked[j * width + i] = near;
+      }
+    for (const coast of world.coastlines)
+      for (const p of coast.shape) {
+        const i = Math.round((p.x - minX) / CELL),
+          j = Math.round((p.y - minY) / CELL);
+        if (i >= 0 && j >= 0 && i < width && j < height)
+          blocked[j * width + i] = 1;
+      }
+    return blocked;
+  };
+  // Ships prefer a wide berth from the coast and squeeze closer only in narrow straits.
+  const margins = [dilate(2), dilate(1)];
+  let blocked = margins[0];
   const cellOf = (p: Vector2) => [
     Math.round((p.x - minX) / CELL),
     Math.round((p.y - minY) / CELL),
@@ -242,8 +271,21 @@ function waterGrid(
     }
     return true;
   };
+  const length = (path: Vector2[]) =>
+    path.reduce((sum, p, i) => (i ? sum + p.distanceTo(path[i - 1]) : 0), 0);
+  const route = (from: Vector2, to: Vector2) => {
+    blocked = margins[0];
+    const wide = routeOver(from, to);
+    // A fairly direct wide route needs no second look.
+    if (wide && length(wide) < from.distanceTo(to) * 1.3) return wide;
+    blocked = margins[1];
+    const close = routeOver(from, to);
+    // Keep the wide berth unless it means sailing far around an island.
+    if (wide && (!close || length(wide) < length(close) * 1.25)) return wide;
+    return close;
+  };
   /** A* over the free cells, then pulled taut along lines of sight. */
-  const route = (from: Vector2, to: Vector2): Vector2[] | null => {
+  const routeOver = (from: Vector2, to: Vector2): Vector2[] | null => {
     const start = nearestFree(from),
       goal = nearestFree(to);
     if (!start || !goal) return null;
@@ -369,35 +411,89 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
     return null;
   };
   const sea = () => SEA_LEVEL;
-  const ports = new Map<string, { at: Vector2; region: RegionId }>();
-  for (const [id, lon, lat, region] of PORTS) {
-    const at = offshore(projectCoordinate([lon, lat]), 0.55);
-    if (at) ports.set(id, { at, region });
-  }
-  const grid = waterGrid(world, (x, y) => plan.onLand(x, y));
-  const routes: SeaRoute[] = [];
-  for (const [a, b] of CARGO_LINES) {
-    const from = ports.get(a),
-      to = ports.get(b);
-    if (!from || !to) continue;
-    const path = grid.route(from.at, to.at);
-    if (!path) continue;
-    // Round the corners only as far as the sampled route stays at sea.
-    let sampled = samplePath(path, sea);
-    for (let rounds = 3; rounds > 0; rounds--) {
-      const candidate = samplePath(chaikin(path, rounds), sea);
-      if (candidate.points.every((p) => !plan.onLand(p.x, -p.z))) {
-        sampled = candidate;
+  /**
+   * A quay platform standing in the shallows where the line from a berth to its
+   * harbour meets the shore, clear of the coast road. The search fans out a
+   * little when the first landfall is on a road.
+   */
+  const quayFor = (berth: Vector2, harbour: Vector2): Quay | null => {
+    const toward = Math.atan2(harbour.y - berth.y, harbour.x - berth.x);
+    const reach = berth.distanceTo(harbour) + 1;
+    let fallback: Quay | null = null;
+    for (const turn of [0, 0.2, -0.2, 0.4, -0.4, 0.6, -0.6, 0.8, -0.8]) {
+      const direction = new Vector2(
+        Math.cos(toward + turn),
+        Math.sin(toward + turn),
+      );
+      for (let d = 0.02; d <= reach; d += 0.02) {
+        const p = berth.clone().addScaledVector(direction, d);
+        if (!plan.onLand(p.x, p.y)) continue;
+        p.addScaledVector(direction, -0.08);
+        const quay = {
+          position: new Vector3(
+            p.x,
+            Math.max(0.03, world.surfaceHeight(p)),
+            -p.y,
+          ),
+          // Structures face +z, so this turns the pier back towards the berth.
+          rotation: Math.atan2(-direction.x, direction.y),
+        };
+        if (!onRoadOrCity(roads, p.x, -p.y, 0.26, 0)) return quay;
+        fallback ??= quay;
         break;
       }
     }
+    return fallback;
+  };
+  const ports = new Map<
+    string,
+    { at: Vector2; region: RegionId; quay: Quay | null }
+  >();
+  // Berths sit far enough out that a docked ship clears the beach.
+  for (const [id, lon, lat, region] of PORTS) {
+    const harbour = projectCoordinate([lon, lat]);
+    const at = offshore(harbour, 0.75);
+    if (at) ports.set(id, { at, region, quay: quayFor(at, harbour) });
+  }
+  const grid = waterGrid(world, (x, y) => plan.onLand(x, y));
+  const sail = (from: Vector2, to: Vector2) => {
+    const path = grid.route(from, to);
+    if (!path) return null;
+    // Round the corners only as far as the sampled route keeps off the coast.
+    for (let rounds = 3; rounds > 0; rounds--) {
+      const candidate = samplePath(chaikin(path, rounds), sea);
+      if (candidate.points.every((p) => water(p.x, -p.z, 0.2)))
+        return candidate;
+    }
+    return samplePath(path, sea);
+  };
+  const routes: SeaRoute[] = [];
+  // Tol Laut shares harbour pairs with the cargo lines; route each pair once.
+  const sailed = new Map<string, TransportPath | null>();
+  const addSeaRoute = (
+    a: string,
+    b: string,
+    kind: SeaRoute["kind"],
+    regions?: [RegionId, RegionId],
+  ) => {
+    const from = ports.get(a),
+      to = ports.get(b);
+    if (!from || !to) return;
+    const key = `${a}|${b}`;
+    if (!sailed.has(key)) sailed.set(key, sail(from.at, to.at));
+    const sampled = sailed.get(key);
+    if (!sampled) return;
     routes.push({
-      id: `${a}-${b}`,
-      kind: "cargo",
-      regions: [from.region, to.region],
+      id: kind === "tol-laut" ? `tol-laut:${a}-${b}` : `${a}-${b}`,
+      kind,
+      regions: regions ?? [from.region, to.region],
+      ...(from.quay && to.quay ? { quays: [from.quay, to.quay] } : {}),
       ...sampled,
     });
-  }
+  };
+  for (const [a, b] of CARGO_LINES) addSeaRoute(a, b, "cargo");
+  for (const [ra, rb, a, b] of TOL_LAUT_LINKS)
+    addSeaRoute(a, b, "tol-laut", [ra, rb]);
   // Ferries cross narrow straits: each end is the first water off its own shore.
   const landing = (from: Vector2, to: Vector2) => {
     const steps = Math.ceil(from.distanceTo(to) / 0.02);
@@ -428,7 +524,7 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
   // Rail runs beside each road corridor, on the side with more room.
   const rail: RailLine[] = [];
   for (const road of roads.roads) {
-    const line = railBeside(world, road);
+    const line = railBeside(world, road, rail);
     if (!line) continue;
     const counts = new Map<string, number>();
     for (const id of road.provinces) {
@@ -511,13 +607,23 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
 }
 
 /** The road's centreline shifted sideways onto land, sampled like the road. */
-function railBeside(world: WorldGeometry, road: Road) {
+function railBeside(world: WorldGeometry, road: Road, laid: RailLine[]) {
   if (road.points.length < 3) return null;
+  // Where roads share a trunk, follow the track already laid beside it, so the
+  // trunk carries one railway instead of one on each side.
+  const onTrack = (x: number, z: number) =>
+    laid.some((line) =>
+      line.points.some(
+        (q) => Math.abs(q.x - x) < 0.15 && Math.abs(q.z - z) < 0.15,
+      ),
+    );
   const sideScore = (side: number) => {
     let score = 0;
-    for (let i = 0; i < road.points.length; i += 4) {
+    for (let i = 0; i < road.points.length; i += 2) {
       const p = shifted(road, i, RAIL_OFFSET * side);
-      if (world.surfaceHeight(new Vector2(p.x, -p.z)) > 0.02) score++;
+      if (i % 4 === 0 && world.surfaceHeight(new Vector2(p.x, -p.z)) > 0.02)
+        score++;
+      if (onTrack(p.x, p.z)) score += 3;
     }
     return score;
   };
@@ -527,7 +633,9 @@ function railBeside(world: WorldGeometry, road: Road) {
     const p = shifted(road, i, RAIL_OFFSET * side);
     path.push(new Vector2(p.x, -p.z));
   }
-  return samplePath(path, (p) => Math.max(0.03, world.surfaceHeight(p)));
+  const line = samplePath(path, (p) => Math.max(0.03, world.surfaceHeight(p)));
+  drapeOver(world, line.points, RAIL_HALF_WIDTH);
+  return line;
 }
 function shifted(road: Road, i: number, offset: number) {
   const a = road.points[Math.max(0, i - 2)],

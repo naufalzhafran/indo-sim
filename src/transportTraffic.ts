@@ -57,6 +57,8 @@ export type TrainPlan = { line: number; phase: number; speed: number };
 export type FlightPlan = { from: number; to: number; phase: number };
 export type FleetPlan = {
   cargo: ShipPlan[];
+  /** Tol Laut ships, sailing only lines whose two regions both fund the programme. */
+  tolLaut: ShipPlan[];
   ferries: ShipPlan[];
   rail: RailLine[];
   trains: TrainPlan[];
@@ -96,9 +98,30 @@ export function planFleet(
   const busiest = Math.max(1, ...tons.values());
 
   const cargo: ShipPlan[] = [],
-    ferries: ShipPlan[] = [];
+    ferries: ShipPlan[] = [],
+    tolLaut: ShipPlan[] = [];
+  const tolLautBuild = (region: string) =>
+    Math.max(
+      -1,
+      ...structures
+        .filter((s) => s.policy === "tol-laut" && s.region === region)
+        .map((s) => s.delivery),
+    );
   network.sea.forEach((route, index) => {
     const [a, b] = route.regions;
+    if (route.kind === "tol-laut") {
+      const built = Math.min(tolLautBuild(a), tolLautBuild(b));
+      if (built < 0) return;
+      // One ship while the ports go up, a second once the line is mostly built.
+      const count = built > 0.5 ? 2 : 1;
+      for (let i = 0; i < count; i++)
+        tolLaut.push({
+          route: index,
+          phase: (i + unit(index, i) * 0.3) / count,
+          speed: 0.38,
+        });
+      return;
+    }
     const lift = (growth.get(a)! + growth.get(b)!) / 2;
     let count: number;
     if (route.kind === "ferry") {
@@ -205,6 +228,7 @@ export function planFleet(
 
   return {
     cargo: cargo.slice(0, MAX_CARGO_SHIPS),
+    tolLaut,
     ferries: ferries.slice(0, MAX_FERRIES),
     rail,
     trains: trains.slice(0, MAX_TRAINS),
