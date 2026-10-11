@@ -231,10 +231,10 @@ export function RegionRelationships({
         id: f,
         emblem: f,
         label: foundationNames[f][language],
-        detail: t("Foundation", "Fondasi"),
+        detail: t("Basic service", "Layanan dasar"),
         explanation: t(
-          `${foundationNames[f].en} sets industry potential. Each industry has its own sensitivity to it; these are simulation weights, not guaranteed growth.`,
-          `${foundationNames[f].id} membentuk potensi industri. Setiap industri punya kepekaan sendiri; ini bobot simulasi, bukan jaminan pertumbuhan.`,
+          `${foundationNames[f].en} helps businesses produce more. Some industries need it more than others. These links are game assumptions, not guaranteed growth.`,
+          `${foundationNames[f].id} membantu usaha berproduksi lebih banyak. Sebagian industri lebih membutuhkannya. Hubungan ini asumsi permainan, bukan jaminan pertumbuhan.`,
         ),
       })),
     },
@@ -247,8 +247,8 @@ export function RegionRelationships({
         label: item.name[language],
         detail: "",
         explanation: t(
-          "Foundations shape industry potential. Demand, investment, available workers and taxes also affect actual output.",
-          "Fondasi membentuk potensi industri. Permintaan, investasi, ketersediaan pekerja, dan pajak juga memengaruhi output aktual.",
+          "Basic services decide how much industries could produce. Buyers, investment, workers and taxes decide how much they actually do.",
+          "Layanan dasar menentukan seberapa banyak industri bisa berproduksi. Pembeli, investasi, pekerja, dan pajak menentukan hasil nyatanya.",
         ),
       })),
     },
@@ -493,8 +493,8 @@ export function RegionRelationships({
               <div>
                 <p className="eco-impact-note">
                   {t(
-                    "No policies in this region yet. Choose a policy to support its foundations and industries.",
-                    "Belum ada kebijakan di wilayah ini. Pilih kebijakan untuk mendukung fondasi dan industrinya.",
+                    "No policies in this region yet. Choose a policy to improve its basic services and industries.",
+                    "Belum ada kebijakan di wilayah ini. Pilih kebijakan untuk memperbaiki layanan dasar dan industrinya.",
                   )}
                 </p>
                 <button type="button" onClick={() => onPolicy("bos")}>

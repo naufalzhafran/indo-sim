@@ -212,8 +212,8 @@ function PolicyEffects({
       {!policy.impacts.length && (
         <p className="eco-no-impact">
           {language === "id"
-            ? "Tidak berdampak langsung pada fondasi atau industri"
-            : "No direct foundation or industry effect"}
+            ? "Tidak langsung mengubah layanan dasar atau industri"
+            : "Does not directly change basic services or industries"}
         </p>
       )}
       {briefing ? (

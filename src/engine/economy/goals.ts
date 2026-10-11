@@ -63,12 +63,12 @@ export const goalLessons: Record<
   },
   services: {
     met: {
-      en: "Schools, clinics, roads, power and food supply improved. These foundations make every industry more productive.",
-      id: "Sekolah, layanan kesehatan, jalan, listrik, dan pasokan pangan membaik. Fondasi ini membuat setiap industri lebih produktif.",
+      en: "Schools, clinics, roads, power and food supply improved. Better basic services help every industry produce more.",
+      id: "Sekolah, layanan kesehatan, jalan, listrik, dan pasokan pangan membaik. Layanan dasar yang lebih baik membantu setiap industri berproduksi lebih banyak.",
     },
     missed: {
-      en: "Public foundations barely improved. Services wear down and the population grows, so they need steady funding just to keep up.",
-      id: "Fondasi publik hampir tidak membaik. Layanan menurun seiring waktu dan penduduk bertambah, jadi perlu dana rutin agar tidak tertinggal.",
+      en: "Basic services barely improved. Services wear down and the population grows, so they need steady funding just to keep up.",
+      id: "Layanan dasar hampir tidak membaik. Layanan menurun seiring waktu dan penduduk bertambah, jadi perlu dana rutin agar tidak tertinggal.",
     },
   },
   energy: {
@@ -108,8 +108,8 @@ export const goalExplanations: Record<string, Bilingual> = {
     id: "Persentase orang yang ingin bekerja tetapi belum punya pekerjaan. Anak muda masuk angkatan kerja setiap tahun, jadi dunia usaha harus terus merekrut agar angkanya tidak naik. Selalu ada orang yang sedang pindah kerja, jadi angkanya jarang di bawah sekitar 3%.",
   },
   services: {
-    en: "Foundations are Education, Infrastructure, Energy, Food and Health, each scored out of 100. They make every industry more productive. You can see them on the Economy screen.",
-    id: "Fondasi adalah Pendidikan, Infrastruktur, Energi, Pangan, dan Kesehatan, masing-masing bernilai 0–100. Fondasi membuat setiap industri lebih produktif. Lihat di layar Ekonomi.",
+    en: "Basic services are the five things every family and business relies on: schools (Education), roads and ports (Infrastructure), electricity (Energy), food supply (Food) and clinics (Health). Each is scored out of 100. When they improve, people and businesses can produce more. See them on the Economy screen.",
+    id: "Layanan dasar adalah lima hal yang diandalkan setiap keluarga dan usaha: sekolah (Pendidikan), jalan dan pelabuhan (Infrastruktur), listrik (Energi), pasokan makanan (Pangan), dan puskesmas (Kesehatan). Masing-masing bernilai 0–100. Jika membaik, warga dan usaha bisa berproduksi lebih banyak. Lihat di layar Ekonomi.",
   },
   energy: {
     en: "How many homes have electricity and how reliable it is. A growing economy uses more power, so new plants are needed just to keep up.",
@@ -207,10 +207,10 @@ export function campaignGoals(game: QuarterGame): CampaignGoal[] {
     },
     {
       id: "services",
-      label: { en: "Stronger foundations", id: "Fondasi lebih kuat" },
+      label: { en: "Better basic services", id: "Layanan dasar lebih baik" },
       target: {
-        en: "Gain 2 points in 3 foundations; none loses over 3",
-        id: "Naik 2 poin pada 3 fondasi; tak ada yang turun lebih dari 3",
+        en: "Raise 3 basic services by 2 points; none drops over 3",
+        id: "Naikkan 3 layanan dasar 2 poin; tak ada yang turun lebih dari 3",
       },
       value: improved,
       unit: "count",

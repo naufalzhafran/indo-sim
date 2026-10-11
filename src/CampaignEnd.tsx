@@ -86,8 +86,8 @@ export function CampaignEnd({
             `Turun lebih dari 3 poin: ${harmed.map((key) => foundationNames[key].id).join(", ")}`,
           )
         : t(
-            "No foundation lost more than 3 points",
-            "Tidak ada fondasi turun lebih dari 3 poin",
+            "No basic service dropped more than 3 points",
+            "Tidak ada layanan dasar yang turun lebih dari 3 poin",
           ),
     },
     energy: {

@@ -328,7 +328,7 @@ export function QuarterDebrief({
     {
       id: "foundations",
       met: foundationChange > 0,
-      name: t("Strengthen foundations", "Fondasi menguat"),
+      name: t("Better basic services", "Layanan dasar membaik"),
       value: `${signed(foundationChange, 1)} ${t("pts", "poin")}`,
     },
     {
@@ -1134,8 +1134,8 @@ export function QuarterDebrief({
       </div>
       <p className="report-next-cue">
         {t(
-          "Next: see which foundations and industries moved, and why.",
-          "Berikutnya: lihat fondasi dan industri yang berubah, serta penyebabnya.",
+          "Next: see which basic services and industries changed, and why.",
+          "Berikutnya: lihat layanan dasar dan industri yang berubah, serta penyebabnya.",
         )}
       </p>
     </div>

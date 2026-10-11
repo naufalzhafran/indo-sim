@@ -535,7 +535,7 @@ export default function QuarterRecap({
               </dl>
               <ul
                 className="q-region-foundations"
-                aria-label={t("Foundation changes", "Perubahan fondasi")}
+                aria-label={t("Basic services changes", "Perubahan layanan dasar")}
               >
                 {FOUNDATIONS.map((f) => (
                   <li key={f} data-tone={tone(spotlight.foundations[f], 0.01)}>
@@ -913,7 +913,7 @@ function ImpactAct({
         <div className="q-impact-legend">
           <h3>
             <StatHelp
-              label={t("Foundations", "Fondasi")}
+              label={t("Basic services", "Layanan dasar")}
               description={t(
                 "Each change is split in two. Your decisions compares this quarter's plan with keeping last quarter's settings under the same events. Ongoing covers programmes already running, economic adjustment and outside events.",
                 "Setiap perubahan dibagi dua. Keputusan Anda membandingkan rencana triwulan ini dengan mempertahankan pengaturan sebelumnya pada peristiwa yang sama. Berjalan mencakup program yang sudah berjalan, penyesuaian ekonomi, dan peristiwa luar.",

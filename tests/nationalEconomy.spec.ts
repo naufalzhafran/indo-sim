@@ -73,7 +73,7 @@ for (const language of ["en", "id"] as const) {
       ).toBe(true);
       await expect(panel.locator(".national-foundations meter")).toHaveCount(5);
       const helpButtons = panel.locator(".stat-help");
-      await expect(helpButtons).toHaveCount(7);
+      await expect(helpButtons).toHaveCount(8);
       for (const help of await helpButtons.all()) {
         await help.focus();
         const tooltip = page.getByRole("tooltip");
@@ -194,8 +194,8 @@ for (const language of ["en", "id"] as const) {
       const hint = panel.getByRole("button", {
         name:
           language === "en"
-            ? "Foundation sensitivity ?"
-            : "Kepekaan terhadap fondasi ?",
+            ? "What this industry needs ?"
+            : "Yang dibutuhkan industri ini ?",
         exact: true,
       });
       await hint.focus();

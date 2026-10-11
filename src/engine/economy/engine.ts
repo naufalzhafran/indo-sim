@@ -2139,8 +2139,8 @@ function executeQuarter(
         `${def.name.id} ${change >= 0 ? "berkembang" : "menyusut"}`,
       ),
       detail: bi(
-        `Output changed ${(change * 100).toFixed(1)}% this quarter. In ${main.name}, ${constraint.en.toLowerCase()} remains this industry's main foundation constraint.`,
-        `Hasil berubah ${(change * 100).toFixed(1).replace(".", ",")}% triwulan ini. Di ${main.nameId}, ${constraint.id.toLowerCase()} tetap menjadi kendala fondasi utama industri ini.`,
+        `Output changed ${(change * 100).toFixed(1)}% this quarter. In ${main.name}, ${constraint.en.toLowerCase()} is still what holds this industry back most.`,
+        `Hasil berubah ${(change * 100).toFixed(1).replace(".", ",")}% triwulan ini. Di ${main.nameId}, ${constraint.id.toLowerCase()} masih menjadi penghambat terbesar industri ini.`,
       ),
     });
   }

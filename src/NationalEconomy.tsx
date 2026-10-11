@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { money, number } from "./components";
 import { StatHelp } from "./StatHelp";
+import { goalExplanations } from "./engine/economy/goals";
 import { EconomyEmblem } from "./EconomyEmblem";
 import { useLanguage } from "./i18n";
 import { activeIds, aggregate } from "./engine/economy/engine";
@@ -175,13 +176,16 @@ export function NationalEconomy({
             <span className="national-step" aria-hidden="true">
               1
             </span>
-            {t("National foundations", "Fondasi nasional")}
+            <StatHelp
+              label={t("Basic services", "Layanan dasar")}
+              description={goalExplanations.services[language]}
+            />
           </h2>
           <p className="national-start">
             <strong>{t("Start here:", "Mulai dari sini:")}</strong>{" "}
             {t(
-              `${foundationNames[weakest].en} ${number(national[weakest])} is your weakest foundation. It holds back ${heldBack.join(" and ")}.`,
-              `${foundationNames[weakest].id} ${number(national[weakest])} adalah fondasi terlemah. Ini menghambat ${heldBack.join(" dan ")}.`,
+              `${foundationNames[weakest].en} ${number(national[weakest])} is your weakest basic service. It holds back ${heldBack.join(" and ")}.`,
+              `${foundationNames[weakest].id} ${number(national[weakest])} adalah layanan dasar terlemah. Ini menghambat ${heldBack.join(" dan ")}.`,
             )}
             {remedy &&
               t(
@@ -351,20 +355,20 @@ export function NationalEconomy({
             </div>
             <p className="national-intro">
               {t(
-                "Foundations support production. Production creates income and investment.",
-                "Fondasi mendukung produksi. Produksi menghasilkan pendapatan dan investasi.",
+                "Good basic services help businesses produce. Production creates income and investment.",
+                "Layanan dasar yang baik membantu usaha berproduksi. Produksi menghasilkan pendapatan dan investasi.",
               )}
             </p>
             <div className="national-production-chain">
               <div className="national-inputs">
                 <StatHelp
                   label={t(
-                    "Foundation sensitivity",
-                    "Kepekaan terhadap fondasi",
+                    "What this industry needs",
+                    "Yang dibutuhkan industri ini",
                   )}
                   description={t(
-                    "Simulation weights show how strongly each foundation affects this industry’s potential. Essential foundations also apply a weakest-link limit. These are game assumptions, not measured estimates.",
-                    "Bobot simulasi menunjukkan pengaruh setiap fondasi pada potensi industri ini. Fondasi utama juga membatasi melalui nilai terlemahnya. Ini asumsi permainan, bukan estimasi hasil pengukuran.",
+                    "Longer bars mean this industry depends more on that basic service. If one it truly needs is weak, the whole industry is held back, like a chain breaking at its weakest link. These are game assumptions, not measured data.",
+                    "Batang yang lebih panjang berarti industri ini lebih bergantung pada layanan dasar tersebut. Jika layanan yang sangat dibutuhkan lemah, seluruh industri tertahan, seperti rantai yang putus di mata terlemahnya. Ini asumsi permainan, bukan data hasil pengukuran.",
                   )}
                 />
                 <ul>
@@ -442,8 +446,8 @@ export function NationalEconomy({
                       <StatHelp
                         label={t("Readiness", "Kesiapan")}
                         description={t(
-                          "Output-weighted average of local industry readiness. The simulation combines weighted foundations with the weakest essential foundation; workforce skills enter with a delay.",
-                          "Rata-rata kesiapan industri lokal berbobot output. Simulasi menggabungkan bobot fondasi dengan fondasi utama terlemah; keterampilan pekerja berpengaruh secara bertahap.",
+                          "How ready local industries are to produce, with bigger industries counting more. It depends on basic services, especially the weakest one an industry needs. Better worker skills show up slowly.",
+                          "Seberapa siap industri lokal berproduksi; industri yang lebih besar lebih diperhitungkan. Ini bergantung pada layanan dasar, terutama yang paling lemah di antara yang dibutuhkan. Keterampilan pekerja yang lebih baik berpengaruh perlahan.",
                         )}
                       />
                     </dt>
@@ -508,8 +512,8 @@ export function NationalEconomy({
             </div>
             <p className="national-spillovers">
               {t(
-                "Weights are game assumptions; the weakest essential foundation limits potential. Constraints reflect local output shares, not national scores.",
-                "Bobot adalah asumsi permainan; fondasi utama terlemah membatasi potensi. Kendala mengikuti pangsa output lokal, bukan skor nasional.",
+                "These links are game assumptions. The weakest basic service an industry needs limits how much it can grow. What holds an industry back depends on where it operates, not on national scores.",
+                "Hubungan ini asumsi permainan. Layanan dasar terlemah yang dibutuhkan industri membatasi pertumbuhannya. Penghambat industri bergantung pada lokasi usahanya, bukan skor nasional.",
               )}{" "}
             </p>
             <div className="national-industry-links">
@@ -606,8 +610,8 @@ export function NationalEconomy({
             <p className="national-policy-note">
               {policyFilter === "constraint" && !isFoundation
                 ? t(
-                    "These policies affect the current bottleneck foundation, which supports this industry indirectly.",
-                    "Kebijakan ini memengaruhi fondasi yang menjadi kendala saat ini dan mendukung industri secara tidak langsung.",
+                    "These policies improve the basic service that holds this industry back most, so they help it indirectly.",
+                    "Kebijakan ini memperbaiki layanan dasar yang paling menghambat industri ini, jadi membantunya secara tidak langsung.",
                   )
                 : t(
                     "Effects describe policy mechanisms, not a measured share of this quarter’s change. Funding and local conditions still matter.",
@@ -689,8 +693,8 @@ export function NationalEconomy({
                           "Belum ada kebijakan terkait yang aktif.",
                         )
                       : t(
-                          "No cataloged direct policy effect for this industry. Use the bottleneck filter to find policies that support its foundations.",
-                          "Belum ada dampak kebijakan langsung dalam katalog untuk industri ini. Gunakan filter kendala untuk mencari kebijakan pendukung fondasinya.",
+                          "No cataloged direct policy effect for this industry. Use the filter for what holds it back to find policies that improve its basic services.",
+                          "Belum ada dampak kebijakan langsung dalam katalog untuk industri ini. Gunakan filter penghambat untuk mencari kebijakan yang memperbaiki layanan dasarnya.",
                         )}
                 </p>
               )}

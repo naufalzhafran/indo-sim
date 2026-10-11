@@ -497,7 +497,7 @@ export function EconomyReport({
             })}
           </tbody>
         </table>
-        <h4>{t("Regional foundations", "Fondasi wilayah")}</h4>
+        <h4>{t("Basic services by region", "Layanan dasar per wilayah")}</h4>
         <table className="eco-data-table">
           <caption>
             {t(
@@ -556,7 +556,7 @@ export function EconomyReport({
             <table className="eco-data-table">
               <thead>
                 <tr>
-                  <th scope="col">{t("Foundation", "Fondasi")}</th>
+                  <th scope="col">{t("Basic service", "Layanan dasar")}</th>
                   <th scope="col">
                     {t("This plan’s contribution", "Kontribusi rencana ini")}
                   </th>

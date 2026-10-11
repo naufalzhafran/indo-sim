@@ -678,8 +678,8 @@ export const policies: PolicyDefinition[] = [
       "Memperbaiki pemungutan pajak yang sudah berlaku.",
     ),
     bi(
-      "Regional collection efficiency rises gradually. This has no direct foundation or industry effect.",
-      "Efisiensi pemungutan daerah naik bertahap. Tidak ada dampak langsung pada fondasi atau industri.",
+      "Regional collection efficiency rises gradually. It does not directly change basic services or industries.",
+      "Efisiensi pemungutan daerah naik bertahap. Tidak langsung mengubah layanan dasar atau industri.",
     ),
     bi(
       "Costs arrive before extra receipts; higher collections leave households and firms less after-tax income.",

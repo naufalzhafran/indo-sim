@@ -234,7 +234,7 @@ export function GameQuarterReport({
           {chapter === "impact" && (
             <>
               <section className="report-board report-foundation-board">
-                <h3>{t("Foundation progress", "Perkembangan fondasi")}</h3>
+                <h3>{t("Basic services progress", "Perkembangan layanan dasar")}</h3>
                 <div className="report-legend">
                   <span>{t("Opening", "Awal")}</span>
                   <span>{t("Closing", "Akhir")}</span>
@@ -395,7 +395,7 @@ export function GameQuarterReport({
                     </div>
                   ))}
                 </dl>
-                <h4>{t("Regional foundations", "Fondasi wilayah")}</h4>
+                <h4>{t("Basic services in this region", "Layanan dasar di wilayah ini")}</h4>
                 <div className="report-region-foundations">
                   {FOUNDATIONS.map((f) => (
                     <div key={f}>

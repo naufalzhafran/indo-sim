@@ -158,8 +158,8 @@ export function EconomyRegions({
           <h2>{t("Nine regions", "Sembilan wilayah")}</h2>
           <p>
             {t(
-              "Choose a region to see construction progress, foundations, industries and funded policies.",
-              "Pilih wilayah untuk melihat progres pembangunan, fondasi, industri, dan kebijakan yang didanai.",
+              "Choose a region to see construction progress, basic services, industries and funded policies.",
+              "Pilih wilayah untuk melihat progres pembangunan, layanan dasar, industri, dan kebijakan yang didanai.",
             )}
           </p>
         </header>
@@ -273,7 +273,7 @@ export function EconomyRegions({
       >
         <div className="eco-section-heading">
           <h3 id={`${instanceId}-foundations`}>
-            {t("Regional foundations", "Fondasi wilayah")}
+            {t("Basic services in this region", "Layanan dasar di wilayah ini")}
           </h3>
           <span>
             {previous
@@ -391,12 +391,12 @@ export function EconomyRegions({
             </dl>
             <p className="eco-industry-tip">
               {t(
-                "Output responds to foundations, demand, investment and available workers. A stronger foundation raises potential; it does not guarantee immediate growth.",
-                "Output merespons fondasi, permintaan, investasi, dan ketersediaan pekerja. Fondasi yang lebih kuat meningkatkan potensi; pertumbuhan tidak langsung terjamin.",
+                "Output depends on basic services, buyers, investment and available workers. Better basic services raise what an industry could produce, but growth does not come right away.",
+                "Hasil produksi bergantung pada layanan dasar, pembeli, investasi, dan ketersediaan pekerja. Layanan dasar yang lebih baik menaikkan kemampuan produksi, tetapi pertumbuhan tidak langsung terjadi.",
               )}
             </p>
             <h3>
-              {t("Foundation dependencies", "Ketergantungan pada fondasi")}
+              {t("Basic services it needs", "Layanan dasar yang dibutuhkan")}
             </h3>
             <ul className="eco-industry-requirements">
               {strongest.map((foundation) => (

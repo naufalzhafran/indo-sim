@@ -888,7 +888,7 @@ test("33 policies show foundation or industry effects and regional edits preserv
   const bpn = page
     .getByTestId("policy-card")
     .filter({ has: page.locator('[data-manage-policy="bpn"]') });
-  await expect(bpn).toContainText("No direct foundation or industry effect");
+  await expect(bpn).toContainText("Does not directly change basic services or industries");
   const replant = page
     .getByTestId("policy-card")
     .filter({ has: page.locator('[data-manage-policy="palm-replanting"]') });
@@ -1714,7 +1714,7 @@ for (const language of ["en", "id"] as const)
         .click();
       await debrief
         .getByRole("heading", {
-          name: t("Regional foundations", "Fondasi wilayah"),
+          name: t("Basic services in this region", "Layanan dasar di wilayah ini"),
           exact: true,
         })
         .scrollIntoViewIfNeeded();

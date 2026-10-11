@@ -715,7 +715,7 @@ function validateGame(game: QuarterGame) {
       for (const key of FOUNDATIONS)
         requireValid(
           close(entry.foundations[key], expected.foundations[key]),
-          "Regional foundations do not match the saved provinces.",
+          "Saved basic services do not match the saved provinces.",
         );
     }
     for (const key of TAX_IDS)
