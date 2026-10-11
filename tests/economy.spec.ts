@@ -888,7 +888,9 @@ test("33 policies show foundation or industry effects and regional edits preserv
   const bpn = page
     .getByTestId("policy-card")
     .filter({ has: page.locator('[data-manage-policy="bpn"]') });
-  await expect(bpn).toContainText("Does not directly change basic services or industries");
+  await expect(bpn).toContainText(
+    "Does not directly change basic services or industries",
+  );
   const replant = page
     .getByTestId("policy-card")
     .filter({ has: page.locator('[data-manage-policy="palm-replanting"]') });
@@ -1634,18 +1636,16 @@ for (const language of ["en", "id"] as const)
       const debrief = page.getByTestId("quarter-report");
       await expect(debrief).toBeVisible();
       await expect(page.locator(".q-recap")).toHaveCount(0);
-      await expect(debrief.locator(".report-delivery-flow > div")).toHaveCount(
-        4,
-      );
+      await expect(debrief.locator(".debrief-results > li")).toHaveCount(4);
       await debrief
         .getByRole("button", {
-          name: t("Next: National impact", "Berikutnya: Dampak nasional"),
+          name: t("Next: Why it changed", "Berikutnya: Mengapa berubah"),
           exact: true,
         })
         .click();
       await debrief
         .getByRole("tab", {
-          name: t("2 National impact", "2 Dampak nasional"),
+          name: t("2 Why it changed", "2 Mengapa berubah"),
           exact: true,
         })
         .click();
@@ -1681,7 +1681,7 @@ for (const language of ["en", "id"] as const)
       );
       await analysis
         .getByRole("button", {
-          name: t("Sources of change ?", "Sumber perubahan ?"),
+          name: t("What caused it ?", "Penyebabnya ?"),
         })
         .focus();
       await expect(page.getByRole("tooltip")).toBeVisible();
@@ -1714,7 +1714,10 @@ for (const language of ["en", "id"] as const)
         .click();
       await debrief
         .getByRole("heading", {
-          name: t("Basic services in this region", "Layanan dasar di wilayah ini"),
+          name: t(
+            "Basic services in this region",
+            "Layanan dasar di wilayah ini",
+          ),
           exact: true,
         })
         .scrollIntoViewIfNeeded();
@@ -1729,15 +1732,15 @@ for (const language of ["en", "id"] as const)
         .analyze();
       expect(access.violations).toEqual([]);
       for (const [en, id] of [
-        ["1 What happened", "1 Yang terjadi"],
-        ["2 National impact", "2 Dampak nasional"],
-        ["4 Treasury", "4 Kas negara"],
-        ["5 Full records", "5 Rincian lengkap"],
+        ["1 Summary", "1 Ringkasan"],
+        ["2 Why it changed", "2 Mengapa berubah"],
+        ["4 Budget", "4 Anggaran"],
+        ["5 All numbers", "5 Semua angka"],
       ]) {
         await debrief
           .getByRole("tab", { name: t(en, id), exact: true })
           .click();
-        if (en === "4 Treasury") {
+        if (en === "4 Budget") {
           const flow = page.getByTestId("treasury-flow");
           await expect(flow).toHaveAttribute("data-playing", "false");
           await expect(flow).toHaveAttribute("data-step", "4");
@@ -1768,10 +1771,8 @@ for (const language of ["en", "id"] as const)
             `report-chapter-${en[0]}-${language}-${viewport.width}.png`,
           ),
         });
-        if (en === "4 Treasury") {
-          await page
-            .locator(".report-settlement-flow")
-            .scrollIntoViewIfNeeded();
+        if (en === "4 Budget") {
+          await page.locator(".report-flow-reading").scrollIntoViewIfNeeded();
           await page.screenshot({
             path: testInfo.outputPath(
               `report-treasury-flow-${language}-${viewport.width}.png`,
@@ -1814,7 +1815,7 @@ test("quarter playback runs once and subsequent reviews open the report", async 
   await expect(page.getByTestId("quarter-report")).toBeVisible();
   await expect(recap).toHaveCount(0);
   await page
-    .getByRole("tab", { name: "2 National impact", exact: true })
+    .getByRole("tab", { name: "2 Why it changed", exact: true })
     .click();
   await expect(page.locator(".q-report-trend polyline")).toHaveCSS(
     "animation-name",
@@ -1829,7 +1830,7 @@ test("quarter playback runs once and subsequent reviews open the report", async 
         ),
       ),
   ).toBe(true);
-  await page.getByRole("tab", { name: "4 Treasury", exact: true }).click();
+  await page.getByRole("tab", { name: "4 Budget", exact: true }).click();
   const flow = page.getByTestId("treasury-flow");
   await expect(flow).toHaveAttribute("data-playing", "true");
   await expect(flow.locator(".report-flow-trace")).toHaveCSS(

@@ -134,12 +134,10 @@ function DebriefScene({
   building,
   completed,
   crisis,
-  grade,
 }: {
   building: boolean;
   completed: boolean;
   crisis: boolean;
-  grade: number;
 }) {
   return (
     <svg className="debrief-scene" viewBox="0 0 260 150" aria-hidden="true">
@@ -262,19 +260,6 @@ function DebriefScene({
           strokeLinejoin="round"
         />
       </g>
-      <g transform="translate(14 14)">
-        {[0, 1, 2, 3, 4].map((i) => (
-          <path
-            key={i}
-            transform={`translate(${i * 22} 0)`}
-            d="m9 0 2.6 5.4 5.9.8-4.3 4.1 1 5.9L9 13.4 3.8 16.2l1-5.9L.5 6.2l5.9-.8Z"
-            fill={i < grade ? "#ffd866" : "#e9f2ec"}
-            stroke="#244d49"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
-        ))}
-      </g>
     </svg>
   );
 }
@@ -297,8 +282,7 @@ export function QuarterDebrief({
     return region ? (language === "id" ? region.nameId : region.name) : id;
   };
 
-  // Quarter results the player can read at a glance: each one is a medal.
-  // Output must beat background trend growth, so standing still earns nothing.
+  // Plain-language results: what the quarter meant for people, without a score.
   const outputChange = before.gdp > 0 ? (after.gdp / before.gdp - 1) * 100 : 0;
   const jobsChange = after.unemployment - before.unemployment;
   const povertyChange = after.poverty - before.poverty;
@@ -306,40 +290,163 @@ export function QuarterDebrief({
     (sum, f) => sum + (after[f] - before[f]),
     0,
   );
-  const objectives = [
+  const tone = (value: number, goodWhenUp = true, steady = 1e-6): Tone =>
+    Math.abs(value) < steady
+      ? "neutral"
+      : value > 0 === goodWhenUp
+        ? "good"
+        : "bad";
+  // Population and jobs are stored in millions of people.
+  const people = (millions: number) => {
+    const n = Math.abs(millions) * 1e6;
+    const rounded =
+      n >= 1e6
+        ? `${number(n / 1e6, 1)} ${t("million", "juta")}`
+        : number(Math.round(n / 1000) * 1000, 0);
+    return rounded;
+  };
+  const poorChange = (povertyChange / 100) * after.population;
+  const newJobs = after.jobs - before.jobs;
+  const results = [
     {
       id: "output",
-      met: outputChange > QUARTER_TREND_GROWTH,
-      name: t("Beat trend growth", "Lampaui tren"),
-      value: `${signed(outputChange)}% · ${t("trend", "tren")} ${number(QUARTER_TREND_GROWTH, 1)}%`,
+      kind: "manufacturing" as const,
+      name: t("Economy", "Ekonomi"),
+      value: `${signed(outputChange)}%`,
+      tone: tone(outputChange - QUARTER_TREND_GROWTH, true, 0.05),
+      text:
+        outputChange > QUARTER_TREND_GROWTH + 0.05
+          ? t(
+              `Businesses produced more than last quarter, faster than the usual ${number(QUARTER_TREND_GROWTH, 1)}%.`,
+              `Dunia usaha memproduksi lebih banyak, lebih cepat dari biasanya (${number(QUARTER_TREND_GROWTH, 1)}%).`,
+            )
+          : outputChange >= QUARTER_TREND_GROWTH - 0.05
+            ? t(
+                `Businesses grew at the usual pace of about ${number(QUARTER_TREND_GROWTH, 1)}%.`,
+                `Dunia usaha tumbuh dengan laju biasa, sekitar ${number(QUARTER_TREND_GROWTH, 1)}%.`,
+              )
+            : t(
+                `Businesses grew slower than the usual ${number(QUARTER_TREND_GROWTH, 1)}%.`,
+                `Dunia usaha tumbuh lebih lambat dari biasanya (${number(QUARTER_TREND_GROWTH, 1)}%).`,
+              ),
     },
     {
       id: "jobs",
-      met: jobsChange <= 0,
-      name: t("Hold jobs", "Jaga lapangan kerja"),
-      value: `${t("Jobless", "Pengangguran")} ${signed(jobsChange)} ${t("pp", "poin")}`,
+      kind: "services" as const,
+      name: t("Unemployment", "Pengangguran"),
+      value:
+        Math.abs(jobsChange) < 0.005
+          ? t("No change", "Tetap")
+          : `${signed(jobsChange)} ${t("points", "poin")}`,
+      tone: tone(jobsChange, false, 0.005),
+      text: `${
+        Math.abs(newJobs) < 0.0005
+          ? t("The number of jobs held steady.", "Jumlah pekerjaan tetap.")
+          : newJobs > 0
+            ? t(
+                `${people(newJobs)} new jobs.`,
+                `${people(newJobs)} pekerjaan baru.`,
+              )
+            : t(
+                `${people(newJobs)} jobs lost.`,
+                `${people(newJobs)} pekerjaan hilang.`,
+              )
+      } ${
+        jobsChange > 0.005
+          ? newJobs > 0
+            ? t(
+                `But more people looked for work than found it, so unemployment rose to ${number(after.unemployment, 1)}%.`,
+                `Namun pencari kerja bertambah lebih cepat, jadi pengangguran naik menjadi ${number(after.unemployment, 1)}%.`,
+              )
+            : t(
+                `Unemployment rose to ${number(after.unemployment, 1)}%.`,
+                `Pengangguran naik menjadi ${number(after.unemployment, 1)}%.`,
+              )
+          : jobsChange < -0.005
+            ? t(
+                `Unemployment fell to ${number(after.unemployment, 1)}%.`,
+                `Pengangguran turun menjadi ${number(after.unemployment, 1)}%.`,
+              )
+            : t(
+                `Unemployment held at ${number(after.unemployment, 1)}%.`,
+                `Pengangguran tetap ${number(after.unemployment, 1)}%.`,
+              )
+      }`,
     },
     {
       id: "poverty",
-      met: povertyChange < 0,
-      name: t("Cut poverty", "Kemiskinan turun"),
-      value: `${signed(povertyChange)} ${t("pp", "poin")}`,
+      kind: "income" as const,
+      name: t("Poverty", "Kemiskinan"),
+      value:
+        Math.abs(poorChange) < 0.0005
+          ? t("No change", "Tetap")
+          : poorChange > 0
+            ? t(
+                `${people(poorChange)} more poor`,
+                `+${people(poorChange)} warga miskin`,
+              )
+            : t(
+                `${people(poorChange)} fewer poor`,
+                `−${people(poorChange)} warga miskin`,
+              ),
+      tone: tone(povertyChange, false, 0.005),
+      text:
+        povertyChange < -0.005
+          ? t(
+              `About ${people(poorChange)} fewer people live below the poverty line (${number(after.poverty, 1)}%).`,
+              `Sekitar ${people(poorChange)} orang keluar dari garis kemiskinan (${number(after.poverty, 1)}%).`,
+            )
+          : povertyChange > 0.005
+            ? t(
+                `About ${people(poorChange)} more people fell below the poverty line (${number(after.poverty, 1)}%).`,
+                `Sekitar ${people(poorChange)} orang jatuh ke bawah garis kemiskinan (${number(after.poverty, 1)}%).`,
+              )
+            : t(
+                `Poverty held at ${number(after.poverty, 1)}%.`,
+                `Kemiskinan tetap ${number(after.poverty, 1)}%.`,
+              ),
     },
     {
       id: "foundations",
-      met: foundationChange > 0,
-      name: t("Better basic services", "Layanan dasar membaik"),
-      value: `${signed(foundationChange, 1)} ${t("pts", "poin")}`,
+      kind: "education" as const,
+      name: t("Basic services", "Layanan dasar"),
+      value:
+        Math.abs(foundationChange) < 0.05
+          ? t("Steady", "Stabil")
+          : `${signed(foundationChange, 1)} ${t("points", "poin")}`,
+      tone: tone(foundationChange, true, 0.05),
+      text:
+        foundationChange > 0.05
+          ? t(
+              "Schools, roads, power, food and clinics improved overall.",
+              "Sekolah, jalan, listrik, pangan, dan klinik membaik secara keseluruhan.",
+            )
+          : foundationChange < -0.05
+            ? t(
+                "Schools, roads, power, food and clinics wore down a little. They need steady funding.",
+                "Sekolah, jalan, listrik, pangan, dan klinik sedikit menurun. Layanan butuh dana rutin.",
+              )
+            : t(
+                "Schools, roads, power, food and clinics stayed about the same.",
+                "Sekolah, jalan, listrik, pangan, dan klinik relatif sama.",
+              ),
     },
-    {
-      id: "funding",
-      met: ledger.funding >= 0.999,
-      name: t("Fully fund delivery", "Didanai penuh"),
-      value: `${number(ledger.funding * 100, 0)}%`,
-    },
+    ...(ledger.funding < 0.999
+      ? [
+          {
+            id: "funding",
+            kind: "investment" as const,
+            name: t("Programme money", "Dana program"),
+            value: `${number(ledger.funding * 100, 0)}%`,
+            tone: "bad" as Tone,
+            text: t(
+              "Only part of the money programmes needed was paid, so they delivered less.",
+              "Hanya sebagian dana yang dibutuhkan program terbayar, jadi hasilnya berkurang.",
+            ),
+          },
+        ]
+      : []),
   ];
-  const grade = objectives.filter((o) => o.met).length;
-
   // Group construction sites by policy so builds and facilities read as one card each.
   const priorProjects = new Map(
     (replay && !replay.partial ? replay.projects : []).map((p) => [
@@ -441,22 +548,9 @@ export function QuarterDebrief({
     .filter((w) => w.status !== "legacy")
     .sort((a, b) => order.indexOf(a.status) - order.indexOf(b.status));
   const legacy = works.filter((w) => w.status === "legacy");
-  const programs = game.policies
-    .filter((p) => p.active && policyById[p.id]?.kind === "program")
-    .map((p) => ({ id: p.id, spending: ledger.policySpending[p.id] ?? 0 }))
-    .sort((a, b) => b.spending - a.spending);
-
-  const kindSpending = { program: 0, build: 0, facility: 0 } as Record<
-    PolicyKind,
-    number
-  >;
-  for (const [id, value] of Object.entries(ledger.policySpending)) {
-    const def = policyById[id as PolicyId];
-    if (def && value) kindSpending[def.kind] += value;
-  }
-  const policyTotal =
-    kindSpending.program + kindSpending.build + kindSpending.facility;
-
+  const programs = game.policies.filter(
+    (p) => p.active && policyById[p.id]?.kind === "program",
+  );
   const statusText: Record<Works["status"], string> = {
     started: t("Ground broken", "Mulai dibangun"),
     building: t("Under construction", "Sedang dibangun"),
@@ -512,52 +606,6 @@ export function QuarterDebrief({
       Number(decisions.taxesChanged) +
       Number(decisions.allocationChanged)
     : null;
-  const unemploymentChange = after.unemployment - before.unemployment;
-  const tone = (value: number, goodWhenUp = true): Tone =>
-    Math.abs(value) < 1e-6
-      ? "neutral"
-      : value > 0 === goodWhenUp
-        ? "good"
-        : "bad";
-  const flow = [
-    {
-      kind: "investment" as const,
-      name: t("Decisions", "Keputusan"),
-      value:
-        decisionCount === null
-          ? "—"
-          : decisionCount
-            ? t(
-                `${decisionCount} ${decisionCount === 1 ? "change" : "changes"}`,
-                `${decisionCount} perubahan`,
-              )
-            : t("Plan kept", "Rencana tetap"),
-      detail: t("Policies, taxes, allocation", "Kebijakan, pajak, alokasi"),
-      tone: "neutral" as Tone,
-    },
-    {
-      kind: "infrastructure" as const,
-      name: t("Delivery", "Pelaksanaan"),
-      value: money(policyTotal),
-      detail: `${number(ledger.funding * 100, 0)}% ${t("funded", "didanai")}`,
-      tone: (ledger.funding >= 0.999 ? "good" : "bad") as Tone,
-    },
-    {
-      kind: "manufacturing" as const,
-      name: t("Industries", "Industri"),
-      value: `${signed(outputChange)}%`,
-      detail: t("National output", "Output nasional"),
-      tone: tone(outputChange),
-    },
-    {
-      kind: "income" as const,
-      name: t("Households", "Rumah tangga"),
-      value: `${signed(povertyChange)} ${t("pp", "poin")}`,
-      detail: `${t("Poverty", "Kemiskinan")} · ${t("jobless", "pengangguran")} ${signed(unemploymentChange)}`,
-      tone: tone(povertyChange, false),
-    },
-  ];
-
   const headline = [
     yard.some((w) => w.status === "completed" || w.status === "opened")
       ? t(
@@ -644,67 +692,43 @@ export function QuarterDebrief({
             (w) => w.status === "completed" || w.status === "opened",
           )}
           crisis={crisisRegions.size > 0}
-          grade={grade}
         />
         <div className="debrief-verdict">
           <span className="debrief-kicker">
-            {t("This quarter", "Triwulan ini")} · {grade}/{objectives.length}{" "}
-            {t("checks met", "tercapai")}
+            {t("This quarter in one line", "Triwulan ini dalam satu kalimat")}
           </span>
           <h3 id="debrief-verdict">{verdict}</h3>
-          <p>{headline.join(" · ")}</p>
-          <ul className="debrief-medals">
-            {objectives.map((o) => (
-              <li key={o.id} data-met={o.met}>
-                <span className="debrief-medal" aria-hidden="true">
-                  {o.met ? "✓" : "○"}
-                </span>
-                <span>
-                  <strong>{o.name}</strong>
-                  <small>
-                    <span className="debrief-sr">
-                      {o.met
-                        ? t("Met: ", "Tercapai: ")
-                        : t("Not met: ", "Belum: ")}
-                    </span>
-                    {o.value}
-                  </small>
-                </span>
-              </li>
-            ))}
-          </ul>
+          {headline.length > 0 && <p>{headline.join(" · ")}</p>}
         </div>
+        <ul
+          className="debrief-results"
+          aria-label={t("What it meant for people", "Artinya bagi warga")}
+        >
+          {results.map((r) => (
+            <li key={r.id} data-tone={r.tone}>
+              <EconomyEmblem kind={r.kind} />
+              <span>
+                <strong>{r.name}</strong>
+                <b>
+                  {r.value}
+                  <span className="debrief-sr">
+                    {r.tone === "good"
+                      ? t(" (better)", " (membaik)")
+                      : r.tone === "bad"
+                        ? t(" (worse)", " (memburuk)")
+                        : ""}
+                  </span>
+                </b>
+                <small>{r.text}</small>
+              </span>
+            </li>
+          ))}
+        </ul>
       </section>
-
       <div className="report-story-layout">
         <div className="debrief-column">
           <section className="report-board">
-            <h3>
-              {t(
-                "Your decisions reached the islands",
-                "Keputusan Anda sampai ke kepulauan",
-              )}
-            </h3>
-            <div
-              className="report-delivery-flow"
-              aria-label={t(
-                "How decisions reach outcomes",
-                "Alur keputusan menuju hasil",
-              )}
-            >
-              {flow.map((node, i) => (
-                <div
-                  key={node.name}
-                  data-tone={node.tone}
-                  style={{ animationDelay: `${i * 90}ms` }}
-                >
-                  <EconomyEmblem kind={node.kind} />
-                  <strong>{node.name}</strong>
-                  <b>{node.value}</b>
-                  <small>{node.detail}</small>
-                </div>
-              ))}
-            </div>
+            <h3>{t("What you changed", "Yang Anda ubah")}</h3>
             <ul className="debrief-decisions">
               {decisions?.launched.map((id) => (
                 <li key={`l-${id}`} data-tone="launch">
@@ -747,162 +771,165 @@ export function QuarterDebrief({
                 </li>
               )}
             </ul>
-          </section>
-
-          <section className="report-board">
-            <h3>{t("Construction yard", "Lokasi pembangunan")}</h3>
-            {yard.length ? (
-              <ul className="debrief-yard">
-                {yard.map((w) => {
-                  const def = policyById[w.id];
-                  const celebrate =
-                    w.status === "completed" || w.status === "opened";
-                  return (
-                    <li key={w.id} data-status={w.status}>
-                      <div className="debrief-works-art">
-                        <EconomyEmblem
-                          kind={
-                            def.category === "economy"
-                              ? "investment"
-                              : def.category
-                          }
-                        />
-                        <DebriefIcon kind={statusIcon(w.status)} />
-                      </div>
-                      <div className="debrief-works-body">
-                        <div className="debrief-works-head">
-                          <strong>{def.name}</strong>
-                          <PolicyKindBadge kind={w.kind} />
-                          <span className="debrief-status">
-                            {statusText[w.status]}
-                          </span>
-                        </div>
-                        <div
-                          className="debrief-progress"
-                          role="meter"
-                          aria-label={`${def.name}: ${t("construction progress", "progres pembangunan")}`}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          aria-valuenow={Math.round(w.progress)}
-                        >
-                          {w.progressBefore !== null && (
-                            <span style={{ width: `${w.progressBefore}%` }} />
-                          )}
-                          <span style={{ width: `${w.progress}%` }} />
-                        </div>
-                        <div className="debrief-works-meta">
-                          <span>
-                            {w.progressBefore !== null &&
-                            w.progress - w.progressBefore > 0.05
-                              ? `${number(w.progressBefore, 0)}% → ${number(w.progress, 0)}%`
-                              : `${number(w.progress, 0)}%`}
-                          </span>
-                          {w.spending > 0 && (
-                            <span>
-                              {money(w.spending)}{" "}
-                              {t("this quarter", "triwulan ini")}
-                            </span>
-                          )}
-                        </div>
-                        {w.sites.every(
-                          (site) =>
-                            finished(site) === finished(w.sites[0]) &&
-                            (finished(site) ||
-                              site.state === w.sites[0].state) &&
-                            Math.abs(site.after - w.sites[0].after) < 15,
-                        ) ? (
-                          <p className="debrief-sites-line">
-                            <b>
-                              {t(
-                                `${w.sites.length} ${w.sites.length === 1 ? "region" : "regions"}`,
-                                `${w.sites.length} wilayah`,
-                              )}
-                            </b>{" "}
-                            {w.sites
-                              .map((site) => regionLabel(site.region))
-                              .join(", ")}
-                          </p>
-                        ) : (
-                          <ul
-                            className="debrief-sites"
-                            aria-label={t("Regional sites", "Lokasi wilayah")}
-                          >
-                            {w.sites.map((site) => (
-                              <li key={site.region} data-state={site.state}>
-                                <span
-                                  className="debrief-site-pip"
-                                  aria-hidden="true"
-                                  style={{
-                                    background: `conic-gradient(var(--site-fill) ${site.after}%, #dce6d5 0)`,
-                                  }}
-                                />
-                                {regionLabel(site.region)}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                        {w.kind === "facility" &&
-                          ["started", "building", "paused"].includes(
-                            w.status,
-                          ) && (
-                            <p className="debrief-sites-line">
-                              {t(
-                                "Service starts in each region once its facility is built.",
-                                "Layanan dimulai di tiap wilayah setelah fasilitasnya selesai.",
-                              )}
-                            </p>
-                          )}
-                        {(celebrate ||
-                          w.status === "building" ||
-                          w.status === "started") &&
-                          rewardChips(w.id).length > 0 && (
-                            <div className="debrief-rewards">
-                              <span>
-                                {celebrate
-                                  ? t(
-                                      "Permanent reward per region",
-                                      "Bonus permanen per wilayah",
-                                    )
-                                  : t(
-                                      "Reward on completion",
-                                      "Bonus saat selesai",
-                                    )}
-                              </span>
-                              {rewardChips(w.id).map((chip) => (
-                                <b
-                                  key={chip.label}
-                                  data-negative={chip.negative || undefined}
-                                >
-                                  {chip.label} {chip.value}
-                                </b>
-                              ))}
-                            </div>
-                          )}
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : (
-              <p>
+            {!yard.length && !legacy.length && (
+              <p className="debrief-sites-line">
                 {t(
-                  "Nothing is being built. Launch a one-time build or facility programme to break ground.",
-                  "Belum ada pembangunan. Jalankan kebijakan bangun sekali atau program fasilitas untuk mulai membangun.",
+                  "Nothing is being built yet. One-time builds and facilities show their progress here.",
+                  "Belum ada pembangunan. Kemajuan proyek bangun sekali dan fasilitas akan tampil di sini.",
                 )}
               </p>
             )}
-            {legacy.length > 0 && (
-              <div className="debrief-legacy">
-                <span>{t("Already built", "Sudah terbangun")}</span>
-                {legacy.map((w) => (
-                  <b key={w.id}>
-                    <DebriefIcon kind="star" />
-                    {policyById[w.id].name}
-                  </b>
-                ))}
-              </div>
-            )}
           </section>
+
+          {(yard.length > 0 || legacy.length > 0) && (
+            <section className="report-board">
+              <h3>{t("Construction yard", "Lokasi pembangunan")}</h3>
+              {yard.length > 0 && (
+                <ul className="debrief-yard">
+                  {yard.map((w) => {
+                    const def = policyById[w.id];
+                    const celebrate =
+                      w.status === "completed" || w.status === "opened";
+                    return (
+                      <li key={w.id} data-status={w.status}>
+                        <div className="debrief-works-art">
+                          <EconomyEmblem
+                            kind={
+                              def.category === "economy"
+                                ? "investment"
+                                : def.category
+                            }
+                          />
+                          <DebriefIcon kind={statusIcon(w.status)} />
+                        </div>
+                        <div className="debrief-works-body">
+                          <div className="debrief-works-head">
+                            <strong>{def.name}</strong>
+                            <PolicyKindBadge kind={w.kind} />
+                            <span className="debrief-status">
+                              {statusText[w.status]}
+                            </span>
+                          </div>
+                          <div
+                            className="debrief-progress"
+                            role="meter"
+                            aria-label={`${def.name}: ${t("construction progress", "progres pembangunan")}`}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            aria-valuenow={Math.round(w.progress)}
+                          >
+                            {w.progressBefore !== null && (
+                              <span style={{ width: `${w.progressBefore}%` }} />
+                            )}
+                            <span style={{ width: `${w.progress}%` }} />
+                          </div>
+                          <div className="debrief-works-meta">
+                            <span>
+                              {w.progressBefore !== null &&
+                              w.progress - w.progressBefore > 0.05
+                                ? `${number(w.progressBefore, 0)}% → ${number(w.progress, 0)}%`
+                                : `${number(w.progress, 0)}%`}
+                            </span>
+                            {w.spending > 0 && (
+                              <span>
+                                {money(w.spending)}{" "}
+                                {t("this quarter", "triwulan ini")}
+                              </span>
+                            )}
+                          </div>
+                          {w.sites.every(
+                            (site) =>
+                              finished(site) === finished(w.sites[0]) &&
+                              (finished(site) ||
+                                site.state === w.sites[0].state) &&
+                              Math.abs(site.after - w.sites[0].after) < 15,
+                          ) ? (
+                            <p className="debrief-sites-line">
+                              <b>
+                                {t(
+                                  `${w.sites.length} ${w.sites.length === 1 ? "region" : "regions"}`,
+                                  `${w.sites.length} wilayah`,
+                                )}
+                              </b>{" "}
+                              {w.sites
+                                .map((site) => regionLabel(site.region))
+                                .join(", ")}
+                            </p>
+                          ) : (
+                            <ul
+                              className="debrief-sites"
+                              aria-label={t("Regional sites", "Lokasi wilayah")}
+                            >
+                              {w.sites.map((site) => (
+                                <li key={site.region} data-state={site.state}>
+                                  <span
+                                    className="debrief-site-pip"
+                                    aria-hidden="true"
+                                    style={{
+                                      background: `conic-gradient(var(--site-fill) ${site.after}%, #dce6d5 0)`,
+                                    }}
+                                  />
+                                  {regionLabel(site.region)}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                          {w.kind === "facility" &&
+                            ["started", "building", "paused"].includes(
+                              w.status,
+                            ) && (
+                              <p className="debrief-sites-line">
+                                {t(
+                                  "Service starts in each region once its facility is built.",
+                                  "Layanan dimulai di tiap wilayah setelah fasilitasnya selesai.",
+                                )}
+                              </p>
+                            )}
+                          {(celebrate ||
+                            w.status === "building" ||
+                            w.status === "started") &&
+                            rewardChips(w.id).length > 0 && (
+                              <div className="debrief-rewards">
+                                <span>
+                                  {celebrate
+                                    ? t(
+                                        "Permanent reward per region",
+                                        "Bonus permanen per wilayah",
+                                      )
+                                    : t(
+                                        "Reward on completion",
+                                        "Bonus saat selesai",
+                                      )}
+                                </span>
+                                {rewardChips(w.id).map((chip) => (
+                                  <b
+                                    key={chip.label}
+                                    data-negative={chip.negative || undefined}
+                                  >
+                                    {chip.label} {chip.value}
+                                  </b>
+                                ))}
+                              </div>
+                            )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+              {legacy.length > 0 && (
+                <div className="debrief-legacy">
+                  <span>{t("Already built", "Sudah terbangun")}</span>
+                  {legacy.map((w) => (
+                    <b key={w.id}>
+                      <DebriefIcon kind="star" />
+                      {policyById[w.id].name}
+                    </b>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
         </div>
 
         <div className="debrief-column">
@@ -1069,75 +1096,109 @@ export function QuarterDebrief({
               </p>
             )}
           </section>
-          <section className="report-board">
-            <h3>{t("Policy spending", "Belanja kebijakan")}</h3>
-            <div
-              className="debrief-spend-bar"
-              role="img"
-              aria-label={t(
-                `Policy spending this quarter: programmes ${money(kindSpending.program)}, one-time builds ${money(kindSpending.build)}, facility programmes ${money(kindSpending.facility)}`,
-                `Belanja kebijakan triwulan ini: program ${money(kindSpending.program)}, bangun sekali ${money(kindSpending.build)}, program fasilitas ${money(kindSpending.facility)}`,
-              )}
-            >
-              {(["program", "build", "facility"] as const).map((kind) =>
-                kindSpending[kind] > 0 ? (
-                  <span
-                    key={kind}
-                    data-kind={kind}
-                    style={{ flexGrow: kindSpending[kind] }}
-                  />
-                ) : null,
-              )}
-            </div>
-            <ul className="debrief-spend-legend">
-              {(["program", "build", "facility"] as const).map((kind) => (
-                <li key={kind} data-kind={kind}>
-                  <span aria-hidden="true" />
-                  {kind === "program"
-                    ? t("Programmes", "Program")
-                    : kind === "build"
-                      ? t("One-time builds", "Bangun sekali")
-                      : t("Facilities", "Fasilitas")}
-                  <b>{money(kindSpending[kind])}</b>
-                </li>
-              ))}
-            </ul>
-            {programs.length ? (
-              <ul className="debrief-programs">
-                {programs.map((p) => {
-                  const def = policyById[p.id];
-                  return (
-                    <li key={p.id}>
-                      <EconomyEmblem
-                        kind={
-                          def.category === "economy"
-                            ? "investment"
-                            : def.category
-                        }
-                      />
-                      <span>{def.name}</span>
-                      <b>{money(p.spending)}</b>
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : (
-              <p>
-                {t(
-                  "No recurring programmes are running.",
-                  "Tidak ada program rutin yang berjalan.",
-                )}
-              </p>
-            )}
-          </section>
         </div>
       </div>
       <p className="report-next-cue">
         {t(
-          "Next: see which basic services and industries changed, and why.",
-          "Berikutnya: lihat layanan dasar dan industri yang berubah, serta penyebabnya.",
+          "Next: see why these numbers changed.",
+          "Berikutnya: lihat mengapa angka-angka ini berubah.",
         )}
       </p>
     </div>
+  );
+}
+
+/** Programme, build and facility spending for the quarter, used by the budget page. */
+export function PolicySpending({ game }: { game: QuarterGame }) {
+  const language = useLanguage();
+  const t = (en: string, id: string) => (language === "id" ? id : en);
+  const ledger = game.receipt!.ledger;
+  const programs = game.policies
+    .filter((p) => p.active && policyById[p.id]?.kind === "program")
+    .map((p) => ({ id: p.id, spending: ledger.policySpending[p.id] ?? 0 }))
+    .sort((a, b) => b.spending - a.spending);
+
+  const kindSpending = { program: 0, build: 0, facility: 0 } as Record<
+    PolicyKind,
+    number
+  >;
+  for (const [id, value] of Object.entries(ledger.policySpending)) {
+    const def = policyById[id as PolicyId];
+    if (def && value) kindSpending[def.kind] += value;
+  }
+  return (
+    <section className="report-board">
+      <h3>
+        {t("Where programme money went", "Ke mana dana program mengalir")}
+      </h3>
+      {kindSpending.program + kindSpending.build + kindSpending.facility <
+      0.05 ? (
+        <p>
+          {t(
+            "No money went to programmes or builds this quarter. Choose them in Policies & taxes.",
+            "Tidak ada dana untuk program atau pembangunan triwulan ini. Pilih di Kebijakan & pajak.",
+          )}
+        </p>
+      ) : (
+        <>
+          <div
+            className="debrief-spend-bar"
+            role="img"
+            aria-label={t(
+              `Policy spending this quarter: programmes ${money(kindSpending.program)}, one-time builds ${money(kindSpending.build)}, facility programmes ${money(kindSpending.facility)}`,
+              `Belanja kebijakan triwulan ini: program ${money(kindSpending.program)}, bangun sekali ${money(kindSpending.build)}, program fasilitas ${money(kindSpending.facility)}`,
+            )}
+          >
+            {(["program", "build", "facility"] as const).map((kind) =>
+              kindSpending[kind] > 0 ? (
+                <span
+                  key={kind}
+                  data-kind={kind}
+                  style={{ flexGrow: kindSpending[kind] }}
+                />
+              ) : null,
+            )}
+          </div>
+          <ul className="debrief-spend-legend">
+            {(["program", "build", "facility"] as const).map((kind) => (
+              <li key={kind} data-kind={kind}>
+                <span aria-hidden="true" />
+                {kind === "program"
+                  ? t("Programmes", "Program")
+                  : kind === "build"
+                    ? t("One-time builds", "Bangun sekali")
+                    : t("Facilities", "Fasilitas")}
+                <b>{money(kindSpending[kind])}</b>
+              </li>
+            ))}
+          </ul>
+          {programs.length ? (
+            <ul className="debrief-programs">
+              {programs.map((p) => {
+                const def = policyById[p.id];
+                return (
+                  <li key={p.id}>
+                    <EconomyEmblem
+                      kind={
+                        def.category === "economy" ? "investment" : def.category
+                      }
+                    />
+                    <span>{def.name}</span>
+                    <b>{money(p.spending)}</b>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p>
+              {t(
+                "No recurring programmes are running.",
+                "Tidak ada program rutin yang berjalan.",
+              )}
+            </p>
+          )}
+        </>
+      )}
+    </section>
   );
 }

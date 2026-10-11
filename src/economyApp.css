@@ -163,16 +163,12 @@
 .q-report-trend .q-report-axis {
   stroke: var(--q-line);
 }
-.q-report-chart-dates,
-.q-report-chart-scale {
+.q-report-chart-dates {
   display: flex;
   justify-content: space-between;
   gap: 12px;
   color: var(--q-muted);
   font-size: 14px;
-}
-.q-report-chart-scale {
-  margin-top: 8px;
 }
 .q-report-trend p,
 .q-report-causes p {

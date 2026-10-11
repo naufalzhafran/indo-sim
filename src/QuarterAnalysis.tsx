@@ -16,7 +16,7 @@ const date = (month: number) =>
 export function QuarterAnalysis({ game }: { game: QuarterGame }) {
   const language = useLanguage();
   const t = (en: string, id: string) => (language === "id" ? id : en);
-  const [key, setKey] = useState<keyof Metrics>("gdp");
+  const [key, setKey] = useState<keyof Metrics>("poverty");
   const receipt = game.receipt!;
   const measures: {
     key: keyof Metrics;
@@ -28,13 +28,13 @@ export function QuarterAnalysis({ game }: { game: QuarterGame }) {
     {
       key: "poverty",
       label: t("Poverty", "Kemiskinan"),
-      unit: t(" pp", " poin"),
+      unit: t(" points", " poin"),
       lower: true,
     },
     {
       key: "unemployment",
       label: t("Unemployment", "Pengangguran"),
-      unit: t(" pp", " poin"),
+      unit: t(" points", " poin"),
       lower: true,
     },
     {
@@ -46,7 +46,7 @@ export function QuarterAnalysis({ game }: { game: QuarterGame }) {
     {
       key: "inflation",
       label: t("Inflation", "Inflasi"),
-      unit: t(" pp", " poin"),
+      unit: t(" points", " poin"),
     },
     {
       key: "debt",
@@ -132,15 +132,12 @@ export function QuarterAnalysis({ game }: { game: QuarterGame }) {
   const contributions = effects
     ? [
         {
-          label: t("Your new decisions", "Keputusan baru Anda"),
+          label: t("Your changes this quarter", "Perubahan Anda triwulan ini"),
           value: effects.decisions[key] ?? 0,
           kind: "plan",
         },
         {
-          label: t(
-            "Ongoing programmes & conditions",
-            "Program berjalan & kondisi",
-          ),
+          label: t("Things already in motion", "Hal yang sudah berjalan"),
           value: effects.world[key] ?? 0,
           kind: "ongoing",
         },
@@ -167,7 +164,9 @@ export function QuarterAnalysis({ game }: { game: QuarterGame }) {
   return (
     <section className="q-report-analysis" data-testid="quarter-analysis">
       <div className="q-report-analysis-head">
-        <h3>{t("Why did this stat change?", "Mengapa angka ini berubah?")}</h3>
+        <h3>
+          {t("Why did this number change?", "Mengapa angka ini berubah?")}
+        </h3>
         <GameSelect
           value={key}
           onChange={(e) => setKey(e.target.value as keyof Metrics)}
@@ -184,11 +183,11 @@ export function QuarterAnalysis({ game }: { game: QuarterGame }) {
         <div>
           <dl className="q-report-comparison">
             <div>
-              <dt>{t("Quarter opening", "Awal triwulan")}</dt>
+              <dt>{t("Start of quarter", "Awal triwulan")}</dt>
               <dd>{value(receipt.before[key])}</dd>
             </div>
             <div>
-              <dt>{t("Quarter closing", "Akhir triwulan")}</dt>
+              <dt>{t("End of quarter", "Akhir triwulan")}</dt>
               <dd>{value(receipt.after[key])}</dd>
             </div>
             <div>
@@ -208,14 +207,8 @@ export function QuarterAnalysis({ game }: { game: QuarterGame }) {
           </dl>
           <figure className="q-report-trend">
             <figcaption>
-              {metric.label} · {t("Recorded history", "Riwayat tercatat")}
+              {metric.label} · {t("So far", "Sejauh ini")}
             </figcaption>
-            <div className="q-report-chart-scale">
-              <span>
-                {t("Recorded range", "Rentang tercatat")}: {value(low)}{" "}
-                {t("to", "hingga")} {value(high)}
-              </span>
-            </div>
             <svg
               key={key}
               viewBox="0 0 700 185"
@@ -250,8 +243,8 @@ export function QuarterAnalysis({ game }: { game: QuarterGame }) {
             </div>
             <p>
               {t(
-                "Shaded area: the quarter reviewed. Each point is a saved simulation result.",
-                "Area berwarna: triwulan yang ditinjau. Setiap titik adalah hasil simulasi tersimpan.",
+                "The shaded area is the quarter you just played.",
+                "Area berwarna adalah triwulan yang baru Anda mainkan.",
               )}
             </p>
           </figure>
@@ -259,10 +252,10 @@ export function QuarterAnalysis({ game }: { game: QuarterGame }) {
         <div className="q-report-causes">
           <h4>
             <StatHelp
-              label={t("Sources of change", "Sumber perubahan")}
+              label={t("What caused it", "Penyebabnya")}
               description={t(
-                "New decisions compare your plan with keeping the previous settings under the same events. Continuing conditions include existing programmes, economic adjustment and outside events. These are combined contributions, not estimates for each individual policy.",
-                "Keputusan baru membandingkan rencana Anda dengan pengaturan sebelumnya pada peristiwa yang sama. Kondisi berlanjut mencakup program berjalan, penyesuaian ekonomi, dan peristiwa luar. Ini kontribusi gabungan, bukan perkiraan setiap kebijakan.",
+                "Your changes: the difference your new choices made, compared with keeping last quarter's plan. Things already in motion: programmes you were already running, the economy's normal growth and outside events.",
+                "Perubahan Anda: selisih yang dibuat pilihan baru Anda dibanding tetap memakai rencana triwulan lalu. Hal yang sudah berjalan: program yang sudah berjalan, pertumbuhan ekonomi yang biasa, dan peristiwa dari luar.",
               )}
             />
           </h4>
@@ -276,8 +269,8 @@ export function QuarterAnalysis({ game }: { game: QuarterGame }) {
                     )
                   : dominant && Math.abs(dominant.value) >= 0.005
                     ? t(
-                        `${dominant.label} made the largest contribution, ${signed(dominant.value)}.`,
-                        `${dominant.label} memberi kontribusi terbesar, ${signed(dominant.value)}.`,
+                        `${dominant.label} caused most of it: ${signed(dominant.value)}.`,
+                        `Sebagian besar karena ${dominant.label.toLowerCase()}: ${signed(dominant.value)}.`,
                       )
                     : t(
                         "Only a small change was recorded.",
@@ -314,8 +307,8 @@ export function QuarterAnalysis({ game }: { game: QuarterGame }) {
               </div>
               <p>
                 {t(
-                  "Both contributions add up to the quarter’s total change before rounding. Continuing programmes can still improve results even when you make no new decisions.",
-                  "Kedua kontribusi membentuk perubahan total triwulan sebelum pembulatan. Program berjalan tetap dapat memperbaiki hasil meski tidak ada keputusan baru.",
+                  "Together they make the total change. Numbers keep moving even when you change nothing.",
+                  "Keduanya membentuk perubahan total. Angka tetap bergerak meski Anda tidak mengubah apa pun.",
                 )}
               </p>
             </>
@@ -330,7 +323,7 @@ export function QuarterAnalysis({ game }: { game: QuarterGame }) {
         </div>
       </div>
       <div className="q-report-mechanism">
-        <h4>{t("How this stat works", "Cara angka ini dihitung")}</h4>
+        <h4>{t("How this number works", "Cara angka ini bekerja")}</h4>
         <p>{mechanisms[key]?.[language === "id" ? 1 : 0]}</p>
       </div>
     </section>

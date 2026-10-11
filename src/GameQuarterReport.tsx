@@ -5,7 +5,8 @@ import { EconomyEmblem } from "./EconomyEmblem";
 import { EconomyReport } from "./EconomyReport";
 import { QuarterAnalysis } from "./QuarterAnalysis";
 import { TreasuryFlow } from "./TreasuryFlow";
-import { QuarterDebrief } from "./QuarterDebrief";
+import { PolicySpending, QuarterDebrief } from "./QuarterDebrief";
+import { StatHelp } from "./StatHelp";
 import { foundationNames, industries } from "./engine/economy/catalog";
 import {
   FOUNDATIONS,
@@ -60,11 +61,11 @@ export function GameQuarterReport({
       </div>
     );
   const names: Record<Chapter, string> = {
-    events: t("What happened", "Yang terjadi"),
-    impact: t("National impact", "Dampak nasional"),
+    events: t("Summary", "Ringkasan"),
+    impact: t("Why it changed", "Mengapa berubah"),
     regions: t("Regions", "Wilayah"),
-    treasury: t("Treasury", "Kas negara"),
-    records: t("Full records", "Rincian lengkap"),
+    treasury: t("Budget", "Anggaran"),
+    records: t("All numbers", "Semua angka"),
   };
   const index = chapters.indexOf(chapter);
   const selectChapter = (next: Chapter) => {
@@ -115,6 +116,9 @@ export function GameQuarterReport({
     );
     return { industry, change: end - start };
   });
+  const topIndustries = [...industryChanges]
+    .sort((a, b) => Math.abs(b.change) - Math.abs(a.change))
+    .slice(0, 6);
   const industryScale = Math.max(
     0.01,
     ...industryChanges.map((r) => Math.abs(r.change)),
@@ -153,14 +157,22 @@ export function GameQuarterReport({
         {[
           {
             kind: "manufacturing" as const,
-            label: t("Output", "Output"),
+            label: t("Economy (GDP)", "Ekonomi (PDB)"),
+            help: t(
+              "GDP is the value of everything the country produced. This shows how much it grew in the quarter.",
+              "PDB adalah nilai semua barang dan jasa yang diproduksi negara. Angka ini menunjukkan pertumbuhannya dalam triwulan ini.",
+            ),
             value: `${signed(outputChange)}%`,
             tone: outputChange > 0 ? "good" : outputChange < 0 ? "bad" : null,
           },
           {
             kind: "income" as const,
-            label: t("Poverty change", "Perubahan kemiskinan"),
-            value: `${signed(after.poverty - before.poverty)} ${t("pp", "poin")}`,
+            label: t("Poverty rate", "Tingkat kemiskinan"),
+            help: t(
+              `The share of people below the poverty line went from ${number(before.poverty, 2)}% to ${number(after.poverty, 2)}%. The change is shown in points: 0.1 points is about ${number(Math.round(after.population * 10) * 100, 0)} people.`,
+              `Porsi penduduk di bawah garis kemiskinan berubah dari ${number(before.poverty, 2)}% menjadi ${number(after.poverty, 2)}%. Perubahan ditulis dalam poin: 0,1 poin sekitar ${number(Math.round(after.population * 10) * 100, 0)} orang.`,
+            ),
+            value: `${signed(after.poverty - before.poverty)} ${t("points", "poin")}`,
             tone:
               after.poverty < before.poverty
                 ? "good"
@@ -170,7 +182,14 @@ export function GameQuarterReport({
           },
           {
             kind: "investment" as const,
-            label: t("Budget balance", "Saldo anggaran"),
+            label:
+              balance < 0
+                ? t("Budget deficit", "Defisit anggaran")
+                : t("Budget surplus", "Surplus anggaran"),
+            help: t(
+              "Money the government collected minus what it spent this quarter. A deficit is covered by cash or new borrowing. T means trillion rupiah.",
+              "Uang yang diterima pemerintah dikurangi yang dibelanjakan triwulan ini. Defisit ditutup dengan kas atau pinjaman baru. T berarti triliun rupiah.",
+            ),
             value: money(balance),
             tone: null,
           },
@@ -182,7 +201,9 @@ export function GameQuarterReport({
           >
             <EconomyEmblem kind={stat.kind} />
             <div>
-              <span>{stat.label}</span>
+              <span>
+                <StatHelp label={stat.label} description={stat.help} />
+              </span>
               <strong>
                 {stat.value}
                 {stat.tone && (
@@ -233,11 +254,23 @@ export function GameQuarterReport({
           {chapter === "events" && <QuarterDebrief game={game} recap={recap} />}
           {chapter === "impact" && (
             <>
+              <QuarterAnalysis game={game} />
               <section className="report-board report-foundation-board">
-                <h3>{t("Basic services progress", "Perkembangan layanan dasar")}</h3>
+                <h3>
+                  {t(
+                    "Basic services this quarter",
+                    "Layanan dasar triwulan ini",
+                  )}
+                </h3>
+                <p>
+                  {t(
+                    "Scores from 0 to 100. Higher means better schools, roads, power, food and clinics. They wear down unless they are funded.",
+                    "Skor 0 sampai 100. Makin tinggi, makin baik sekolah, jalan, listrik, pangan, dan klinik. Skor turun perlahan jika tidak didanai.",
+                  )}
+                </p>
                 <div className="report-legend">
-                  <span>{t("Opening", "Awal")}</span>
-                  <span>{t("Closing", "Akhir")}</span>
+                  <span>{t("Start of quarter", "Awal triwulan")}</span>
+                  <span>{t("End of quarter", "Akhir triwulan")}</span>
                 </div>
                 <div className="report-foundation-tiles">
                   {FOUNDATIONS.map((f) => (
@@ -253,29 +286,29 @@ export function GameQuarterReport({
                         <span style={{ width: `${after[f]}%` }} />
                       </div>
                       <span>
-                        {number(before[f], 1)} → {number(after[f], 1)} (
-                        {signed(after[f] - before[f])})
+                        {Math.abs(after[f] - before[f]) < 0.05
+                          ? t("Steady", "Stabil")
+                          : `${after[f] > before[f] ? "+" : "−"}${number(Math.abs(after[f] - before[f]), 1)} ${t("points", "poin")}`}
                       </span>
                     </div>
                   ))}
                 </div>
               </section>
-              <QuarterAnalysis game={game} />
               <section className="report-board">
                 <h3>
                   {t(
-                    "Which industries moved output?",
-                    "Industri mana yang mengubah output?",
+                    "Which industries grew or shrank most?",
+                    "Industri mana yang paling tumbuh atau menyusut?",
                   )}
                 </h3>
                 <p>
                   {t(
-                    "Actual change in annualised production, Rp trillion. These contributions add up to the national output change.",
-                    "Perubahan aktual produksi tahunan, triliun rupiah. Kontribusi ini membentuk perubahan output nasional.",
+                    "Change in each industry's yearly production, in trillion rupiah (T). Together they make up the economy's growth.",
+                    "Perubahan produksi tahunan tiap industri, dalam triliun rupiah (T). Bersama-sama membentuk pertumbuhan ekonomi.",
                   )}
                 </p>
                 <div className="report-industry-bars">
-                  {industryChanges.map((row) => (
+                  {topIndustries.map((row) => (
                     <div key={row.industry.id}>
                       <EconomyEmblem kind={row.industry.id} />
                       <span>{row.industry.name[language]}</span>
@@ -295,6 +328,14 @@ export function GameQuarterReport({
                     </div>
                   ))}
                 </div>
+                {industryChanges.length > topIndustries.length && (
+                  <p>
+                    {t(
+                      `The other ${industryChanges.length - topIndustries.length} industries changed less.`,
+                      `${industryChanges.length - topIndustries.length} industri lainnya berubah lebih kecil.`,
+                    )}
+                  </p>
+                )}
               </section>
             </>
           )}
@@ -303,14 +344,14 @@ export function GameQuarterReport({
               <section className="report-board">
                 <h3>
                   {t(
-                    "Output across the archipelago",
-                    "Output di seluruh kepulauan",
+                    "Growth across the islands",
+                    "Pertumbuhan di seluruh kepulauan",
                   )}
                 </h3>
                 <p>
                   {t(
-                    "Select an island to inspect its quarter.",
-                    "Pilih pulau untuk meninjau triwulannya.",
+                    "How much each island's economy grew. Select an island to see how its families and services did.",
+                    "Seberapa besar ekonomi tiap pulau tumbuh. Pilih pulau untuk melihat kondisi warga dan layanannya.",
                   )}
                 </p>
                 <div className="report-region-chart">
@@ -388,14 +429,19 @@ export function GameQuarterReport({
                         <dd className="report-region-delta">
                           <small>
                             {stat.delta}{" "}
-                            {t("pp this quarter", "poin triwulan ini")}
+                            {t("points this quarter", "poin triwulan ini")}
                           </small>
                         </dd>
                       )}
                     </div>
                   ))}
                 </dl>
-                <h4>{t("Basic services in this region", "Layanan dasar di wilayah ini")}</h4>
+                <h4>
+                  {t(
+                    "Basic services in this region",
+                    "Layanan dasar di wilayah ini",
+                  )}
+                </h4>
                 <div className="report-region-foundations">
                   {FOUNDATIONS.map((f) => (
                     <div key={f}>
@@ -427,17 +473,17 @@ export function GameQuarterReport({
           {chapter === "treasury" && (
             <div className="report-treasury-layout">
               <section className="report-board">
-                <h3>
-                  {t(
-                    "From revenue to the quarter’s balance",
-                    "Dari penerimaan ke saldo triwulan",
-                  )}
-                </h3>
-                <p>
-                  {t(
-                    "Each step adds revenue or subtracts spending. All amounts are actual quarter flows in Rp trillion.",
-                    "Setiap tahap menambah penerimaan atau mengurangi belanja. Semua angka adalah arus aktual triwulan dalam triliun rupiah.",
-                  )}
+                <h3>{t("Money in, money out", "Uang masuk, uang keluar")}</h3>
+                <p className="report-budget-lead">
+                  {balance < 0
+                    ? t(
+                        `The government collected ${money(ledger.revenue)} and spent ${money(ledger.spending + ledger.interest)}. It was ${money(-balance)} short, so it ${ledger.borrowing > 0.05 ? `borrowed ${money(ledger.borrowing)}` : "used its cash"} to cover the gap.`,
+                        `Pemerintah menerima ${money(ledger.revenue)} dan membelanjakan ${money(ledger.spending + ledger.interest)}. Kurang ${money(-balance)}, jadi pemerintah ${ledger.borrowing > 0.05 ? `meminjam ${money(ledger.borrowing)}` : "memakai kas"} untuk menutupnya.`,
+                      )
+                    : t(
+                        `The government collected ${money(ledger.revenue)} and spent ${money(ledger.spending + ledger.interest)}. The ${money(balance)} left over repaid debt or went into cash.`,
+                        `Pemerintah menerima ${money(ledger.revenue)} dan membelanjakan ${money(ledger.spending + ledger.interest)}. Sisa ${money(balance)} dipakai melunasi utang atau masuk kas.`,
+                      )}
                 </p>
                 <TreasuryFlow
                   entries={fiscal}
@@ -448,61 +494,49 @@ export function GameQuarterReport({
                   cashAfter={after.cash}
                 />
               </section>
-              <section className="report-board">
-                <h3>
-                  {t(
-                    "How the balance was financed",
-                    "Bagaimana saldo dibiayai",
-                  )}
-                </h3>
-                <div className="report-finance-flow">
-                  <div>
-                    <EconomyEmblem kind="investment" />
-                    <span>{t("New borrowing", "Pinjaman baru")}</span>
-                    <b>{money(ledger.borrowing)}</b>
-                  </div>
-                  <div>
-                    <EconomyEmblem kind="profits" />
-                    <span>{t("Debt repaid", "Utang dilunasi")}</span>
-                    <b>{money(ledger.repayment)}</b>
-                  </div>
-                  <div>
-                    <EconomyEmblem kind="income" />
-                    <span>{t("Closing cash", "Kas akhir")}</span>
-                    <b>{money(after.cash)}</b>
-                  </div>
-                </div>
-                <p>
-                  {t(
-                    "Deficits use cash before borrowing. Surpluses repay debt before adding to cash.",
-                    "Defisit menggunakan kas sebelum pinjaman. Surplus melunasi utang sebelum menambah kas.",
-                  )}
-                </p>
-                <h4>{t("Programme funding", "Pendanaan program")}</h4>
-                <div
-                  className="report-funding-meter"
-                  role="meter"
-                  aria-label={t("Programme funding", "Pendanaan program")}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-valuenow={ledger.funding * 100}
-                >
-                  <span style={{ width: `${ledger.funding * 100}%` }} />
-                </div>
-                <strong>{number(ledger.funding * 100, 1)}%</strong>
-                {ledger.funding < 0.999 && (
-                  <p role="status">
-                    {t(
-                      "Some requested delivery was unfunded, reducing programme benefits.",
-                      "Sebagian kebutuhan pelaksanaan tidak didanai, sehingga manfaat program berkurang.",
+              <div className="debrief-column">
+                <PolicySpending game={game} />
+                <section className="report-board">
+                  <h3>
+                    <StatHelp
+                      label={t(
+                        "Programmes fully paid",
+                        "Program terbayar penuh",
+                      )}
+                      description={t(
+                        "The share of the money your programmes needed that the budget actually paid. Below 100%, programmes deliver less.",
+                        "Porsi dana yang dibutuhkan program dan benar-benar dibayar anggaran. Di bawah 100%, hasil program berkurang.",
+                      )}
+                    />
+                  </h3>
+                  <div
+                    className="report-funding-meter"
+                    role="meter"
+                    aria-label={t(
+                      "Programmes fully paid",
+                      "Program terbayar penuh",
                     )}
-                  </p>
-                )}
-              </section>
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={ledger.funding * 100}
+                  >
+                    <span style={{ width: `${ledger.funding * 100}%` }} />
+                  </div>
+                  <strong>{number(ledger.funding * 100, 0)}%</strong>
+                  {ledger.funding < 0.999 && (
+                    <p role="status">
+                      {t(
+                        "Some programmes did not get all their money, so they helped less than planned.",
+                        "Sebagian program tidak mendapat dana penuh, jadi manfaatnya lebih kecil dari rencana.",
+                      )}
+                    </p>
+                  )}
+                </section>
+              </div>
             </div>
           )}
           {chapter === "records" && (
-            <EconomyReport game={game} recap={recap} onRegion={onRegion} />
+            <EconomyReport game={game} onRegion={onRegion} />
           )}
         </div>
       </div>
