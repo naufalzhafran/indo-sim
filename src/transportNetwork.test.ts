@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { Vector2, Vector3 } from "three";
 import { buildWorldGeometry } from "./mapGeometry";
 import type { MapData } from "./mapData";
-import { landPlanner, unsharedRanges } from "./roadNetwork";
+import { buildRoadNetwork, landPlanner } from "./roadNetwork";
 import {
   buildTransportNetwork,
   pointAlong,
@@ -67,7 +67,7 @@ describe("transport network", () => {
 
   it("puts the baseline railways on Java and South Sumatra", () => {
     const baseline = network.rail.filter((line) => line.baseline);
-    expect(baseline.length).toBeGreaterThanOrEqual(9);
+    expect(baseline.length).toBeGreaterThanOrEqual(7);
     expect(new Set(baseline.map((line) => line.region))).toEqual(
       new Set(["java", "sumatra"]),
     );
@@ -86,7 +86,7 @@ describe("transport network", () => {
       expect(plan.onLand(spot.position.x, -spot.position.z)).toBe(false);
   });
 
-  it("lays railways clear of the terrain, one track per shared trunk", () => {
+  it("lays railways clear of the terrain", () => {
     for (const line of network.rail)
       for (let i = 0; i < line.points.length - 1; i++) {
         const a = line.points[i],
@@ -96,18 +96,24 @@ describe("transport network", () => {
           (a.y + b.y) / 2 + 0.03,
         );
       }
-    // Semarang to Yogyakarta is shared by three roads but carries one railway.
-    const drawn = unsharedRanges(network.rail, 0.1);
-    const trunk = network.rail.find((l) => l.id === "semarang-yogyakarta")!;
-    const middle = trunk.points[Math.floor(trunk.points.length / 2)];
-    const tracks = network.rail.filter((line, index) =>
-      drawn[index].some(([from, to]) =>
-        line.points
-          .slice(from, to + 1)
-          .some((p) => Math.hypot(p.x - middle.x, p.z - middle.z) < 0.3),
-      ),
-    );
-    expect(tracks).toHaveLength(1);
+  });
+
+  it("runs Java's railways inland, clear of the roads between cities", () => {
+    const roads = buildRoadNetwork(world);
+    const java = network.rail.filter((line) => line.region === "java");
+    expect(java.length).toBeGreaterThanOrEqual(6);
+    for (const line of java)
+      for (const p of line.points) {
+        const nearCity = roads.cities.some(
+          (c) => Math.hypot(c.position.x - p.x, c.position.z - p.z) < 0.6,
+        );
+        if (nearCity) continue;
+        const nearRoad = roads.roads.some((road) =>
+          road.points.some((q) => Math.hypot(q.x - p.x, q.z - p.z) < 0.25),
+        );
+        expect(nearRoad, line.id).toBe(false);
+        expect(plan.onLand(p.x, -p.z, 0.05), line.id).toBe(true);
+      }
   });
 
   it("samples positions and headings along a path", () => {

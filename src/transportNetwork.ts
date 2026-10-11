@@ -118,15 +118,87 @@ const FERRY_LINES: [string, string][] = [
 export const BASELINE_RAIL = new Set([
   "merak-jakarta",
   "jakarta-bandung",
-  "jakarta-cirebon",
-  "cirebon-semarang",
   "bandung-yogyakarta",
-  "semarang-yogyakarta",
-  "semarang-surabaya",
+  "semarang-solo",
   "yogyakarta-surabaya",
   "surabaya-banyuwangi",
   "palembang-bandar-lampung",
 ]);
+/**
+ * Java's railways run inland along the island's southern half, through the
+ * towns the real lines serve, so they keep clear of the north-coast road:
+ * [id, from city, [lon, lat] stops along the way, to city or a last stop].
+ */
+const JAVA_RAIL: [
+  string,
+  string,
+  [number, number][],
+  string | [number, number],
+][] = [
+  [
+    "merak-jakarta",
+    "merak",
+    [
+      [106.25, -6.36],
+      [106.55, -6.33],
+    ],
+    "jakarta",
+  ],
+  [
+    "jakarta-bandung",
+    "jakarta",
+    [
+      [106.8, -6.6],
+      [106.93, -6.92],
+      [107.3, -6.95],
+    ],
+    "bandung",
+  ],
+  [
+    "bandung-yogyakarta",
+    "bandung",
+    [
+      [107.9, -7.2],
+      [108.22, -7.33],
+      [108.54, -7.37],
+      [109.0, -7.55],
+      [109.65, -7.65],
+    ],
+    "yogyakarta",
+  ],
+  [
+    "semarang-solo",
+    "semarang",
+    [
+      [110.6, -7.1],
+      [110.9, -7.2],
+    ],
+    [110.82, -7.57],
+  ],
+  [
+    "yogyakarta-surabaya",
+    "yogyakarta",
+    [
+      [110.82, -7.57],
+      [111.52, -7.63],
+      [112.1, -7.6],
+      [112.5, -7.45],
+    ],
+    "surabaya",
+  ],
+  [
+    "surabaya-banyuwangi",
+    "surabaya",
+    [
+      [112.6, -7.62],
+      [112.63, -7.98],
+      [113.0, -8.18],
+      [113.7, -8.2],
+      [114.0, -8.32],
+    ],
+    "banyuwangi",
+  ],
+];
 /** Airport hubs, by road-network city id. */
 const AIRPORT_CITIES = [
   "medan",
@@ -147,12 +219,18 @@ const AIRPORT_CITIES = [
 ];
 
 const STEP = 0.3;
+/** Railways are sampled finely enough to follow the hills between points. */
+const RAIL_STEP = 0.14;
 const CELL = 0.25;
 const RAIL_OFFSET = 0.17;
 /** Half the gravel bed's width, which the track must clear. */
 const RAIL_HALF_WIDTH = 0.04;
 
-function samplePath(path: Vector2[], height: (p: Vector2) => number) {
+function samplePath(
+  path: Vector2[],
+  height: (p: Vector2) => number,
+  step = STEP,
+) {
   const points: Vector3[] = [],
     distances: number[] = [];
   let travelled = 0;
@@ -166,13 +244,13 @@ function samplePath(path: Vector2[], height: (p: Vector2) => number) {
     const a = path[i - 1],
       b = path[i],
       segment = a.distanceTo(b);
-    let along = STEP - carry;
+    let along = step - carry;
     while (along <= segment) {
-      travelled += STEP;
+      travelled += step;
       push(a.clone().lerp(b, along / segment));
-      along += STEP;
+      along += step;
     }
-    carry = (carry + segment) % STEP;
+    carry = (carry + segment) % step;
   }
   const end = path[path.length - 1],
     tail = points[points.length - 1];
@@ -523,7 +601,27 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
 
   // Rail runs beside each road corridor, on the side with more room.
   const rail: RailLine[] = [];
+  const cityAt = (id: string) => {
+    const city = roads.cities.find((c) => c.id === id);
+    return city && new Vector2(city.position.x, -city.position.z);
+  };
+  for (const [id, from, stops, to] of JAVA_RAIL) {
+    const start = cityAt(from),
+      end = typeof to === "string" ? cityAt(to) : projectCoordinate(to);
+    if (!start || !end) continue;
+    const path = chaikin([start, ...stops.map(projectCoordinate), end], 3);
+    const line = samplePath(
+      path,
+      (p) => Math.max(0.03, world.surfaceHeight(p)),
+      RAIL_STEP,
+    );
+    drapeOver(world, line.points, RAIL_HALF_WIDTH);
+    rail.push({ id, region: "java", baseline: BASELINE_RAIL.has(id), ...line });
+  }
   for (const road of roads.roads) {
+    // Java has its own inland railways, laid above.
+    if (road.provinces.every((p) => regionForProvince(p)?.id === "java"))
+      continue;
     const line = railBeside(world, road, rail);
     if (!line) continue;
     const counts = new Map<string, number>();
