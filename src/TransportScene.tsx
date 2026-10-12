@@ -7,7 +7,6 @@ import {
 } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import {
-  Color,
   DoubleSide,
   DynamicDrawUsage,
   InstancedMesh,
@@ -25,19 +24,25 @@ import {
   type RailLine,
 } from "./transportNetwork";
 import {
-  flightLeg,
+  flightPath,
+  flightStage,
+  headingAlong,
   shuttle,
   TRAIN_CAR_SPACING,
   TRAIN_CARS,
   trainHead,
   type FleetPlan,
+  type Motion,
 } from "./transportTraffic";
 import { baseWorldZoom } from "./worldCameraMath";
 
 const RAIL_LIFT = 0.036;
-const CRUISE = 2.6;
-const LOCOMOTIVE = new Color("#eb7057"),
-  CARRIAGE = new Color("#fffaf0");
+/** Planes sharing an airport park at different spots along its runway. */
+const APRON = [0, 0.26, -0.26];
+const smooth = (x: number) => {
+  const t = Math.max(0, Math.min(1, x));
+  return t * t * (3 - 2 * t);
+};
 
 /** Steel lines on a gravel bed, laid apart from the roads. */
 function Railways({ lines }: { lines: RailLine[] }) {
@@ -94,12 +99,10 @@ function Fleet({
   model,
   capacity,
   meshRef,
-  colored = false,
 }: {
   model: TransportModel;
   capacity: number;
   meshRef: RefObject<InstancedMesh | null>;
-  colored?: boolean;
 }) {
   const geometry = useMemo(() => transportGeometry(model), [model]);
   useLayoutEffect(() => {
@@ -107,18 +110,29 @@ function Fleet({
     if (!mesh) return;
     mesh.instanceMatrix.setUsage(DynamicDrawUsage);
     mesh.count = 0;
-    if (colored)
-      for (let i = 0; i < capacity; i++) mesh.setColorAt(i, CARRIAGE);
-  }, [meshRef, capacity, colored]);
+  }, [meshRef, capacity]);
   if (!capacity) return null;
   return (
     <instancedMesh
       key={capacity}
+      name={model}
       ref={meshRef}
       args={[geometry, undefined, capacity]}
       frustumCulled={false}
     >
-      <meshLambertMaterial vertexColors flatShading />
+      {model === "wake" ? (
+        <meshBasicMaterial
+          vertexColors
+          transparent
+          depthWrite={false}
+          side={DoubleSide}
+          polygonOffset
+          polygonOffsetFactor={-1}
+          polygonOffsetUnits={-1}
+        />
+      ) : (
+        <meshLambertMaterial vertexColors flatShading />
+      )}
     </instancedMesh>
   );
 }
@@ -140,6 +154,8 @@ export default function TransportScene({
     ferries = useRef<InstancedMesh>(null),
     fishing = useRef<InstancedMesh>(null),
     trains = useRef<InstancedMesh>(null),
+    engines = useRef<InstancedMesh>(null),
+    wakes = useRef<InstancedMesh>(null),
     planes = useRef<InstancedMesh>(null),
     runways = useRef<InstancedMesh>(null);
   const scratch = useMemo(
@@ -148,7 +164,8 @@ export default function TransportScene({
       position: new Vector3(),
       from: new Vector3(),
       to: new Vector3(),
-      locomotive: new Int8Array(TRAIN_CARS * 64).fill(-1),
+      motion: { heading: 0, pace: 0 } as Motion,
+      wakes: 0,
       time: Number.NaN,
       zoom: Number.NaN,
     }),
@@ -185,6 +202,22 @@ export default function TransportScene({
       mesh.setMatrixAt(index, transform.matrix);
     };
 
+    const wakeMesh = wakes.current;
+    scratch.wakes = 0;
+    /** Foam behind a moving hull, longer the faster it goes. */
+    const wake = (
+      heading: number,
+      pace: number,
+      length: number,
+      width: number,
+    ) => {
+      if (!wakeMesh || pace < 0.05) return;
+      transform.position.set(position.x, SEA_LEVEL + 0.004, position.z);
+      transform.rotation.set(0, heading, 0);
+      transform.scale.set(length * (0.35 + pace * 0.65), 1, width);
+      write(wakeMesh, scratch.wakes++);
+    };
+
     const ships = (
       mesh: InstancedMesh | null,
       plans: FleetPlan["cargo"],
@@ -193,11 +226,12 @@ export default function TransportScene({
       scale: number,
     ) => {
       if (!mesh) return;
+      const { motion } = scratch;
       plans.forEach((plan, i) => {
         const route = network.sea[plan.route];
         // Lines sharing a harbour wait at different berths.
         const berth = lane * (1 + (plan.route % 3) * 0.35);
-        const heading = shuttle(
+        shuttle(
           route,
           plan.speed,
           dwell,
@@ -205,14 +239,27 @@ export default function TransportScene({
           time,
           position,
           berth,
+          // Ease out of and into port over about two hull lengths.
+          scale * 1.6,
+          motion,
         );
+        const { heading, pace } = motion;
+        wake(heading, pace, scale, scale);
+        // A gentle swell: rolling side to side and pitching bow to stern,
+        // calmer while berthed.
         const sway = time * 1.6 + plan.phase * 9;
+        const swell = 0.5 + pace * 0.5;
         transform.position.set(
           position.x,
           SEA_LEVEL + 0.01 + Math.sin(sway) * 0.008,
           position.z,
         );
-        transform.rotation.set(Math.sin(sway * 0.8) * 0.04, heading, 0, "YXZ");
+        transform.rotation.set(
+          Math.sin(sway * 0.8) * 0.04 * swell,
+          heading,
+          Math.sin(sway * 1.3 + 1) * 0.015 * swell,
+          "YXZ",
+        );
         transform.scale.setScalar(scale);
         write(mesh, i);
       });
@@ -223,23 +270,41 @@ export default function TransportScene({
     ships(tolLaut.current, fleet.tolLaut, 4, 0.12, 0.9);
     ships(ferries.current, fleet.ferries, 3, 0.05, 0.7);
 
-    // Fishing boats bob near the coast and only show up close.
+    // Fishing boats potter about near the coast, pausing now and then to fish,
+    // and only show up close.
     const near = Math.min(1, Math.max(0, (zoom - 2.5) / 1.5));
     if (fishing.current) {
       const mesh = fishing.current;
       let count = 0;
       if (near > 0)
         network.fishing.forEach((spot, i) => {
-          const drift = time * 0.08 + i * 1.7;
+          // Time that slows to a stop once in a while: the boat drifts while fishing.
+          const w = 0.22,
+            k = i * 1.7;
+          const local = time - Math.sin(time * w + k) / w;
+          const pace = 1 - Math.cos(time * w + k);
+          const a = local * 0.07 + k,
+            b = local * 0.16 + i * 2.9;
+          position.set(
+            spot.position.x + Math.cos(a) * 0.18 + Math.cos(b) * 0.07,
+            0,
+            spot.position.z + Math.sin(a) * 0.18 + Math.sin(b * 1.3) * 0.07,
+          );
+          // Head along the direction of travel.
+          const vx = -Math.sin(a) * 0.18 * 0.07 - Math.sin(b) * 0.07 * 0.16,
+            vz =
+              Math.cos(a) * 0.18 * 0.07 + Math.cos(b * 1.3) * 0.07 * 0.16 * 1.3;
+          const heading = -Math.atan2(vz, vx);
+          wake(heading, pace * 0.5, 0.3 * near, 0.3 * near);
           transform.position.set(
-            spot.position.x + Math.cos(drift) * 0.25,
+            position.x,
             SEA_LEVEL + 0.01 + Math.sin(time * 2 + i) * 0.006,
-            spot.position.z + Math.sin(drift) * 0.25,
+            position.z,
           );
           transform.rotation.set(
             Math.sin(time * 1.4 + i) * 0.06,
-            -drift - Math.PI / 2,
-            0,
+            heading,
+            Math.sin(time * 1.9 + i) * 0.03,
             "YXZ",
           );
           transform.scale.setScalar(near);
@@ -248,73 +313,108 @@ export default function TransportScene({
       mesh.count = count;
       mesh.instanceMatrix.needsUpdate = true;
     }
+    if (wakeMesh) {
+      wakeMesh.count = scratch.wakes;
+      wakeMesh.instanceMatrix.needsUpdate = true;
+    }
 
-    if (trains.current) {
-      const mesh = trains.current;
+    if (trains.current && engines.current) {
+      const cars = trains.current,
+        heads = engines.current;
       let count = 0,
-        recolored = false;
+        engineCount = 0;
       for (const plan of fleet.trains) {
         const line = fleet.rail[plan.line];
         const { rear, forward } = trainHead(line, plan, time);
         for (let car = 0; car < TRAIN_CARS; car++) {
-          const heading = pointAlong(
-            line,
-            rear + car * TRAIN_CAR_SPACING,
-            position,
-          );
+          const distance = rear + car * TRAIN_CAR_SPACING;
+          pointAlong(line, distance, position);
+          // Each car lines up between its own bogies, so the train bends round curves.
+          const heading = headingAlong(line, distance, 0.08);
           transform.position.set(
             position.x,
             position.y + RAIL_LIFT,
             position.z,
           );
-          transform.rotation.set(0, heading, 0);
+          const engine = car === (forward ? TRAIN_CARS - 1 : 0);
+          // The engine always leads, nose first.
+          transform.rotation.set(
+            0,
+            heading + (engine && !forward ? Math.PI : 0),
+            0,
+          );
           transform.scale.setScalar(1);
-          write(mesh, count);
-          const engine = Number(car === (forward ? TRAIN_CARS - 1 : 0));
-          if (scratch.locomotive[count] !== engine) {
-            mesh.setColorAt(count, engine ? LOCOMOTIVE : CARRIAGE);
-            scratch.locomotive[count] = engine;
-            recolored = true;
-          }
-          count++;
+          if (engine) write(heads, engineCount++);
+          else write(cars, count++);
         }
       }
-      mesh.count = count;
-      mesh.instanceMatrix.needsUpdate = true;
-      if (recolored && mesh.instanceColor)
-        mesh.instanceColor.needsUpdate = true;
+      cars.count = count;
+      cars.instanceMatrix.needsUpdate = true;
+      heads.count = engineCount;
+      heads.instanceMatrix.needsUpdate = true;
     }
 
     if (planes.current) {
       const mesh = planes.current;
       let count = 0;
-      for (const flight of fleet.flights) {
+      fleet.flights.forEach((flight, n) => {
         const a = network.airports[flight.from],
           b = network.airports[flight.to];
-        const distance = a.position.distanceTo(b.position);
-        const leg = flightLeg(distance, flight.phase, time);
-        if (!leg) continue;
-        const [start, end] = leg.outbound
-          ? [a.position, b.position]
-          : [b.position, a.position];
-        const u = leg.u;
-        const climb = Math.min(1, u / 0.16, (1 - u) / 0.16);
-        const lift = climb * climb * (3 - 2 * climb);
-        transform.position.set(
-          start.x + (end.x - start.x) * u,
-          start.y + (end.y - start.y) * u + 0.05 + lift * CRUISE,
-          start.z + (end.z - start.z) * u,
+        const stage = flightStage(
+          a.position.distanceTo(b.position),
+          flight.phase,
+          time,
         );
-        const pitch = u < 0.16 ? 0.22 : u > 0.84 ? -0.18 : 0;
-        transform.rotation.set(
-          0,
-          -Math.atan2(end.z - start.z, end.x - start.x),
-          pitch,
-          "YXZ",
-        );
+        // Each flight parks at its own spot on the runway at either end.
+        const apron = APRON[n % APRON.length];
+        const [start, end] = stage.outbound ? [a, b] : [b, a];
+        scratch.from
+          .copy(start.position)
+          .add(
+            position.set(
+              Math.cos(start.heading) * apron,
+              0,
+              Math.sin(start.heading) * apron,
+            ),
+          );
+        scratch.to
+          .copy(end.position)
+          .add(
+            position.set(
+              Math.cos(end.heading) * apron,
+              0,
+              Math.sin(end.heading) * apron,
+            ),
+          );
+        let heading: number,
+          pitch = 0,
+          bank = 0;
+        if (stage.flying) {
+          ({ heading, pitch, bank } = flightPath(
+            scratch.from,
+            start.heading,
+            scratch.to,
+            end.heading,
+            stage.u,
+            position,
+          ));
+        } else {
+          // On the ground: taxi round to face back the way it came.
+          const landed = flightPath(
+            scratch.from,
+            start.heading,
+            scratch.to,
+            end.heading,
+            1,
+            position,
+          );
+          heading = landed.heading + Math.PI * smooth((stage.u - 0.2) / 0.6);
+        }
+        transform.position.copy(position);
+        transform.rotation.set(bank, heading, pitch, "YXZ");
         transform.scale.setScalar(1);
         write(mesh, count++);
-      }
+      });
       mesh.count = count;
       mesh.instanceMatrix.needsUpdate = true;
     }
@@ -322,7 +422,6 @@ export default function TransportScene({
 
   useLayoutEffect(() => {
     scratch.time = Number.NaN;
-    scratch.locomotive.fill(-1);
     place(animationTime.current);
     invalidate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -356,10 +455,24 @@ export default function TransportScene({
         meshRef={fishing}
       />
       <Fleet
+        model="wake"
+        capacity={
+          fleet.cargo.length +
+          fleet.tolLaut.length +
+          fleet.ferries.length +
+          network.fishing.length
+        }
+        meshRef={wakes}
+      />
+      <Fleet
         model="train"
-        capacity={fleet.trains.length * TRAIN_CARS}
+        capacity={fleet.trains.length * (TRAIN_CARS - 1)}
         meshRef={trains}
-        colored
+      />
+      <Fleet
+        model="locomotive"
+        capacity={fleet.trains.length}
+        meshRef={engines}
       />
       <Fleet model="plane" capacity={fleet.flights.length} meshRef={planes} />
     </group>

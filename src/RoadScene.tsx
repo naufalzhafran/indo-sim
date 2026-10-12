@@ -328,6 +328,7 @@ export default function RoadNetwork({
       viewProjection: new Matrix4(),
       previousView: new Matrix4(),
       position: new Vector3(),
+      attitude: { pitch: 0, fade: 1 },
       color: new Color(),
       visible: new Uint8Array(traffic.groups.length),
       slots: new Int32Array(MAX_VEHICLES).fill(-1),
@@ -385,20 +386,20 @@ export default function RoadNetwork({
         group,
         time,
         frame.position,
+        frame.attitude,
       );
       if (!frame.frustum.containsPoint(frame.position)) continue;
-      transform.position.copy(frame.position);
-      transform.rotation.set(0, heading, 0);
       const roadClass = group.run.roadClass;
       const vehicleSize =
         (roadClass === "toll" ? 1.15 : roadClass === "track" ? 0.8 : 1) *
         (vehicle.local ? localScale : 1);
-      transform.scale.setScalar(vehicleSize);
+      // Both models stand on their wheels, just above the road surface.
+      transform.position.copy(frame.position);
+      transform.position.y -= 0.03 * vehicleSize;
+      transform.rotation.set(0, heading, frame.attitude.pitch);
+      transform.scale.setScalar(vehicleSize * frame.attitude.fade);
       transform.updateMatrix();
       if (truck) {
-        // The truck model stands on its wheels; the car box is centred.
-        transform.position.y -= 0.035 * vehicleSize;
-        transform.updateMatrix();
         trucks.setMatrixAt(truckCount, transform.matrix);
         if (frame.truckSlots[truckCount] !== i) {
           trucks.setColorAt(
@@ -492,15 +493,16 @@ export default function RoadNetwork({
       </instancedMesh>
       <instancedMesh
         key={`cars-${traffic.vehicles.length}`}
+        name="car"
         ref={carMesh}
-        args={[undefined, undefined, MAX_VEHICLES]}
+        args={[transportGeometry("car"), undefined, MAX_VEHICLES]}
         frustumCulled={false}
       >
-        <boxGeometry args={[0.16, 0.06, 0.08]} />
-        <meshLambertMaterial flatShading />
+        <meshLambertMaterial vertexColors flatShading />
       </instancedMesh>
       <instancedMesh
         key={`trucks-${traffic.vehicles.length}`}
+        name="truck"
         ref={truckMesh}
         args={[transportGeometry("truck"), undefined, MAX_TRUCKS]}
         frustumCulled={false}

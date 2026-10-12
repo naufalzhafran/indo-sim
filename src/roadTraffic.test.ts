@@ -109,4 +109,33 @@ describe("visible road traffic", () => {
       expect(position.x).toBeLessThanOrEqual(4);
     }
   });
+
+  it("tilts vehicles up slopes and grows them in at the ends of a run", () => {
+    const source = corridor("hill", 10);
+    source.road.points = [new Vector3(0, 0, 0), new Vector3(10, 1, 0)];
+    source.road.distances = [0, 10];
+    const plan = buildTrafficPlan([source]);
+    const position = new Vector3();
+    const attitude = { pitch: 0, fade: 0 };
+    const up = { ...plan.vehicles[0], phase: 0.5, forward: true };
+    sampleTrafficVehicle(up, plan.groups[0], 0, position, attitude);
+    expect(attitude.pitch).toBeCloseTo(Math.atan2(1, 10));
+    expect(attitude.fade).toBe(1);
+    sampleTrafficVehicle(
+      { ...up, forward: false },
+      plan.groups[0],
+      0,
+      position,
+      attitude,
+    );
+    expect(attitude.pitch).toBeCloseTo(-Math.atan2(1, 10));
+    sampleTrafficVehicle(
+      { ...up, phase: 0.001 },
+      plan.groups[0],
+      0,
+      position,
+      attitude,
+    );
+    expect(attitude.fade).toBeLessThan(1);
+  });
 });

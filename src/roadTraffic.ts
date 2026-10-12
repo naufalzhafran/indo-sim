@@ -104,20 +104,16 @@ export function buildTrafficPlan(
   return { groups, vehicles: [...interleave(overview), ...interleave(local)] };
 }
 
-/** Sample from elapsed time, so culling never pauses or restarts a vehicle. Returns its heading. */
-export function sampleTrafficVehicle(
-  vehicle: TrafficVehicle,
-  group: TrafficRun,
-  time: number,
-  position: Vector3,
+/** A point along a road at `distance`, kept within `from`–`to` points. */
+function roadPoint(
+  road: Road,
+  from: number,
+  to: number,
+  distance: number,
+  out: Vector3,
 ) {
-  const { road, run, start, length } = group;
-  let t =
-    (vehicle.phase + (time * SPEED[run.roadClass]) / Math.max(0.5, length)) % 1;
-  if (!vehicle.forward) t = 1 - t;
-  const distance = start + t * length;
-  let low = run.from,
-    high = run.to;
+  let low = from,
+    high = to;
   while (low + 1 < high) {
     const middle = Math.floor((low + high) / 2);
     if (road.distances[middle] <= distance) low = middle;
@@ -133,15 +129,67 @@ export function sampleTrafficVehicle(
         Math.max(0.00001, road.distances[high] - road.distances[low]),
     ),
   );
-  const dx = b.x - a.x,
-    dz = b.z - a.z,
+  return out.set(
+    a.x + (b.x - a.x) * f,
+    a.y + (b.y - a.y) * f,
+    a.z + (b.z - a.z) * f,
+  );
+}
+
+/** How a vehicle sits on the road: nose up or down a slope, and how far it has faded in at a run's ends. */
+export type VehicleAttitude = { pitch: number; fade: number };
+const ahead = new Vector3(),
+  behind = new Vector3();
+/** About a car's length, so vehicles swing through bends instead of snapping. */
+const BEND_SPAN = 0.06;
+/** Vehicles grow in and shrink out over this distance where their run ends. */
+const FADE_DISTANCE = 0.1;
+
+/** Sample from elapsed time, so culling never pauses or restarts a vehicle. Returns its heading. */
+export function sampleTrafficVehicle(
+  vehicle: TrafficVehicle,
+  group: TrafficRun,
+  time: number,
+  position: Vector3,
+  attitude?: VehicleAttitude,
+) {
+  const { road, run, start, length } = group;
+  let t =
+    (vehicle.phase + (time * SPEED[run.roadClass]) / Math.max(0.5, length)) % 1;
+  if (!vehicle.forward) t = 1 - t;
+  const distance = start + t * length;
+  roadPoint(road, run.from, run.to, distance, position);
+  roadPoint(
+    road,
+    run.from,
+    run.to,
+    Math.min(start + length, distance + BEND_SPAN),
+    ahead,
+  );
+  roadPoint(
+    road,
+    run.from,
+    run.to,
+    Math.max(start, distance - BEND_SPAN),
+    behind,
+  );
+  const dx = ahead.x - behind.x,
+    dy = ahead.y - behind.y,
+    dz = ahead.z - behind.z,
     norm = Math.hypot(dx, dz) || 1;
   const lane =
     ROAD_HALF_WIDTH[run.roadClass] * 0.45 * (vehicle.forward ? 1 : -1);
-  position.set(
-    a.x + dx * f - (dz / norm) * lane,
-    a.y + (b.y - a.y) * f + 0.065,
-    a.z + dz * f + (dx / norm) * lane,
-  );
+  position.x -= (dz / norm) * lane;
+  position.y += 0.065;
+  position.z += (dx / norm) * lane;
+  if (attitude) {
+    const slope = Math.atan2(dy, norm);
+    attitude.pitch = vehicle.forward ? slope : -slope;
+    attitude.fade = Math.min(
+      1,
+      (t * length) / FADE_DISTANCE,
+      ((1 - t) * length) / FADE_DISTANCE,
+    );
+  }
   return -Math.atan2(dz, dx) + (vehicle.forward ? 0 : Math.PI);
 }

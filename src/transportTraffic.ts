@@ -236,9 +236,57 @@ export function planFleet(
   };
 }
 
+const smoothstep = (x: number) => {
+  const t = Math.max(0, Math.min(1, x));
+  return t * t * (3 - 2 * t);
+};
+
 /**
- * Out and back along a path with a pause at each end. Writes the position and
- * returns the heading, sampled from elapsed time so culling never restarts it.
+ * A run of `length` at `speed` that speeds up and slows down over `ease`
+ * units at each end instead of starting and stopping dead.
+ */
+export function easedRun(length: number, speed: number, ease: number) {
+  const a = Math.max(0, Math.min(ease, length / 2));
+  const ramp = (2 * a) / speed;
+  return { a, ramp, time: (length + 2 * a) / speed };
+}
+/** Distance covered `t` into an eased run, and the share of full speed. */
+export function easedDistance(
+  t: number,
+  length: number,
+  speed: number,
+  run: ReturnType<typeof easedRun>,
+): [distance: number, pace: number] {
+  const { a, ramp, time } = run;
+  if (ramp <= 0) return [Math.min(length, t * speed), 1];
+  if (t < ramp) return [(0.5 * speed * t * t) / ramp, t / ramp];
+  if (t > time - ramp) {
+    const r = Math.max(0, time - t);
+    return [length - (0.5 * speed * r * r) / ramp, r / ramp];
+  }
+  return [a + speed * (t - ramp), 1];
+}
+
+const ahead = new Vector3(),
+  behind = new Vector3(),
+  further = new Vector3();
+/** Heading of the chord across `span` around a distance, so corners turn smoothly. */
+export function headingAlong(
+  path: TransportPath,
+  distance: number,
+  span: number,
+) {
+  pointAlong(path, Math.min(path.length, distance + span), ahead);
+  pointAlong(path, Math.max(0, distance - span), behind);
+  return -Math.atan2(ahead.z - behind.z, ahead.x - behind.x);
+}
+
+export type Motion = { heading: number; pace: number };
+
+/**
+ * Out and back along a path with a pause at each end. Ships ease out of and
+ * into port and swing round while berthed. Writes the position and returns
+ * the heading, sampled from elapsed time so culling never restarts it.
  */
 export function shuttle(
   path: TransportPath,
@@ -248,56 +296,175 @@ export function shuttle(
   time: number,
   out: Vector3,
   lane = 0,
+  ease = 0,
+  motion?: Motion,
 ) {
-  const travel = path.length / speed;
+  const run = easedRun(path.length, speed, ease);
+  const travel = run.time;
   const cycle = 2 * (travel + dwell);
   const t = (((phase * cycle + time) % cycle) + cycle) % cycle;
   let distance: number,
+    pace = 0,
+    turn = 0,
     back = false;
-  if (t < dwell) distance = 0;
-  else if (t < dwell + travel) distance = (t - dwell) * speed;
-  else if (t < 2 * dwell + travel) ((distance = path.length), (back = true));
-  else
-    ((distance = path.length - (t - 2 * dwell - travel) * speed),
-      (back = true));
-  const heading = pointAlong(path, distance, out) + (back ? Math.PI : 0);
+  if (t < dwell) ((distance = 0), (turn = 1 + smoothstep(t / dwell)));
+  else if (t < dwell + travel)
+    [distance, pace] = easedDistance(t - dwell, path.length, speed, run);
+  else if (t < 2 * dwell + travel)
+    ((distance = path.length),
+      (turn = smoothstep((t - dwell - travel) / dwell)));
+  else {
+    [distance, pace] = easedDistance(
+      t - 2 * dwell - travel,
+      path.length,
+      speed,
+      run,
+    );
+    distance = path.length - distance;
+    back = true;
+  }
+  pointAlong(path, distance, out);
+  // A ship's own length or so, so it bends through corners rather than snapping.
+  const span = Math.min(0.35, path.length / 4);
+  const heading =
+    headingAlong(path, distance, span) + (back ? Math.PI : turn * Math.PI);
   if (lane) {
     // Ships keep to their own side of the lane in each direction.
     out.x += Math.sin(heading) * lane;
     out.z += Math.cos(heading) * lane;
   }
+  if (motion) ((motion.heading = heading), (motion.pace = pace));
   return heading;
 }
 
-/** Where a train's front car is, as a distance, and which way it runs. */
+/** Where a train's rear car is, as a distance, which way it runs, and its share of full speed. */
 export function trainHead(line: RailLine, plan: TrainPlan, time: number) {
   const span = Math.max(
     0.01,
     line.length - (TRAIN_CARS - 1) * TRAIN_CAR_SPACING,
   );
   const dwell = 4;
-  const travel = span / plan.speed;
+  // Trains pull away and brake into stations over a short stretch.
+  const run = easedRun(span, plan.speed, 0.35);
+  const travel = run.time;
   const cycle = 2 * (travel + dwell);
   const t = (((plan.phase * cycle + time) % cycle) + cycle) % cycle;
-  if (t < dwell) return { rear: 0, forward: true };
-  if (t < dwell + travel)
-    return { rear: (t - dwell) * plan.speed, forward: true };
-  if (t < 2 * dwell + travel) return { rear: span, forward: false };
-  return {
-    rear: span - (t - 2 * dwell - travel) * plan.speed,
-    forward: false,
-  };
+  if (t < dwell) return { rear: 0, forward: true, pace: 0 };
+  if (t < dwell + travel) {
+    const [rear, pace] = easedDistance(t - dwell, span, plan.speed, run);
+    return { rear, forward: true, pace };
+  }
+  if (t < 2 * dwell + travel) return { rear: span, forward: false, pace: 0 };
+  const [covered, pace] = easedDistance(
+    t - 2 * dwell - travel,
+    span,
+    plan.speed,
+    run,
+  );
+  return { rear: span - covered, forward: false, pace };
 }
+
+const FLIGHT_GROUND = 5;
+const flightTime = (distance: number) => 3 + distance / 2.2;
 
 /** A plane's progress: 0–1 along its leg and which way, or null while on the ground. */
 export function flightLeg(distance: number, phase: number, time: number) {
-  const travel = 3 + distance / 2.2,
-    ground = 5;
+  const stage = flightStage(distance, phase, time);
+  return stage.flying ? { u: stage.u, outbound: stage.outbound } : null;
+}
+/**
+ * Where a plane is in its out-and-back day: flying a leg (u is 0–1 along it)
+ * or on the ground turning round (u is 0–1 through the stop). `outbound`
+ * names the leg just flown or being flown.
+ */
+export function flightStage(distance: number, phase: number, time: number) {
+  const travel = flightTime(distance),
+    ground = FLIGHT_GROUND;
   const cycle = 2 * (travel + ground);
   const t = (((phase * cycle + time) % cycle) + cycle) % cycle;
-  if (t < travel) return { u: t / travel, outbound: true };
-  if (t < travel + ground) return null;
+  if (t < travel) return { flying: true, u: t / travel, outbound: true };
+  if (t < travel + ground)
+    return { flying: false, u: (t - travel) / ground, outbound: true };
   if (t < 2 * travel + ground)
-    return { u: (t - travel - ground) / travel, outbound: false };
-  return null;
+    return {
+      flying: true,
+      u: (t - travel - ground) / travel,
+      outbound: false,
+    };
+  return {
+    flying: false,
+    u: (t - 2 * travel - ground) / ground,
+    outbound: false,
+  };
+}
+
+export const CRUISE_ALTITUDE = 2.6;
+/**
+ * A flight from runway to runway: a curve leaving along the first runway and
+ * lining up with the second, with a take-off roll, climb, cruise and descent.
+ * `u` runs 0–1; writes the position and returns heading, pitch and bank.
+ */
+export function flightPath(
+  from: Vector3,
+  fromRunway: number,
+  to: Vector3,
+  toRunway: number,
+  u: number,
+  out: Vector3,
+) {
+  const dx = to.x - from.x,
+    dz = to.z - from.z;
+  const distance = Math.hypot(dx, dz);
+  // Each runway is used in whichever direction points along the trip.
+  const along = (heading: number) => {
+    const x = Math.cos(heading),
+      z = Math.sin(heading);
+    return x * dx + z * dz >= 0 ? [x, z] : [-x, -z];
+  };
+  const [ax, az] = along(fromRunway),
+    [bx, bz] = along(toRunway);
+  const reach = Math.min(distance * 0.3, 3);
+  const at = (s: number, target: Vector3) => {
+    const r = 1 - s;
+    const w0 = r * r * r,
+      w1 = 3 * r * r * s,
+      w2 = 3 * r * s * s,
+      w3 = s * s * s;
+    target.set(
+      w0 * from.x +
+        w1 * (from.x + ax * reach) +
+        w2 * (to.x - bx * reach) +
+        w3 * to.x,
+      0,
+      w0 * from.z +
+        w1 * (from.z + az * reach) +
+        w2 * (to.z - bz * reach) +
+        w3 * to.z,
+    );
+    // Roll down the runway, climb out, cruise, descend and flare.
+    const climb = smoothstep((s - 0.06) / 0.22) * smoothstep((0.97 - s) / 0.24);
+    target.y = from.y + (to.y - from.y) * s + 0.06 + climb * CRUISE_ALTITUDE;
+    return target;
+  };
+  // Slow on the runway, quick in cruise.
+  const run = easedRun(1, 1, 0.12);
+  const [s] = easedDistance(u * run.time, 1, 1, run);
+  const step = 0.004;
+  at(s, out);
+  const before = at(Math.max(0, s - step), behind),
+    after = at(Math.min(1, s + step), ahead);
+  const heading = -Math.atan2(after.z - before.z, after.x - before.x);
+  const pitch = Math.atan2(
+    after.y - before.y,
+    Math.hypot(after.x - before.x, after.z - before.z) || 1e-6,
+  );
+  // Bank into the turn, from how quickly the heading changes.
+  at(Math.min(1, s + step * 2), further);
+  const nextHeading = -Math.atan2(further.z - out.z, further.x - out.x);
+  let turn = nextHeading - heading;
+  turn = Math.atan2(Math.sin(turn), Math.cos(turn));
+  // Left wing down for a left turn, and only once clear of the runway.
+  const airborne = smoothstep((out.y - from.y - 0.1) / 0.8);
+  const bank = -Math.max(-0.45, Math.min(0.45, turn * 40)) * airborne;
+  return { heading, pitch: Math.max(-0.2, Math.min(0.3, pitch)), bank };
 }
