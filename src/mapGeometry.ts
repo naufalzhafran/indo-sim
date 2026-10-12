@@ -15,6 +15,7 @@ import type { MapData, RegionData } from "./mapData";
 import { LAKE_TOBA, RELIEF_PEAKS, RELIEF_RANGES, SAMOSIR } from "./mapRelief";
 import { triangulateTerrain } from "./terrainMesh";
 import { forestDensity, hash2 } from "./sceneryNoise";
+import { regionForProvince } from "./engine/gameRegions";
 import { topology } from "topojson-server";
 import { feature as topologyFeature, merge } from "topojson-client";
 import { presimplify, simplify } from "topojson-simplify";
@@ -389,33 +390,70 @@ function terrainField(islands: Shape[], lake: Vector2[], samosir: Vector2[]) {
   return { heightAt, coastDistance };
 }
 
+// Illustrative land cover by region, not measured land use: dry savanna
+// grassland in Nusa Tenggara, bright paddy lowlands in Java and Bali, deep
+// rainforest in Kalimantan and Papua, mixed farmland and forest elsewhere.
+type LandCover = { lowland: Color; upland: Color };
+const LAND_COVER: Record<string, LandCover> = {
+  mixed: { lowland: new Color("#8dc859"), upland: new Color("#7fb15c") },
+  paddy: { lowland: new Color("#a2d25a"), upland: new Color("#79b65a") },
+  savanna: { lowland: new Color("#cfc976"), upland: new Color("#a6bf68") },
+  rainforest: { lowland: new Color("#5fae4f"), upland: new Color("#5c9c55") },
+};
+const REGION_LAND_COVER: Record<string, keyof typeof LAND_COVER> = {
+  java: "paddy",
+  bali: "paddy",
+  ntb: "savanna",
+  ntt: "savanna",
+  kalimantan: "rainforest",
+  papua: "rainforest",
+};
+export const landCoverFor = (provinceId: string) =>
+  LAND_COVER[
+    REGION_LAND_COVER[regionForProvince(provinceId)?.id ?? ""] ?? "mixed"
+  ];
+
 function landGeometry(
   mesh: ReturnType<typeof triangulateTerrain>,
   heightAt: (point: Vector2) => number,
   coastDistance: (point: Vector2) => number,
+  cover: LandCover,
 ) {
   const positions: number[] = [],
     colors: number[] = [];
   const sand = new Color("#e3d496"),
-    grass = new Color("#8dc859"),
-    upland = new Color("#91b56a"),
-    rock = new Color("#c4c5a0");
+    rock = new Color("#ccceaa");
   const color = new Color();
   for (const point of mesh.points) {
     const height = heightAt(point);
     positions.push(point.x, height, -point.y);
-    color
-      .copy(grass)
-      .lerp(upland, smoothstep((height - 0.6) / 2.5))
-      .lerp(rock, smoothstep((height - 2.8) / 1.4) * 0.72)
-      .lerp(sand, 1 - smoothstep(coastDistance(point) / 0.24));
-    colors.push(color.r, color.g, color.b);
   }
   const geometry = new BufferGeometry();
   geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
-  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
   geometry.setIndex(mesh.triangles.flat());
   geometry.computeVertexNormals();
+  const normals = geometry.getAttribute("normal");
+  mesh.points.forEach((point, i) => {
+    const height = positions[i * 3 + 1];
+    const { x, y } = point;
+    // Broad, soft patches of lighter and darker cover; position-based, so
+    // neighbouring provinces match along their shared border.
+    const patch =
+      0.6 *
+        Math.sin(x * 0.9 + Math.sin(y * 0.7) * 1.4) *
+        Math.cos(y * 1.1 - x * 0.4) +
+      0.4 * Math.sin(x * 2.3 - y * 1.9 + 0.8) * Math.cos(y * 2.6 + x * 1.3);
+    // Bare rock shows only where slopes are steep, never as noisy speckle.
+    const steep = smoothstep((0.7 - normals.getY(i)) / 0.14);
+    color
+      .copy(cover.lowland)
+      .lerp(cover.upland, smoothstep((height - 0.35) / 0.9))
+      .offsetHSL(0.006 * patch, 0.02 * patch, 0.025 * patch)
+      .lerp(rock, steep * 0.5)
+      .lerp(sand, 1 - smoothstep(coastDistance(point) / 0.24));
+    colors.push(color.r, color.g, color.b);
+  });
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
   geometry.computeBoundingBox();
   return geometry;
 }
@@ -902,7 +940,12 @@ export function buildWorldGeometry(map: MapData) {
   const { heightAt, coastDistance } = terrainField(islands, lake, samosir);
   const surfaces = parts.map(({ id, shapes }) => {
     const mesh = triangulateTerrain(shapes);
-    const geometry = landGeometry(mesh, heightAt, coastDistance);
+    const geometry = landGeometry(
+      mesh,
+      heightAt,
+      coastDistance,
+      landCoverFor(id),
+    );
     return {
       id,
       shapes,
