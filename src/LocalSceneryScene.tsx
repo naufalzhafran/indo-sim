@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import {
+  Color,
   DynamicDrawUsage,
   Frustum,
   InstancedMesh,
@@ -26,8 +27,10 @@ import {
   selectLocalScenery,
 } from "./localSceneryVisibility";
 import { baseWorldZoom } from "./worldCameraMath";
+import { shadeFoliage } from "./sceneryNoise";
 
 const KINDS = Object.keys(LOCAL_SCENERY_CAPACITY) as LocalSceneryKind[];
+const TREE_KINDS = new Set<LocalSceneryKind>(["tree", "tree-detail"]);
 
 export default function LocalSceneryScene({
   world,
@@ -45,6 +48,8 @@ export default function LocalSceneryScene({
     () => new MeshLambertMaterial({ vertexColors: true, flatShading: true }),
     [],
   );
+  // Trees take per-instance shades, so they keep a material of their own.
+  const foliage = useMemo(() => material.clone(), [material]);
   const meshes = useRef(new Map<LocalSceneryKind, InstancedMesh>());
   const displayed = useRef<
     Partial<Record<LocalSceneryKind, LocalSceneryItem[]>>
@@ -77,6 +82,7 @@ export default function LocalSceneryScene({
       centre: new Vector3(),
       ndc: new Vector2(),
       ground: new Plane(new Vector3(0, 1, 0), 0),
+      shade: new Color(),
     }),
     [],
   );
@@ -84,12 +90,13 @@ export default function LocalSceneryScene({
     () => () => {
       Object.values(models).forEach((geometry) => geometry.dispose());
       material.dispose();
+      foliage.dispose();
       if (import.meta.env.DEV) {
         gl.domElement.dataset.detailInstances = "0";
         gl.domElement.dataset.detailChunks = "0";
       }
     },
-    [models, material, gl],
+    [models, material, foliage, gl],
   );
 
   useFrame(() => {
@@ -134,9 +141,15 @@ export default function LocalSceneryScene({
         );
         scratch.transform.updateMatrix();
         mesh.setMatrixAt(index, scratch.transform.matrix);
+        if (TREE_KINDS.has(kind))
+          mesh.setColorAt(
+            index,
+            shadeFoliage(item.x, item.z, scratch.shade.setRGB(1, 1, 1)),
+          );
       });
       if (entries.length) {
         mesh.instanceMatrix.needsUpdate = true;
+        if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
         mesh.computeBoundingSphere();
       }
       count += entries.length;
@@ -153,7 +166,11 @@ export default function LocalSceneryScene({
       key={kind}
       name={`local-scenery-${kind}`}
       ref={meshRefs[kind]}
-      args={[models[kind], material, LOCAL_SCENERY_CAPACITY[kind]]}
+      args={[
+        models[kind],
+        TREE_KINDS.has(kind) ? foliage : material,
+        LOCAL_SCENERY_CAPACITY[kind],
+      ]}
       dispose={null}
       frustumCulled={false}
       castShadow

@@ -104,10 +104,14 @@ export function gradeTerrain(world: WorldGeometry, paths: Path[]) {
   const probe = new Vector2();
   // Scenery keeps its footing: remember the ground under it before grading.
   const footing = world.provinces.map((p) =>
-    [...p.scenery.trees, ...p.scenery.houses].map((item) => ({
-      item,
-      before: world.surfaceHeight(probe.set(item.position.x, -item.position.z)),
-    })),
+    [...p.scenery.trees, ...p.scenery.houses, ...p.scenery.palms].map(
+      (item) => ({
+        item,
+        before: world.surfaceHeight(
+          probe.set(item.position.x, -item.position.z),
+        ),
+      }),
+    ),
   );
   for (const province of world.provinces) {
     const positions = province.geometry.getAttribute("position");

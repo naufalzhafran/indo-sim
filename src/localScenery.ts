@@ -3,6 +3,7 @@ import type { Scenery, WorldGeometry } from "./mapGeometry";
 import { buildRoadNetwork, onRoadOrCity } from "./roadNetwork";
 import { getStructureSites } from "./structureLayout";
 import { regionForProvince } from "./engine/gameRegions";
+import { forestDensity } from "./sceneryNoise";
 
 export type LocalSceneryKind =
   "tree" | "house" | "tree-detail" | "house-detail";
@@ -148,7 +149,11 @@ export function getLocalScenery(world: WorldGeometry): LocalSceneryChunk[] {
       reserved.add({ x: site.position.x, z: site.position.z, radius: 0.8 });
   }
   for (const province of world.provinces)
-    for (const item of [...province.scenery.trees, ...province.scenery.houses])
+    for (const item of [
+      ...province.scenery.trees,
+      ...province.scenery.houses,
+      ...province.scenery.palms,
+    ])
       occupied.add({
         x: item.position.x,
         z: item.position.z,
@@ -317,8 +322,7 @@ export function getLocalScenery(world: WorldGeometry): LocalSceneryChunk[] {
       const x = p.bounds.min.x + random(seed) * width;
       const z = p.bounds.min.z + random(seed + 1) * depth;
       // Broad gaps between groves keep valleys and the faceted terrain readable.
-      if (random(Math.floor(x / 2) * 37 + Math.floor(z / 2) * 101) < 0.42)
-        continue;
+      if (forestDensity(x, -z) < 0.42) continue;
       place(p, x, z, seed, "tree", i % 3 === 0 ? 1 : 2);
     }
   }

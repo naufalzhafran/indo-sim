@@ -14,6 +14,7 @@ import type { Geometry } from "geojson";
 import type { MapData, RegionData } from "./mapData";
 import { LAKE_TOBA, RELIEF_PEAKS, RELIEF_RANGES, SAMOSIR } from "./mapRelief";
 import { triangulateTerrain } from "./terrainMesh";
+import { forestDensity, hash2 } from "./sceneryNoise";
 import { topology } from "topojson-server";
 import { feature as topologyFeature, merge } from "topojson-client";
 import { presimplify, simplify } from "topojson-simplify";
@@ -722,14 +723,16 @@ function scenery(
   province: string,
   anchor: Vector3,
   surfaceHeight: (point: Vector2) => number,
+  coastDistance: (point: Vector2) => number,
 ) {
   const trees: Scenery[] = [],
-    houses: Scenery[] = [];
+    houses: Scenery[] = [],
+    palms: Scenery[] = [];
+  const step = 0.5;
   for (const shape of shapes) {
     const rings = shape.extractPoints(1),
       xs = rings.shape.map((p) => p.x),
       ys = rings.shape.map((p) => p.y);
-    const step = 1.2;
     for (
       let x = Math.ceil(Math.min(...xs) / step) * step;
       x < Math.max(...xs);
@@ -741,19 +744,36 @@ function scenery(
         y += step
       ) {
         const point = new Vector2(
-          x + Math.sin(x * 17 + y * 7) * 0.4,
-          y + Math.cos(x * 11 - y * 19) * 0.4,
+          x + (hash2(x * 3.1, y * 1.7) - 0.5) * step * 0.9,
+          y + (hash2(x * 1.3 + 5, y * 2.9) - 0.5) * step * 0.9,
         );
         if (
-          !insideRings(point, rings) ||
-          clearanceIn(point, rings) < 0.3 ||
           (Math.abs(point.x - anchor.x) < 1.8 &&
-            Math.abs(point.y + anchor.z) < 1.1)
+            Math.abs(point.y + anchor.z) < 1.1) ||
+          !insideRings(point, rings)
         )
           continue;
-        const random = (Math.sin(point.x * 39.17 + point.y * 93.71) + 1) / 2;
+        const roll = hash2(point.x * 7.3, point.y * 5.1);
+        const coast = coastDistance(point);
         const height = surfaceHeight(point);
-        if (random < 0.45 || height > 2.7) continue;
+        // Coconut palms line the beaches; woods gather in clumps inland, thinning
+        // towards the peaks, with open farmland and the odd house between them.
+        const shore = coast > 0.16 && coast < 0.6 && height < 0.5;
+        const woods =
+          smoothstep((forestDensity(point.x, point.y) - 0.33) / 0.22) *
+          (1 - smoothstep((height - 1.9) / 0.8) * 0.75);
+        const kind = shore
+          ? roll < 0.34
+            ? "palm"
+            : null
+          : coast < 0.3 || height > 2.7
+            ? null
+            : roll < woods * 0.9
+              ? "tree"
+              : woods < 0.15 && roll > 0.96 && houses.length < 3
+                ? "house"
+                : null;
+        if (!kind || clearanceIn(point, rings) < 0.12) continue;
         const slope =
           Math.abs(
             surfaceHeight(point.clone().add(new Vector2(0.2, 0))) - height,
@@ -761,7 +781,7 @@ function scenery(
           Math.abs(
             surfaceHeight(point.clone().add(new Vector2(0, 0.2))) - height,
           );
-        if (slope > 0.35) continue;
+        if (slope > (kind === "house" ? 0.1 : 0.35)) continue;
         // Faceted terrain can rise above the centre sample, so seat each prop
         // on the highest ground under its footprint rather than sinking it.
         const seat = (radius: number) => {
@@ -784,22 +804,33 @@ function scenery(
             );
           return top;
         };
-        const item = {
-          province,
-          position: new Vector3(point.x, seat(0.04) + 0.005, -point.y),
-          scale: 0.225 + random * 0.11,
-          rotation: random * Math.PI,
-        };
-        if (random > 0.94 && houses.length < 3 && slope < 0.1)
+        const size = hash2(point.x * 2.3, point.y * 8.9);
+        const rotation = hash2(point.x * 5.9, point.y * 3.3) * Math.PI * 2;
+        if (kind === "house")
           houses.push({
-            ...item,
+            province,
             position: new Vector3(point.x, seat(0.15) + 0.005, -point.y),
             scale: 0.3,
+            rotation,
           });
-        else trees.push(item);
+        else if (kind === "palm")
+          palms.push({
+            province,
+            position: new Vector3(point.x, seat(0.03) + 0.005, -point.y),
+            scale: 0.26 + size * 0.1,
+            rotation,
+          });
+        else
+          trees.push({
+            province,
+            position: new Vector3(point.x, seat(0.04) + 0.005, -point.y),
+            // Trees deep in a wood grow taller than those at its edge.
+            scale: 0.17 + size * 0.11 + woods * 0.09,
+            rotation,
+          });
       }
   }
-  return { trees, houses };
+  return { trees, houses, palms };
 }
 
 const worldCache = new WeakMap<MapData, WorldGeometry>();
@@ -889,7 +920,13 @@ export function buildWorldGeometry(map: MapData) {
     return {
       ...province,
       anchor,
-      scenery: scenery(shapes, province.id, anchor, surfaceHeight),
+      scenery: scenery(
+        shapes,
+        province.id,
+        anchor,
+        surfaceHeight,
+        coastDistance,
+      ),
     };
   });
   const lakeShape = new Shape(lake);

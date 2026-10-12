@@ -172,11 +172,12 @@ describe("province geometry", () => {
         ).toBeCloseTo((a.y + b.y + c.y) / 3, 5);
       }
   });
-  it("grounds trees and houses on the drawn facets inside their provinces", () => {
+  it("grounds trees, palms and houses on the drawn facets inside their provinces", () => {
     const simplified = smoothMap(simplifyMap(map));
     const objects = world.provinces.flatMap((province) => [
       ...province.scenery.trees,
       ...province.scenery.houses,
+      ...province.scenery.palms,
     ]);
     expect(objects.length).toBeGreaterThan(50);
     for (const object of objects) {

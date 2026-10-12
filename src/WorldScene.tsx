@@ -18,6 +18,7 @@ import {
   Group,
   InstancedMesh,
   Mesh,
+  NeutralToneMapping,
   Object3D,
   Vector2,
   Vector3,
@@ -61,6 +62,8 @@ import TransportScene from "./TransportScene";
 import CrisisScenery from "./CrisisScenery";
 import { buildTransportNetwork } from "./transportNetwork";
 import { planFleet, regionGrowth } from "./transportTraffic";
+import { getPalmModels } from "./localSceneryModels";
+import { shadeFoliage } from "./sceneryNoise";
 
 export type { CameraAction } from "./WorldCamera";
 export type WorldSceneProps = {
@@ -268,6 +271,7 @@ function SceneryInstances({
   scale = [1, 1, 1],
   rotation = 0,
   color,
+  shade,
   onSelect,
   children,
 }: {
@@ -276,6 +280,8 @@ function SceneryInstances({
   scale?: [number, number, number];
   rotation?: number;
   color: string;
+  /** Gives each instance its own variation of `color`. */
+  shade?: (item: Scenery, color: Color) => Color;
   onSelect: (id: string) => void;
   children: ReactNode;
 }) {
@@ -284,7 +290,8 @@ function SceneryInstances({
     scaleKey = scale.join(",");
   useLayoutEffect(() => {
     if (!mesh.current) return;
-    const transform = new Object3D();
+    const transform = new Object3D(),
+      tint = new Color();
     items.forEach((item, index) => {
       const [x, y, z] = offset;
       const cos = Math.cos(item.rotation),
@@ -304,10 +311,13 @@ function SceneryInstances({
       );
       transform.updateMatrix();
       mesh.current!.setMatrixAt(index, transform.matrix);
+      if (shade) mesh.current!.setColorAt(index, shade(item, tint.set(color)));
     });
     mesh.current.instanceMatrix.needsUpdate = true;
+    if (mesh.current.instanceColor)
+      mesh.current.instanceColor.needsUpdate = true;
     mesh.current.computeBoundingSphere();
-  }, [items, offsetKey, scaleKey, rotation]);
+  }, [items, offsetKey, scaleKey, rotation, color, shade]);
   if (!items.length) return null;
   return (
     <instancedMesh
@@ -322,10 +332,12 @@ function SceneryInstances({
       }}
     >
       {children}
-      <meshLambertMaterial color={color} flatShading />
+      <meshLambertMaterial color={shade ? "#ffffff" : color} flatShading />
     </instancedMesh>
   );
 }
+const shadeScenery = (item: Scenery, color: Color) =>
+  shadeFoliage(item.position.x, item.position.z, color);
 function IslandScenery({
   world,
   cleared,
@@ -336,7 +348,7 @@ function IslandScenery({
   cleared: Vector3[];
   onSelect: (id: string) => void;
 }) {
-  const { trees, houses } = useMemo(() => {
+  const { trees, houses, palms } = useMemo(() => {
     const network = buildRoadNetwork(world);
     const free = (item: Scenery) =>
       !onRoadOrCity(network, item.position.x, item.position.z, 0.22, 1.1) &&
@@ -348,10 +360,23 @@ function IslandScenery({
     return {
       trees: world.provinces.flatMap((p) => p.scenery.trees).filter(free),
       houses: world.provinces.flatMap((p) => p.scenery.houses).filter(free),
+      palms: world.provinces.flatMap((p) => p.scenery.palms).filter(free),
     };
   }, [world, cleared]);
+  const palm = getPalmModels();
   return (
     <>
+      <SceneryInstances items={palms} color="#a9845a" onSelect={onSelect}>
+        <primitive object={palm.trunk} attach="geometry" dispose={null} />
+      </SceneryInstances>
+      <SceneryInstances
+        items={palms}
+        color="#5aa84f"
+        shade={shadeScenery}
+        onSelect={onSelect}
+      >
+        <primitive object={palm.fronds} attach="geometry" dispose={null} />
+      </SceneryInstances>
       <SceneryInstances
         items={trees}
         offset={[0, 0.42, 0]}
@@ -365,6 +390,7 @@ function IslandScenery({
         offset={[0, 1.02, 0]}
         scale={[0.72, 1, 0.72]}
         color="#438b54"
+        shade={shadeScenery}
         onSelect={onSelect}
       >
         <icosahedronGeometry args={[0.7, 0]} />
@@ -374,6 +400,7 @@ function IslandScenery({
         offset={[0.11, 1.33, 0.04]}
         scale={[0.65, 0.85, 0.65]}
         color="#6bb65a"
+        shade={shadeScenery}
         onSelect={onSelect}
       >
         <icosahedronGeometry args={[0.62, 0]} />
@@ -682,7 +709,8 @@ function Contents(props: WorldSceneProps) {
         reducedMotion={props.reducedMotion}
         focus={cardAnchor ?? null}
       />
-      <ambientLight intensity={0.65} />
+      {/* Less fill light lets the sun model hills, woods and shadows. */}
+      <ambientLight intensity={0.45} />
       <hemisphereLight args={["#fff7df", "#659579", 0.6]} />
       <WorldSun world={world} />
       {/* Just below the coast, so narrow sea-level strips never lose to the water. */}
@@ -842,12 +870,16 @@ export default function WorldScene(props: WorldSceneProps) {
   return (
     <Canvas
       orthographic
-      flat
       shadows
       camera={{ position: [0, 82, 60], near: 0.1, far: 500 }}
       dpr={[1, 1.5]}
       frameloop="demand"
-      gl={{ antialias: true, powerPreference: "low-power" }}
+      gl={{
+        antialias: true,
+        powerPreference: "low-power",
+        // Neutral keeps the approved palette while rolling off sunlit highlights.
+        toneMapping: NeutralToneMapping,
+      }}
       onPointerDown={props.onInteraction}
       onPointerMissed={() => props.onDismiss?.()}
       onWheel={props.onInteraction}

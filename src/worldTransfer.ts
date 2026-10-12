@@ -115,6 +115,7 @@ export function packWorld(world: WorldGeometry) {
       scenery: {
         trees: p.scenery.trees.map(sceneryData),
         houses: p.scenery.houses.map(sceneryData),
+        palms: p.scenery.palms.map(sceneryData),
       },
     })),
     lake: geometryData(world.lake),
@@ -204,6 +205,7 @@ export function unpackWorld(data: PackedWorld): WorldGeometry {
     scenery: {
       trees: p.scenery.trees.map(readScenery),
       houses: p.scenery.houses.map(readScenery),
+      palms: p.scenery.palms.map(readScenery),
     },
   }));
   const lake = readGeometry(data.lake);

@@ -6,6 +6,7 @@ import {
   CylinderGeometry,
   Float32BufferAttribute,
   IcosahedronGeometry,
+  OctahedronGeometry,
 } from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import type { LocalSceneryKind } from "./localScenery";
@@ -112,4 +113,39 @@ export function createLocalSceneryModels(): Record<
       return [kind, merged];
     }),
   ) as Record<LocalSceneryKind, BufferGeometry>;
+}
+
+let palmModels: { trunk: BufferGeometry; fronds: BufferGeometry } | null = null;
+/** A leaning coconut palm, shared by every island; the two parts take separate colours. */
+export function getPalmModels() {
+  if (palmModels) return palmModels;
+  const lean = 0.2,
+    height = 1.25;
+  const top = { x: -Math.sin(lean) * height, y: Math.cos(lean) * height };
+  const trunk = new CylinderGeometry(0.045, 0.075, height, 5)
+    .translate(0, height / 2, 0)
+    .rotateZ(lean);
+  const leaves = Array.from({ length: 7 }, (_, i) =>
+    new OctahedronGeometry(1, 0)
+      .scale(0.4, 0.03, 0.1)
+      .translate(0.36, 0, 0)
+      // Alternate the droop so the crown reads as layered fronds.
+      .rotateZ(-0.38 - (i % 2) * 0.2)
+      .rotateY((i / 7) * Math.PI * 2 + (i % 3) * 0.12)
+      .translate(top.x, top.y, 0),
+  );
+  leaves.push(
+    new IcosahedronGeometry(0.075, 0).translate(top.x, top.y - 0.05, 0),
+  );
+  const fronds = mergeGeometries(
+    leaves.map((leaf) => {
+      leaf.deleteAttribute("uv");
+      return leaf.index ? leaf.toNonIndexed() : leaf;
+    }),
+  )!;
+  leaves.forEach((leaf) => leaf.dispose());
+  fronds.computeVertexNormals();
+  fronds.computeBoundingSphere();
+  trunk.computeBoundingSphere();
+  return (palmModels = { trunk, fronds });
 }
