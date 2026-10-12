@@ -80,7 +80,7 @@ export default function WorldSun({ world }: { world: WorldGeometry }) {
     <directionalLight
       ref={sun}
       position={WORLD_SUN_POSITION}
-      intensity={1.1}
+      intensity={1.35}
       castShadow
       shadow-mapSize={[1024, 1024]}
       shadow-bias={-0.0005}
