@@ -371,16 +371,62 @@ const BLUEPRINTS: Record<TransportModel, () => BufferGeometry[]> = {
     lying(0.02, 0.08, 0.03, -0.042, 0.13, GREY, 7),
     lying(0.02, 0.08, 0.03, -0.042, -0.13, GREY, 7),
   ],
-  runway: () => [
-    box(1.0, 0.015, 0.15, 0, 0, 0, "#7d8a86"),
-    ...[-0.36, -0.18, 0, 0.18, 0.36].map((x) =>
-      box(0.08, 0.004, 0.015, x, 0.015, 0, CREAM),
-    ),
-    box(0.2, 0.08, 0.12, 0.05, 0, 0.22, CREAM),
-    box(0.22, 0.02, 0.14, 0.05, 0.08, 0.22, TEAL),
-    cyl(0.02, 0.025, 0.2, 5, -0.15, 0, 0.2, CREAM),
-    box(0.06, 0.04, 0.06, -0.15, 0.2, 0.2, GLASS),
-  ],
+  // An airfield: marked runway, apron, terminal with a jet bridge, control
+  // tower, hangar and a windsock. Runway along x; buildings to the +z side.
+  runway: () => {
+    const ASPHALT = "#6b7774",
+      PAD = "#9aa7a3";
+    return [
+      box(1.06, 0.008, 0.2, 0, 0, 0, "#b5c0bc"),
+      box(1.0, 0.012, 0.14, 0, 0.008, 0, ASPHALT),
+      // Edge lines, threshold bars at each end and a dashed centre line.
+      ...[-1, 1].map((side) =>
+        box(0.96, 0.002, 0.008, 0, 0.02, side * 0.06, CREAM),
+      ),
+      ...[-1, 1].flatMap((end) =>
+        [-0.05, -0.025, 0, 0.025, 0.05].map((z) =>
+          box(0.05, 0.002, 0.01, end * 0.45, 0.02, z, CREAM),
+        ),
+      ),
+      ...[-0.32, -0.16, 0, 0.16, 0.32].map((x) =>
+        box(0.09, 0.002, 0.012, x, 0.02, 0, CREAM),
+      ),
+      // Taxiway and apron.
+      box(0.07, 0.01, 0.1, 0.1, 0.004, 0.12, PAD),
+      box(0.52, 0.01, 0.15, 0.05, 0.004, 0.2, PAD),
+      ...[-0.15, 0.05, 0.25].map((x) =>
+        box(0.02, 0.002, 0.1, x, 0.014, 0.2, SUN),
+      ),
+      // Terminal: white block, teal roof, window band and a jet bridge.
+      box(0.34, 0.05, 0.08, 0.1, 0.012, 0.3, CREAM),
+      box(0.345, 0.014, 0.081, 0.1, 0.034, 0.3, WINDOW),
+      box(0.37, 0.012, 0.1, 0.1, 0.062, 0.3, TEAL),
+      ...[0.0, 0.18].map((x) => box(0.012, 0.012, 0.07, x, 0.032, 0.245, GREY)),
+      // Control tower: shaft, glass cab and a dish on top.
+      cyl(0.016, 0.02, 0.2, 6, -0.18, 0.012, 0.3, CREAM),
+      cyl(0.034, 0.026, 0.035, 6, -0.18, 0.212, 0.3, GLASS),
+      cyl(0.038, 0.038, 0.008, 6, -0.18, 0.247, 0.3, CORAL),
+      cyl(0.003, 0.003, 0.03, 4, -0.18, 0.255, 0.3, INK),
+      // Hangar with a curved roof.
+      box(0.15, 0.04, 0.1, -0.38, 0.01, 0.22, "#e3dcc8"),
+      tint(
+        new CylinderGeometry(0.05, 0.05, 0.15, 8, 1, false, 0, Math.PI)
+          .rotateZ(Math.PI / 2)
+          .rotateX(Math.PI / 2)
+          .scale(1, 1, 1)
+          .translate(-0.38, 0.05, 0.22),
+        GREEN,
+      ),
+      // Windsock on a pole beside the runway.
+      cyl(0.004, 0.004, 0.09, 4, 0.4, 0.008, -0.13, INK),
+      tint(
+        new CylinderGeometry(0.014, 0.006, 0.05, 5)
+          .rotateZ(Math.PI / 2)
+          .translate(0.425, 0.09, -0.13),
+        CORAL,
+      ),
+    ];
+  },
   wake,
   // Crisis scenery, sized for a unit footprint.
   flood: () => [

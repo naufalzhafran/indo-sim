@@ -249,7 +249,7 @@ export default function TransportScene({
       transform.position.copy(airport.position);
       transform.position.y += 0.004;
       transform.rotation.set(0, -airport.heading, 0);
-      transform.scale.setScalar(1);
+      transform.scale.setScalar(1.1);
       transform.updateMatrix();
       mesh.setMatrixAt(i, transform.matrix);
     });
@@ -334,9 +334,9 @@ export default function TransportScene({
       mesh.count = plans.length;
       mesh.instanceMatrix.needsUpdate = true;
     };
-    ships(cargo.current, fleet.cargo, 3, 0.16, 1);
-    ships(tolLaut.current, fleet.tolLaut, 4, 0.12, 0.9);
-    ships(ferries.current, fleet.ferries, 3, 0.05, 0.7);
+    ships(cargo.current, fleet.cargo, 3, 0.16, 0.6);
+    ships(tolLaut.current, fleet.tolLaut, 4, 0.12, 0.55);
+    ships(ferries.current, fleet.ferries, 3, 0.05, 0.5);
 
     // Fishing boats potter about near the coast, pausing now and then to fish,
     // and only show up close.
@@ -503,6 +503,7 @@ export default function TransportScene({
     <group>
       <Railways lines={fleet.rail} />
       <instancedMesh
+        name="runway"
         ref={runways}
         args={[transportGeometry("runway"), undefined, network.airports.length]}
         castShadow
