@@ -14,6 +14,7 @@ import type { Geometry } from "geojson";
 import type { MapData, RegionData } from "./mapData";
 import { LAKE_TOBA, RELIEF_PEAKS, RELIEF_RANGES, SAMOSIR } from "./mapRelief";
 import { triangulateTerrain } from "./terrainMesh";
+import { gradientNoise, ridgedNoise } from "./terrainNoise";
 import { topology } from "topojson-server";
 import { feature as topologyFeature, merge } from "topojson-client";
 import { presimplify, simplify } from "topojson-simplify";
@@ -220,8 +221,10 @@ function terrainField(islands: Shape[], lake: Vector2[], samosir: Vector2[]) {
     point: projectCoordinate([...peak.at]),
     height: peak.elevation * 0.0008,
     width: 0.95 + peak.elevation * 0.00017,
+    kind: peak.kind,
   }));
   const heights = new Map<string, number>();
+  const covers = new Map<string, TerrainCover>();
   const coastDistances = new Map<string, number>();
   // Coast segments bucketed by cell, searched outwards until no nearer cell remains.
   type Segment = { a: Vector2; b: Vector2; ring: number };
@@ -331,12 +334,27 @@ function terrainField(islands: Shape[], lake: Vector2[], samosir: Vector2[]) {
         range.height * Math.exp(-((distance / range.width) ** 2)),
       );
     }
-    for (const peak of peaks)
+    // Volcanoes rise as steeper cones with a small crater; other summits stay rounded.
+    let crater = 0,
+      volcanoTop = 0,
+      snowTop = 0;
+    for (const peak of peaks) {
+      const distance = point.distanceTo(peak.point);
+      const volcano = peak.kind === "volcano";
       summit = Math.max(
         summit,
         peak.height *
-          Math.exp(-((point.distanceTo(peak.point) / peak.width) ** 2)),
+          Math.exp(-((distance / peak.width) ** (volcano ? 1.35 : 2))),
       );
+      if (volcano) {
+        crater = Math.max(crater, Math.exp(-((distance / 0.2) ** 2)));
+        volcanoTop = Math.max(
+          volcanoTop,
+          smoothstep((1 - distance / 0.34) * 1.8),
+        );
+      } else if (peak.kind === "snow")
+        snowTop = Math.max(snowTop, smoothstep(1 - distance / 0.9));
+    }
     // Smooth broad shoulders, never independent per-triangle spikes.
     // Narrow islands such as Java get lower relief so they read as islands
     // with lowlands, not a single ridge; broad islands keep taller ranges.
@@ -373,6 +391,18 @@ function terrainField(islands: Shape[], lake: Vector2[], samosir: Vector2[]) {
     // Compress steep coastal relief on narrow islands without flattening
     // the broad inland ranges. The fourth-power blend keeps the shoulder smooth.
     height /= (1 + (height / (0.18 + coast * 2.2)) ** 4) ** 0.25;
+    // Close-up detail: spurs and gullies on mountain flanks, soft knolls in the
+    // lowlands. Wavelengths span several mesh cells, so facets stay deliberate.
+    const mountain = smoothstep((relief - 0.06) / 0.4);
+    const inland = smoothstep(coast / 0.5);
+    const spurs =
+      0.65 * ridgedNoise(x * 1.25 + 11.3, y * 1.25 - 7.1) +
+      0.35 * ridgedNoise(x * 2.6 - 3.7, y * 2.6 + 5.9);
+    height +=
+      inland *
+      (mountain * 0.3 * (spurs - 0.42) +
+        (1 - mountain) * 0.04 * gradientNoise(x * 1.7 + 4.2, y * 1.7 + 9.4) -
+        crater * mountain * 0.09);
     const lakeDistance = distanceToEdge(point, lake);
     if (insideRing(point, lake)) {
       height = insideRing(point, samosir)
@@ -383,30 +413,61 @@ function terrainField(islands: Shape[], lake: Vector2[], samosir: Vector2[]) {
         LAKE_HEIGHT + (height - LAKE_HEIGHT) * smoothstep(lakeDistance / 0.7);
     }
     heights.set(key, height);
+    covers.set(key, {
+      mountain,
+      rock: Math.max(
+        smoothstep((height - 1.25) / 0.35) * 0.55,
+        volcanoTop * smoothstep((height - 0.6) / 0.25) * 0.65,
+      ),
+      snow: snowTop * smoothstep((height - 1.45) / 0.18),
+    });
     return height;
   };
-  return { heightAt, coastDistance };
+  const coverAt = (point: Vector2): TerrainCover => {
+    heightAt(point);
+    return covers.get(`${point.x.toFixed(7)},${point.y.toFixed(7)}`)!;
+  };
+  return { heightAt, coastDistance, coverAt };
 }
+type TerrainCover = { mountain: number; rock: number; snow: number };
 
 function landGeometry(
   mesh: ReturnType<typeof triangulateTerrain>,
-  heightAt: (point: Vector2) => number,
-  coastDistance: (point: Vector2) => number,
+  { heightAt, coastDistance, coverAt }: ReturnType<typeof terrainField>,
 ) {
   const positions: number[] = [],
     colors: number[] = [];
   const sand = new Color("#e3d496"),
     grass = new Color("#8dc859"),
-    upland = new Color("#91b56a"),
-    rock = new Color("#c4c5a0");
+    paddy = new Color("#a6d166"),
+    forest = new Color("#6aad52"),
+    upland = new Color("#88b064"),
+    rock = new Color("#c0b590"),
+    snow = new Color("#f5f7ef");
   const color = new Color();
   for (const point of mesh.points) {
-    const height = heightAt(point);
+    const height = heightAt(point),
+      cover = coverAt(point);
     positions.push(point.x, height, -point.y);
+    // Broad, illustrative patches: brighter farmland in the lowlands, deeper
+    // forest on hills, then highland grass, bare volcanic tops and snow.
+    const patch = gradientNoise(point.x * 0.85 + 2.3, point.y * 0.85 - 5.1);
     color
       .copy(grass)
-      .lerp(upland, smoothstep((height - 0.6) / 2.5))
-      .lerp(rock, smoothstep((height - 2.8) / 1.4) * 0.72)
+      .lerp(
+        paddy,
+        smoothstep((patch - 0.12) / 0.45) * 0.8 * (1 - cover.mountain),
+      )
+      .lerp(
+        forest,
+        Math.min(
+          0.85,
+          smoothstep((-patch - 0.05) / 0.45) * 0.55 + cover.mountain * 0.5,
+        ),
+      )
+      .lerp(upland, smoothstep((height - 0.85) / 0.5))
+      .lerp(rock, cover.rock)
+      .lerp(snow, cover.snow)
       .lerp(sand, 1 - smoothstep(coastDistance(point) / 0.24));
     colors.push(color.r, color.g, color.b);
   }
@@ -790,10 +851,17 @@ function scenery(
           scale: 0.225 + random * 0.11,
           rotation: random * Math.PI,
         };
-        if (random > 0.94 && houses.length < 3 && slope < 0.1)
+        // A house needs level ground across its whole footprint, not a crest.
+        const houseSeat = seat(0.15);
+        if (
+          random > 0.94 &&
+          houses.length < 3 &&
+          slope < 0.1 &&
+          houseSeat - height < 0.08
+        )
           houses.push({
             ...item,
-            position: new Vector3(point.x, seat(0.15) + 0.005, -point.y),
+            position: new Vector3(point.x, houseSeat + 0.005, -point.y),
             scale: 0.3,
           });
         else trees.push(item);
@@ -868,10 +936,11 @@ export function buildWorldGeometry(map: MapData) {
     lakeOwner.holes.push(new Path(lake));
     northSumatra.shapes.push(new Shape(samosir));
   }
-  const { heightAt, coastDistance } = terrainField(islands, lake, samosir);
+  const field = terrainField(islands, lake, samosir),
+    { heightAt } = field;
   const surfaces = parts.map(({ id, shapes }) => {
     const mesh = triangulateTerrain(shapes);
-    const geometry = landGeometry(mesh, heightAt, coastDistance);
+    const geometry = landGeometry(mesh, field);
     return {
       id,
       shapes,

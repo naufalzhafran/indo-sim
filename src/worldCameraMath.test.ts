@@ -1,13 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { Box3, OrthographicCamera, Vector3 } from "three";
+import { Box3, OrthographicCamera, Vector2, Vector3 } from "three";
 import {
   baseWorldZoom,
   cameraPanDistance,
   clampWorldZoom,
   DEFAULT_ZOOM_RATIO,
+  easeZoom,
   MAX_ZOOM_RATIO,
-  panelZoomShift,
   regionWorldZoom,
+  wheelZoomFactor,
+  zoomAtScreenPoint,
 } from "./worldCameraMath";
 
 const bounds = new Box3(new Vector3(-49, 0, -15), new Vector3(49, 8, 28));
@@ -23,7 +25,7 @@ describe("orthographic world navigation", () => {
     expect((98 + 11) * zoom).toBeLessThanOrEqual(size.width);
     expect(51 * zoom).toBeLessThanOrEqual(size.height);
     expect(clampWorldZoom(0, zoom)).toBe(zoom);
-    expect(clampWorldZoom(Infinity, zoom)).toBe(zoom * 8);
+    expect(clampWorldZoom(Infinity, zoom)).toBe(zoom * MAX_ZOOM_RATIO);
     expect(clampWorldZoom(zoom * DEFAULT_ZOOM_RATIO, zoom)).toBe(
       zoom * DEFAULT_ZOOM_RATIO,
     );
@@ -43,10 +45,14 @@ describe("orthographic world navigation", () => {
   });
 
   it.each(desktopSizes)(
-    "keeps the uncovered map centre fixed through button zoom at $width×$height",
+    "keeps the ground under the cursor or panel centre fixed while zooming at $width×$height",
     (size) => {
       const base = baseWorldZoom(bounds, size);
-      for (const inset of [0, 710]) {
+      for (const anchor of [
+        new Vector2(0, 0),
+        new Vector2(710 / size.width, 0),
+        new Vector2(-0.7, 0.55),
+      ]) {
         const camera = new OrthographicCamera(
           -size.width / 2,
           size.width / 2,
@@ -60,25 +66,58 @@ describe("orthographic world navigation", () => {
         camera.zoom = base * 2;
         camera.updateProjectionMatrix();
         camera.updateMatrixWorld();
-        const focus = new Vector3(inset / (2 * camera.zoom), 0, 0);
-        for (const ratio of [4, 8, 2, 1]) {
-          const nextZoom = base * ratio;
-          camera.position.x += panelZoomShift(inset, camera.zoom, nextZoom);
-          camera.zoom = nextZoom;
-          camera.updateProjectionMatrix();
+        // The ground point under the anchor, found along the view ray.
+        const direction = camera.getWorldDirection(new Vector3());
+        const origin = new Vector3(anchor.x, anchor.y, -1).unproject(camera);
+        const point = origin.addScaledVector(
+          direction,
+          -origin.y / direction.y,
+        );
+        for (const ratio of [4, MAX_ZOOM_RATIO, 2, 1]) {
+          const shift = zoomAtScreenPoint(camera, anchor, 0, base * ratio);
+          expect(shift.y).toBe(0);
+          camera.position.add(shift);
           camera.updateMatrixWorld();
-          const projected = focus.clone().project(camera);
-          expect(projected.x).toBeCloseTo(inset / size.width);
-          expect(projected.y).toBeCloseTo(0);
+          const projected = point.clone().project(camera);
+          expect(projected.x).toBeCloseTo(anchor.x, 6);
+          expect(projected.y).toBeCloseTo(anchor.y, 6);
           expect(camera.position.y).toBe(82);
-          expect(camera.position.z).toBe(60);
         }
       }
     },
   );
 
+  it("eases zoom smoothly and evenly towards its goal", () => {
+    expect(
+      wheelZoomFactor({ deltaY: -100, deltaMode: 0, ctrlKey: false }),
+    ).toBeGreaterThan(1.2);
+    expect(
+      wheelZoomFactor({ deltaY: 100, deltaMode: 0, ctrlKey: false }) *
+        wheelZoomFactor({ deltaY: -100, deltaMode: 0, ctrlKey: false }),
+    ).toBeCloseTo(1);
+    // Line-based wheels and pinch gestures move about as far per gesture.
+    expect(
+      wheelZoomFactor({ deltaY: -3, deltaMode: 1, ctrlKey: false }),
+    ).toBeGreaterThan(1.05);
+    expect(
+      wheelZoomFactor({ deltaY: -10, deltaMode: 0, ctrlKey: true }),
+    ).toBeGreaterThan(1.05);
+    let zoom = 10;
+    const steps: number[] = [];
+    for (let frame = 0; frame < 60 && zoom !== 40; frame++) {
+      const next = easeZoom(zoom, 40, 16);
+      steps.push(next / zoom);
+      zoom = next;
+    }
+    expect(zoom).toBe(40);
+    expect(steps.length).toBeGreaterThan(8);
+    expect(steps.every((step) => step >= 1)).toBe(true);
+    // Each frame covers a steady share of what remains: no sudden jump.
+    expect(Math.max(...steps)).toBeLessThan(1.3);
+  });
+
   it.each(desktopSizes)(
-    "preserves arrow-button screen travel from default to 8× at $width×$height",
+    "preserves arrow-button screen travel from default to full zoom at $width×$height",
     (size) => {
       const base = baseWorldZoom(bounds, size);
       const camera = new OrthographicCamera(

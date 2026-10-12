@@ -1,7 +1,18 @@
-import type { Box3, Vector3 } from "three";
+import {
+  Plane,
+  Raycaster,
+  Vector3,
+  type Box3,
+  type Vector2,
+  type OrthographicCamera,
+} from "three";
 
 export const DEFAULT_ZOOM_RATIO = 1.15;
-export const MAX_ZOOM_RATIO = 8;
+export const MAX_ZOOM_RATIO = 14;
+/** One mouse-wheel notch (100 px) zooms by about a quarter. */
+export const WHEEL_ZOOM_STEP = 0.0022;
+/** Map zoom buttons change zoom by this factor per press. */
+export const BUTTON_ZOOM_FACTOR = 1.5;
 
 export function baseWorldZoom(
   bounds: Box3,
@@ -37,11 +48,50 @@ export function cameraPanDistance(zoom: number, baseZoom: number) {
   return (5 * baseZoom * DEFAULT_ZOOM_RATIO) / zoom;
 }
 
-/** Keep the centre of the uncovered map anchored while a side panel is open. */
-export function panelZoomShift(
-  inset: number,
-  oldZoom: number,
-  newZoom: number,
+/** Normalises wheel deltas from mice, trackpads and pinch gestures to a zoom factor. */
+export function wheelZoomFactor(event: {
+  deltaY: number;
+  deltaMode: number;
+  ctrlKey: boolean;
+}) {
+  const pixels =
+    event.deltaY *
+    (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 400 : 1);
+  // Pinch gestures arrive as small ctrl-wheel deltas; give them the same feel.
+  const step = event.ctrlKey ? WHEEL_ZOOM_STEP * 4 : WHEEL_ZOOM_STEP;
+  return Math.exp(-Math.max(-600, Math.min(600, pixels)) * step);
+}
+
+/** Eases zoom towards its goal in log space, so every step feels equally fast. */
+export function easeZoom(zoom: number, goal: number, elapsedMs: number) {
+  const t = 1 - Math.exp(-Math.max(0, elapsedMs) / 85);
+  const next = zoom * (goal / zoom) ** t;
+  return Math.abs(Math.log(goal / next)) < 0.002 ? goal : next;
+}
+
+const ray = new Raycaster(),
+  ground = new Plane(new Vector3(0, 1, 0)),
+  before = new Vector3(),
+  after = new Vector3();
+/**
+ * Sets the camera zoom and returns the ground-plane shift that keeps the point
+ * under `ndc` (normalised screen position) where it is on screen.
+ */
+export function zoomAtScreenPoint(
+  camera: OrthographicCamera,
+  ndc: Vector2,
+  groundY: number,
+  zoom: number,
 ) {
-  return inset / (2 * oldZoom) - inset / (2 * newZoom);
+  ground.constant = -groundY;
+  camera.updateMatrixWorld();
+  ray.setFromCamera(ndc, camera);
+  const from = ray.ray.intersectPlane(ground, before);
+  camera.zoom = zoom;
+  camera.updateProjectionMatrix();
+  ray.setFromCamera(ndc, camera);
+  const to = ray.ray.intersectPlane(ground, after);
+  return from && to
+    ? new Vector3(from.x - to.x, 0, from.z - to.z)
+    : new Vector3();
 }

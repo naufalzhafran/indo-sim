@@ -202,10 +202,10 @@ test("deep zoom keeps cursor focus, reveals scenery, and settles with reduced mo
 
   const zoomIn = page.getByRole("button", { name: "Zoom in", exact: true });
   for (let i = 0; i < 8; i++) await zoomIn.click();
-  await expect(canvas).toHaveAttribute("data-zoom-ratio", "8.0000");
+  await expect(canvas).toHaveAttribute("data-zoom-ratio", "14.0000");
   expect(
     (await viewSnapshot(page, initial.anchor)).cameraZoom / baseZoom,
-  ).toBeCloseTo(8, 6);
+  ).toBeCloseTo(14, 6);
   await expect
     .poll(async () =>
       Number(await canvas.getAttribute("data-detail-instances")),
@@ -301,7 +301,7 @@ test("region-panel camera controls stay reachable and preserve the uncovered map
       };
       const focused = await viewSnapshot(page, focus);
       for (let i = 0; i < 8; i++) await zoomIn.click();
-      await expect(canvas).toHaveAttribute("data-zoom-ratio", "8.0000");
+      await expect(canvas).toHaveAttribute("data-zoom-ratio", "14.0000");
       const after = await viewSnapshot(page, focus);
       expect(Math.abs(after.screen.x - focused.screen.x)).toBeLessThan(2);
       expect(Math.abs(after.screen.y - focused.screen.y)).toBeLessThan(2);
