@@ -650,7 +650,24 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
       end = typeof to === "string" ? stationAt(to) : junction(to);
     if (!start || !end) continue;
     // Each leg between stops is routed overland, steering round the roads.
-    const waypoints = [start, ...stops.map(projectCoordinate), end];
+    // A stop that would send the line back on itself is skipped, so lines
+    // don't fold into hairpins on their way through.
+    const waypoints = [start];
+    const calls = [...stops.map(projectCoordinate), end];
+    calls.forEach((stop, i) => {
+      const next = calls[i + 1];
+      const prev = waypoints[waypoints.length - 1];
+      if (next) {
+        const ax = stop.x - prev.x,
+          ay = stop.y - prev.y,
+          bx = next.x - stop.x,
+          by = next.y - stop.y;
+        const turn =
+          (ax * bx + ay * by) / (Math.hypot(ax, ay) * Math.hypot(bx, by) || 1);
+        if (turn < -0.3) return;
+      }
+      waypoints.push(stop);
+    });
     const path: Vector2[] = [];
     for (let i = 1; i < waypoints.length; i++) {
       const leg = routeAwayFromRoads(
@@ -739,6 +756,17 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
           );
           if (!ends.every((p) => plan.onLand(p.x, p.y, margin))) continue;
           if (ends.some((p) => onRoadOrCity(roads, p.x, -p.y, road, clearance)))
+            continue;
+          // Nor across a railway.
+          if (
+            ends.some((p) =>
+              rail.some((line) =>
+                line.points.some(
+                  (q) => Math.hypot(q.x - p.x, q.z + p.y) < 0.25,
+                ),
+              ),
+            )
+          )
             continue;
           const heights = ends.map((p) => world.surfaceHeight(p));
           if (Math.max(...heights) - Math.min(...heights) > slope) continue;

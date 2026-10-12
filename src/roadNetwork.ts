@@ -433,7 +433,51 @@ function smooth(path: Vector2[], plan: Planner) {
     next.push(points[points.length - 1]);
     points = next;
   }
-  return points;
+  return relax(points, plan);
+}
+
+const RELAX_STEP = 0.07;
+const RELAX_ROUNDS = 40;
+/**
+ * Irons out the grid's staircase: resamples the path evenly, then averages
+ * each point with its neighbours so diagonal zig-zags settle into long,
+ * gentle curves. Shared trunks are the same curve on every road that uses
+ * them, so they still line up. A point the averaging would push off the
+ * land keeps its place.
+ */
+function relax(path: Vector2[], plan: Planner) {
+  const even: Vector2[] = [path[0].clone()];
+  let carry = 0;
+  for (let i = 1; i < path.length; i++) {
+    const a = path[i - 1],
+      b = path[i];
+    const segment = a.distanceTo(b);
+    let along = RELAX_STEP - carry;
+    while (along < segment) {
+      even.push(a.clone().lerp(b, along / segment));
+      along += RELAX_STEP;
+    }
+    carry = segment - (along - RELAX_STEP);
+  }
+  even.push(path[path.length - 1].clone());
+  if (even.length < 3) return path;
+  let points = even;
+  for (let round = 0; round < RELAX_ROUNDS; round++) {
+    const next = points.map((p) => p.clone());
+    for (let i = 1; i < points.length - 1; i++)
+      next[i]
+        .copy(points[i])
+        .multiplyScalar(2)
+        .add(points[i - 1])
+        .add(points[i + 1])
+        .multiplyScalar(0.25);
+    points = next;
+  }
+  return points.map((p, i) =>
+    plan.onLand(p.x, p.y, 0.02) || !plan.onLand(even[i].x, even[i].y)
+      ? p
+      : even[i],
+  );
 }
 
 /**
