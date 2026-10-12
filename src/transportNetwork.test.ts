@@ -68,7 +68,7 @@ describe("transport network", () => {
 
   it("puts the baseline railways on Java and South Sumatra", () => {
     const baseline = network.rail.filter((line) => line.baseline);
-    expect(baseline.length).toBeGreaterThanOrEqual(7);
+    expect(baseline.length).toBeGreaterThanOrEqual(6);
     expect(new Set(baseline.map((line) => line.region))).toEqual(
       new Set(["java", "sumatra"]),
     );
@@ -102,7 +102,7 @@ describe("transport network", () => {
   it("runs Java's railways inland, clear of the roads between cities", () => {
     const roads = buildRoadNetwork(world);
     const java = network.rail.filter((line) => line.region === "java");
-    expect(java.length).toBeGreaterThanOrEqual(6);
+    expect(java.length).toBe(5);
     for (const line of java)
       for (const p of line.points) {
         const nearCity = roads.cities.some(
@@ -117,20 +117,22 @@ describe("transport network", () => {
       }
   });
 
-  it("joins railways at stations and at the Solo branch, with no gaps", () => {
+  it("joins railways end to end at stations, with no gaps", () => {
     const stations = (lines: typeof network.rail) =>
       lines.flatMap((l) => [l.points[0], l.points.at(-1)!]);
     const baseline = network.rail.filter((l) => l.baseline);
     for (const lines of [network.rail, baseline])
       expect(looseEnds(lines, stations(lines), 0.1, 3)).toEqual([]);
-    const branch = network.rail.find((l) => l.id === "semarang-solo")!;
-    const end = branch.points.at(-1)!;
-    const onMainLine = network.rail.some(
-      (l) =>
-        l !== branch &&
-        l.points.some((q) => Math.hypot(q.x - end.x, q.z - end.z) < 0.01),
-    );
-    expect(onMainLine).toBe(true);
+  });
+
+  it("runs Java's railway as one long line with no branches", () => {
+    const java = network.rail.filter((line) => line.region === "java");
+    // Each line starts where the last one ended, in a single chain.
+    for (let i = 1; i < java.length; i++) {
+      const a = java[i - 1].points.at(-1)!,
+        b = java[i].points[0];
+      expect(Math.hypot(a.x - b.x, a.z - b.z)).toBeLessThan(0.01);
+    }
   });
 
   it("samples positions and headings along a path", () => {

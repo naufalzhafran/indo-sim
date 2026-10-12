@@ -120,22 +120,19 @@ export const BASELINE_RAIL = new Set([
   "merak-jakarta",
   "jakarta-bandung",
   "bandung-yogyakarta",
-  "semarang-solo",
   "yogyakarta-surabaya",
   "surabaya-banyuwangi",
   "palembang-bandar-lampung",
 ]);
+/** Roads that branch off an island's main road get no railway, so each island has one long line. */
+const NO_RAIL = new Set(["pekanbaru-padang", "timika-merauke"]);
 /**
- * Java's railways run inland along the island's southern half, through the
+ * Java's railways form one long line, end to end from Merak to Banyuwangi,
+ * with no branches. They run inland along the island's southern half, through the
  * towns the real lines serve, so they keep clear of the north-coast road:
- * [id, from city, [lon, lat] stops along the way, to city or a last stop].
+ * [id, from city, [lon, lat] stops along the way, to city].
  */
-const JAVA_RAIL: [
-  string,
-  string,
-  [number, number][],
-  string | [number, number],
-][] = [
+const JAVA_RAIL: [string, string, [number, number][], string][] = [
   [
     "merak-jakarta",
     "merak",
@@ -189,16 +186,6 @@ const JAVA_RAIL: [
       [114.0, -8.32],
     ],
     "banyuwangi",
-  ],
-  // A branch that joins the southern main line at Solo; laid last so it can.
-  [
-    "semarang-solo",
-    "semarang",
-    [
-      [110.6, -7.1],
-      [110.9, -7.2],
-    ],
-    [110.82, -7.57],
   ],
 ];
 /** Airport hubs, by road-network city id. */
@@ -629,25 +616,13 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
     stations.set(id, found);
     return found;
   };
-  /** A branch ends on the track already laid nearest its last stop, so it joins it. */
-  const junction = (stop: [number, number]) => {
-    const target = projectCoordinate(stop);
-    let best = target,
-      near = 0.8;
-    for (const line of rail)
-      for (const p of line.points) {
-        const d = Math.hypot(p.x - target.x, -p.z - target.y);
-        if (d < near) ((near = d), (best = new Vector2(p.x, -p.z)));
-      }
-    return best;
-  };
   const cityOf = (p: Vector3) =>
     roads.cities.reduce((best, c) =>
       c.position.distanceTo(p) < best.position.distanceTo(p) ? c : best,
     ).id;
   for (const [id, from, stops, to] of JAVA_RAIL) {
     const start = stationAt(from),
-      end = typeof to === "string" ? stationAt(to) : junction(to);
+      end = stationAt(to);
     if (!start || !end) continue;
     // Each leg between stops is routed overland, steering round the roads.
     // A stop that would send the line back on itself is skipped, so lines
@@ -693,6 +668,7 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
     // Java has its own inland railways, laid above.
     if (road.provinces.every((p) => regionForProvince(p)?.id === "java"))
       continue;
+    if (NO_RAIL.has(road.id)) continue;
     const first = stationAt(cityOf(road.points[0])),
       last = stationAt(cityOf(road.points[road.points.length - 1]));
     if (!first || !last) continue;
