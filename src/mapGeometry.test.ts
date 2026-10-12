@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { ShapeUtils, Vector2, Vector3, type BufferGeometry } from "three";
 import {
   buildWorldGeometry,
+  coastalWaterGeometry,
   geometryShapes,
   interiorAnchor,
   projectCoordinate,
@@ -255,6 +256,30 @@ describe("province geometry", () => {
         ).toBeGreaterThan(0);
       }
     }
+  });
+  it("rings only the drawn islands with coastal water just below sea level", () => {
+    const landRings = world.provinces.flatMap((p) => p.rings);
+    const geometry = coastalWaterGeometry(world.coastlines, landRings);
+    const positions = geometry.getAttribute("position");
+    const key = (x: number, y: number) => `${x.toFixed(3)},${y.toFixed(3)}`;
+    const land = new Set(landRings.flat().map((p) => key(p.x, p.y)));
+    expect(positions.count).toBeGreaterThan(1000);
+    expect(geometry.getAttribute("color").count).toBe(positions.count);
+    const starts = new Set<string>();
+    for (let i = 0; i < positions.count; i++) {
+      expect(positions.getY(i)).toBeLessThan(SEA_LEVEL - 0.02);
+      expect(positions.getY(i)).toBeGreaterThan(SEA_LEVEL - 0.04);
+      // Each band quad starts on the coast itself.
+      if (i % 6 === 0) starts.add(key(positions.getX(i), -positions.getZ(i)));
+    }
+    // Islets dropped from the terrain stay open sea rather than empty rings.
+    const islets = world.coastlines.filter(
+      ({ shape }) => !shape.some((p) => land.has(key(p.x, p.y))),
+    );
+    expect(islets.length).toBeGreaterThan(100);
+    for (const { shape } of islets)
+      expect(shape.some((p) => starts.has(key(p.x, p.y)))).toBe(false);
+    geometry.dispose();
   });
   it("raises geographic ranges above the eastern Sumatra and southern Papua lowlands", () => {
     const height = (lon: number, lat: number) =>

@@ -15,6 +15,7 @@ import type { MapData, RegionData } from "./mapData";
 import { LAKE_TOBA, RELIEF_PEAKS, RELIEF_RANGES, SAMOSIR } from "./mapRelief";
 import { triangulateTerrain } from "./terrainMesh";
 import { forestDensity, hash2 } from "./sceneryNoise";
+import { regionForProvince } from "./engine/gameRegions";
 import { topology } from "topojson-server";
 import { feature as topologyFeature, merge } from "topojson-client";
 import { presimplify, simplify } from "topojson-simplify";
@@ -389,33 +390,70 @@ function terrainField(islands: Shape[], lake: Vector2[], samosir: Vector2[]) {
   return { heightAt, coastDistance };
 }
 
+// Illustrative land cover by region, not measured land use: dry savanna
+// grassland in Nusa Tenggara, bright paddy lowlands in Java and Bali, deep
+// rainforest in Kalimantan and Papua, mixed farmland and forest elsewhere.
+type LandCover = { lowland: Color; upland: Color };
+const LAND_COVER: Record<string, LandCover> = {
+  mixed: { lowland: new Color("#8dc859"), upland: new Color("#7fb15c") },
+  paddy: { lowland: new Color("#a2d25a"), upland: new Color("#79b65a") },
+  savanna: { lowland: new Color("#cfc976"), upland: new Color("#a6bf68") },
+  rainforest: { lowland: new Color("#5fae4f"), upland: new Color("#5c9c55") },
+};
+const REGION_LAND_COVER: Record<string, keyof typeof LAND_COVER> = {
+  java: "paddy",
+  bali: "paddy",
+  ntb: "savanna",
+  ntt: "savanna",
+  kalimantan: "rainforest",
+  papua: "rainforest",
+};
+export const landCoverFor = (provinceId: string) =>
+  LAND_COVER[
+    REGION_LAND_COVER[regionForProvince(provinceId)?.id ?? ""] ?? "mixed"
+  ];
+
 function landGeometry(
   mesh: ReturnType<typeof triangulateTerrain>,
   heightAt: (point: Vector2) => number,
   coastDistance: (point: Vector2) => number,
+  cover: LandCover,
 ) {
   const positions: number[] = [],
     colors: number[] = [];
   const sand = new Color("#e3d496"),
-    grass = new Color("#8dc859"),
-    upland = new Color("#91b56a"),
-    rock = new Color("#c4c5a0");
+    rock = new Color("#ccceaa");
   const color = new Color();
   for (const point of mesh.points) {
     const height = heightAt(point);
     positions.push(point.x, height, -point.y);
-    color
-      .copy(grass)
-      .lerp(upland, smoothstep((height - 0.6) / 2.5))
-      .lerp(rock, smoothstep((height - 2.8) / 1.4) * 0.72)
-      .lerp(sand, 1 - smoothstep(coastDistance(point) / 0.24));
-    colors.push(color.r, color.g, color.b);
   }
   const geometry = new BufferGeometry();
   geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
-  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
   geometry.setIndex(mesh.triangles.flat());
   geometry.computeVertexNormals();
+  const normals = geometry.getAttribute("normal");
+  mesh.points.forEach((point, i) => {
+    const height = positions[i * 3 + 1];
+    const { x, y } = point;
+    // Broad, soft patches of lighter and darker cover; position-based, so
+    // neighbouring provinces match along their shared border.
+    const patch =
+      0.6 *
+        Math.sin(x * 0.9 + Math.sin(y * 0.7) * 1.4) *
+        Math.cos(y * 1.1 - x * 0.4) +
+      0.4 * Math.sin(x * 2.3 - y * 1.9 + 0.8) * Math.cos(y * 2.6 + x * 1.3);
+    // Bare rock shows only where slopes are steep, never as noisy speckle.
+    const steep = smoothstep((0.7 - normals.getY(i)) / 0.14);
+    color
+      .copy(cover.lowland)
+      .lerp(cover.upland, smoothstep((height - 0.35) / 0.9))
+      .offsetHSL(0.006 * patch, 0.02 * patch, 0.025 * patch)
+      .lerp(rock, steep * 0.5)
+      .lerp(sand, 1 - smoothstep(coastDistance(point) / 0.24));
+    colors.push(color.r, color.g, color.b);
+  });
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
   geometry.computeBoundingBox();
   return geometry;
 }
@@ -902,7 +940,12 @@ export function buildWorldGeometry(map: MapData) {
   const { heightAt, coastDistance } = terrainField(islands, lake, samosir);
   const surfaces = parts.map(({ id, shapes }) => {
     const mesh = triangulateTerrain(shapes);
-    const geometry = landGeometry(mesh, heightAt, coastDistance);
+    const geometry = landGeometry(
+      mesh,
+      heightAt,
+      coastDistance,
+      landCoverFor(id),
+    );
     return {
       id,
       shapes,
@@ -1028,5 +1071,85 @@ export function neighbourGeometry(region: RegionData, coastlines: Rings[]) {
     }
   const geometry = new BufferGeometry();
   geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  return geometry;
+}
+
+/**
+ * Bands of coastal water around the merged island coastlines, from the open-sea
+ * shelf inwards to a sand rim. Each band is one flat colour at its own height, so
+ * overlapping bands of nearby islands merge and the inner band always wins.
+ * Only islands with drawn land get a coast; dropped islets stay open sea.
+ */
+const COAST_BANDS = [
+  // Outer edge as a fraction of the local shelf width, or a fixed distance.
+  { color: "#8edbd9", height: -0.036, reach: (shelf: number) => shelf },
+  { color: "#a3e4dc", height: -0.033, reach: (shelf: number) => shelf * 0.6 },
+  {
+    color: "#bdeedf",
+    height: -0.03,
+    reach: (shelf: number) => Math.min(0.17, shelf * 0.6),
+  },
+  {
+    color: "#f5fbf3",
+    height: -0.027,
+    reach: (shelf: number) => Math.min(0.1, shelf * 0.45),
+  },
+  { color: "#e8d9a2", height: -0.024, reach: () => 0.065 },
+] as const;
+export function coastalWaterGeometry(
+  coastlines: Rings[],
+  landRings: Vector2[][],
+) {
+  const positions: number[] = [],
+    colors: number[] = [];
+  const key = (p: Vector2) => `${p.x.toFixed(5)},${p.y.toFixed(5)}`;
+  const landPoints = new Set(landRings.flat().map(key));
+  const color = new Color();
+  // A slow, deterministic swell so the shelf widens and narrows along the coast.
+  const swell = (p: Vector2) =>
+    1 +
+    0.32 *
+      Math.sin(p.x * 0.83 + p.y * 0.37) *
+      Math.cos(p.y * 1.07 - p.x * 0.29) +
+    0.12 * Math.sin(p.x * 2.3 - p.y * 1.9);
+  for (const { shape } of coastlines) {
+    if (!shape.some((point) => landPoints.has(key(point)))) continue;
+    const area = Math.abs(ShapeUtils.area(shape));
+    // Islets get a small reef halo rather than a full-width shelf.
+    const shelfWidth = Math.min(0.62, 0.22 + Math.sqrt(area) * 0.2);
+    const outward = ShapeUtils.isClockWise(shape) ? -1 : 1;
+    const normals = shape.map((point, i) => {
+      const previous = shape[(i + shape.length - 1) % shape.length],
+        next = shape[(i + 1) % shape.length];
+      const before = new Vector2(point.y - previous.y, previous.x - point.x)
+          .normalize()
+          .multiplyScalar(outward),
+        after = new Vector2(next.y - point.y, point.x - next.x)
+          .normalize()
+          .multiplyScalar(outward);
+      const normal = before.clone().add(after).normalize();
+      // Mitre at corners, limited so sharp bays do not throw long spikes.
+      return normal.multiplyScalar(1 / Math.max(0.5, normal.dot(after)));
+    });
+    const shelves = shape.map((point) => shelfWidth * swell(point));
+    for (const band of COAST_BANDS) {
+      color.set(band.color);
+      const outer = shape.map((point, i) =>
+        point.clone().addScaledVector(normals[i], band.reach(shelves[i])),
+      );
+      const push = (p: Vector2) => {
+        positions.push(p.x, band.height, -p.y);
+        colors.push(color.r, color.g, color.b);
+      };
+      shape.forEach((a, i) => {
+        const j = (i + 1) % shape.length,
+          b = shape[j];
+        [a, b, outer[j], a, outer[j], outer[i]].forEach(push);
+      });
+    }
+  }
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
   return geometry;
 }
