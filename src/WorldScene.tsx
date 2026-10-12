@@ -15,6 +15,7 @@ import {
   Box3,
   CanvasTexture,
   Color,
+  DoubleSide,
   Group,
   InstancedMesh,
   Mesh,
@@ -24,6 +25,7 @@ import {
   Vector3,
 } from "three";
 import {
+  coastalWaterGeometry,
   neighbourGeometry,
   SEA_LEVEL,
   type Scenery,
@@ -475,6 +477,23 @@ function ShorelineGlow({
     </mesh>
   );
 }
+/** Shallow shelf, foam line and sand rim between the open sea and the islands. */
+function CoastalWater({ world }: { world: WorldGeometry }) {
+  const geometry = useMemo(
+    () =>
+      coastalWaterGeometry(
+        world.coastlines,
+        world.provinces.flatMap((p) => p.rings),
+      ),
+    [world],
+  );
+  useEffect(() => () => geometry.dispose(), [geometry]);
+  return (
+    <mesh geometry={geometry} position={[0, SEA_LEVEL, 0]}>
+      <meshBasicMaterial vertexColors side={DoubleSide} toneMapped={false} />
+    </mesh>
+  );
+}
 /** Plain, flat land for the neighbouring countries, beneath the playable islands. */
 function NeighbourLand({
   region,
@@ -746,6 +765,7 @@ function Contents(props: WorldSceneProps) {
         <planeGeometry args={[600, 600]} />
         <meshBasicMaterial color="#79d0d8" toneMapped={false} />
       </mesh>
+      <CoastalWater world={world} />
       {props.neighbours && (
         <NeighbourLand region={props.neighbours} world={world} />
       )}

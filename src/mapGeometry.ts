@@ -993,3 +993,83 @@ export function neighbourGeometry(region: RegionData, coastlines: Rings[]) {
   geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
   return geometry;
 }
+
+/**
+ * Bands of coastal water around the merged island coastlines, from the open-sea
+ * shelf inwards to a sand rim. Each band is one flat colour at its own height, so
+ * overlapping bands of nearby islands merge and the inner band always wins.
+ * Only islands with drawn land get a coast; dropped islets stay open sea.
+ */
+const COAST_BANDS = [
+  // Outer edge as a fraction of the local shelf width, or a fixed distance.
+  { color: "#8edbd9", height: -0.036, reach: (shelf: number) => shelf },
+  { color: "#a3e4dc", height: -0.033, reach: (shelf: number) => shelf * 0.6 },
+  {
+    color: "#bdeedf",
+    height: -0.03,
+    reach: (shelf: number) => Math.min(0.17, shelf * 0.6),
+  },
+  {
+    color: "#f5fbf3",
+    height: -0.027,
+    reach: (shelf: number) => Math.min(0.1, shelf * 0.45),
+  },
+  { color: "#e8d9a2", height: -0.024, reach: () => 0.065 },
+] as const;
+export function coastalWaterGeometry(
+  coastlines: Rings[],
+  landRings: Vector2[][],
+) {
+  const positions: number[] = [],
+    colors: number[] = [];
+  const key = (p: Vector2) => `${p.x.toFixed(5)},${p.y.toFixed(5)}`;
+  const landPoints = new Set(landRings.flat().map(key));
+  const color = new Color();
+  // A slow, deterministic swell so the shelf widens and narrows along the coast.
+  const swell = (p: Vector2) =>
+    1 +
+    0.32 *
+      Math.sin(p.x * 0.83 + p.y * 0.37) *
+      Math.cos(p.y * 1.07 - p.x * 0.29) +
+    0.12 * Math.sin(p.x * 2.3 - p.y * 1.9);
+  for (const { shape } of coastlines) {
+    if (!shape.some((point) => landPoints.has(key(point)))) continue;
+    const area = Math.abs(ShapeUtils.area(shape));
+    // Islets get a small reef halo rather than a full-width shelf.
+    const shelfWidth = Math.min(0.62, 0.22 + Math.sqrt(area) * 0.2);
+    const outward = ShapeUtils.isClockWise(shape) ? -1 : 1;
+    const normals = shape.map((point, i) => {
+      const previous = shape[(i + shape.length - 1) % shape.length],
+        next = shape[(i + 1) % shape.length];
+      const before = new Vector2(point.y - previous.y, previous.x - point.x)
+          .normalize()
+          .multiplyScalar(outward),
+        after = new Vector2(next.y - point.y, point.x - next.x)
+          .normalize()
+          .multiplyScalar(outward);
+      const normal = before.clone().add(after).normalize();
+      // Mitre at corners, limited so sharp bays do not throw long spikes.
+      return normal.multiplyScalar(1 / Math.max(0.5, normal.dot(after)));
+    });
+    const shelves = shape.map((point) => shelfWidth * swell(point));
+    for (const band of COAST_BANDS) {
+      color.set(band.color);
+      const outer = shape.map((point, i) =>
+        point.clone().addScaledVector(normals[i], band.reach(shelves[i])),
+      );
+      const push = (p: Vector2) => {
+        positions.push(p.x, band.height, -p.y);
+        colors.push(color.r, color.g, color.b);
+      };
+      shape.forEach((a, i) => {
+        const j = (i + 1) % shape.length,
+          b = shape[j];
+        [a, b, outer[j], a, outer[j], outer[i]].forEach(push);
+      });
+    }
+  }
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+  return geometry;
+}
