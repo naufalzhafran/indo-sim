@@ -79,6 +79,14 @@ function fixture() {
             rotation: 1.2,
           },
         ],
+        palms: [
+          {
+            province: i ? "12" : "11",
+            position: anchor.clone().add(new Vector3(0, 0, 0.1)),
+            scale: 0.3,
+            rotation: 2.1,
+          },
+        ],
       },
     };
   });

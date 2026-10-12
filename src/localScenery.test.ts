@@ -42,7 +42,11 @@ function fixture() {
         bounds,
         rings,
         anchor: new Vector3(2, 1, 15),
-        scenery: { trees: [item(3, 3), item(14, 14)], houses: [item(4, 3)] },
+        scenery: {
+          trees: [item(3, 3), item(14, 14)],
+          houses: [item(4, 3)],
+          palms: [],
+        },
       },
     ],
     lake: new BufferGeometry(),
