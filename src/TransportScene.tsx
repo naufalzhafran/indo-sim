@@ -44,82 +44,28 @@ const smooth = (x: number) => {
   return t * t * (3 - 2 * t);
 };
 
-/** Cross ties laid every `spacing` along a line, for railway sleepers. */
-function addTies(
-  strip: Strip,
-  line: RailLine,
-  from: number,
-  to: number,
-  spacing: number,
-  half: number,
-  width: number,
-  lift: number,
-) {
-  const start = line.distances[from],
-    end = line.distances[to];
-  const at = new Vector3(),
-    ahead = new Vector3();
-  for (let d = start + spacing / 2; d < end; d += spacing) {
-    pointAlong(line, d, at);
-    pointAlong(line, Math.min(end, d + 0.02), ahead);
-    const dx = ahead.x - at.x,
-      dz = ahead.z - at.z,
-      length = Math.hypot(dx, dz) || 1;
-    // Along the track (t) and across it (n).
-    const tx = (dx / length) * width,
-      tz = (dz / length) * width,
-      nx = (-dz / length) * half,
-      nz = (dx / length) * half;
-    const y = at.y + lift;
-    strip.positions.push(
-      at.x - tx + nx,
-      y,
-      at.z - tz + nz,
-      at.x - tx - nx,
-      y,
-      at.z - tz - nz,
-      at.x + tx + nx,
-      y,
-      at.z + tz + nz,
-      at.x - tx - nx,
-      y,
-      at.z - tz - nz,
-      at.x + tx - nx,
-      y,
-      at.z + tz - nz,
-      at.x + tx + nx,
-      y,
-      at.z + tz + nz,
-    );
-  }
-}
-
-/** Steel rails on sleepers over a pale ballast bed, laid apart from the roads. */
+/** A slim ballast bed with two fine rails, laid apart from the roads. */
 function Railways({ lines }: { lines: RailLine[] }) {
   const geometry = useMemo(() => {
     const bed: Strip = { positions: [] },
-      ties: Strip = { positions: [] },
       steel: Strip = { positions: [] };
     // Where lines meet they share track; lay it once.
     const ranges = unsharedRanges(lines, 0.1, 3);
     lines.forEach((line, index) => {
       for (const [from, to] of ranges[index]) {
-        addRibbon(bed, line, from, to, 0.038, 0, RAIL_LIFT);
-        addTies(ties, line, from, to, 0.045, 0.028, 0.007, RAIL_LIFT + 0.002);
-        addRibbon(steel, line, from, to, 0.0035, 0.016, RAIL_LIFT + 0.004);
-        addRibbon(steel, line, from, to, 0.0035, -0.016, RAIL_LIFT + 0.004);
+        addRibbon(bed, line, from, to, 0.026, 0, RAIL_LIFT);
+        addRibbon(steel, line, from, to, 0.003, 0.0105, RAIL_LIFT + 0.004);
+        addRibbon(steel, line, from, to, 0.003, -0.0105, RAIL_LIFT + 0.004);
       }
     });
     return {
       bed: stripGeometry(bed),
-      ties: stripGeometry(ties),
       steel: stripGeometry(steel),
     };
   }, [lines]);
   useEffect(
     () => () => {
       geometry.bed?.dispose();
-      geometry.ties?.dispose();
       geometry.steel?.dispose();
     },
     [geometry],
@@ -129,7 +75,7 @@ function Railways({ lines }: { lines: RailLine[] }) {
       {geometry.bed && (
         <mesh geometry={geometry.bed} renderOrder={2}>
           <meshLambertMaterial
-            color="#cdbd9f"
+            color="#c4b8a0"
             side={DoubleSide}
             polygonOffset
             polygonOffsetFactor={-2}
@@ -137,19 +83,8 @@ function Railways({ lines }: { lines: RailLine[] }) {
           />
         </mesh>
       )}
-      {geometry.ties && (
-        <mesh geometry={geometry.ties} renderOrder={3}>
-          <meshLambertMaterial
-            color="#8a6a4f"
-            side={DoubleSide}
-            polygonOffset
-            polygonOffsetFactor={-3}
-            polygonOffsetUnits={-3}
-          />
-        </mesh>
-      )}
       {geometry.steel && (
-        <mesh geometry={geometry.steel} renderOrder={4}>
+        <mesh geometry={geometry.steel} renderOrder={3}>
           <meshBasicMaterial
             color="#55625f"
             side={DoubleSide}

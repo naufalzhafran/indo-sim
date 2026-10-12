@@ -413,11 +413,12 @@ export function routeAwayFromRoads(
   if (!grid) return null;
   grid[0] = from.clone();
   grid[grid.length - 1] = to.clone();
-  return smooth(grid, plan);
+  // Railways take gentler bends than roads, so they are ironed out harder.
+  return smooth(grid, plan, RAIL_RELAX_ROUNDS);
 }
 
 /** Rounds the grid path's corners without leaving the land. */
-function smooth(path: Vector2[], plan: Planner) {
+function smooth(path: Vector2[], plan: Planner, rounds = RELAX_ROUNDS) {
   let points = path;
   for (let round = 0; round < 4; round++) {
     const next: Vector2[] = [points[0]];
@@ -433,11 +434,12 @@ function smooth(path: Vector2[], plan: Planner) {
     next.push(points[points.length - 1]);
     points = next;
   }
-  return relax(points, plan);
+  return relax(points, plan, rounds);
 }
 
 const RELAX_STEP = 0.07;
 const RELAX_ROUNDS = 40;
+const RAIL_RELAX_ROUNDS = 120;
 /**
  * Irons out the grid's staircase: resamples the path evenly, then averages
  * each point with its neighbours so diagonal zig-zags settle into long,
@@ -445,7 +447,7 @@ const RELAX_ROUNDS = 40;
  * them, so they still line up. A point the averaging would push off the
  * land keeps its place.
  */
-function relax(path: Vector2[], plan: Planner) {
+function relax(path: Vector2[], plan: Planner, rounds: number) {
   const even: Vector2[] = [path[0].clone()];
   let carry = 0;
   for (let i = 1; i < path.length; i++) {
@@ -462,7 +464,7 @@ function relax(path: Vector2[], plan: Planner) {
   even.push(path[path.length - 1].clone());
   if (even.length < 3) return path;
   let points = even;
-  for (let round = 0; round < RELAX_ROUNDS; round++) {
+  for (let round = 0; round < rounds; round++) {
     const next = points.map((p) => p.clone());
     for (let i = 1; i < points.length - 1; i++)
       next[i]
