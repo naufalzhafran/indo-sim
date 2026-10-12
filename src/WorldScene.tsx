@@ -13,14 +13,12 @@ import {
 } from "@react-three/fiber";
 import {
   Box3,
-  CanvasTexture,
   Color,
   DoubleSide,
   Group,
   InstancedMesh,
   Mesh,
   Object3D,
-  SRGBColorSpace,
   Vector2,
   Vector3,
 } from "three";
@@ -408,75 +406,6 @@ function IslandScenery({
     </>
   );
 }
-/** A soft sunlit band in the shallow water around each island of the selected region. */
-function ShorelineGlow({
-  provinces,
-}: {
-  provinces: WorldGeometry["provinces"];
-}) {
-  const glow = useMemo(() => {
-    if (!provinces.length) return null;
-    const band = 0.26,
-      blur = 0.5,
-      margin = band + blur * 2;
-    const bounds = provinces.reduce(
-      (box, p) => box.union(p.bounds),
-      new Box3(),
-    );
-    const minX = bounds.min.x - margin,
-      minZ = bounds.min.z - margin,
-      width = bounds.max.x + margin - minX,
-      depth = bounds.max.z + margin - minZ,
-      scale = Math.min(64, 1024 / Math.max(width, depth));
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.ceil(width * scale);
-    canvas.height = Math.ceil(depth * scale);
-    const context = canvas.getContext("2d");
-    if (!context) return null;
-    const path = new Path2D();
-    for (const ring of provinces.flatMap((p) => p.rings)) {
-      ring.forEach((point, i) =>
-        path[i ? "lineTo" : "moveTo"](
-          (point.x - minX) * scale,
-          (-point.y - minZ) * scale,
-        ),
-      );
-      path.closePath();
-    }
-    // The land covers the filled interior, leaving only the shoreline glow.
-    context.lineJoin = "round";
-    context.fillStyle = context.strokeStyle = context.shadowColor = "#fff4c4";
-    context.lineWidth = band * 2 * scale;
-    context.shadowBlur = blur * scale;
-    context.stroke(path);
-    context.fill(path);
-    const texture = new CanvasTexture(canvas);
-    texture.colorSpace = SRGBColorSpace;
-    return {
-      texture,
-      width,
-      depth,
-      x: minX + width / 2,
-      z: minZ + depth / 2,
-    };
-  }, [provinces]);
-  useEffect(() => () => glow?.texture.dispose(), [glow]);
-  if (!glow) return null;
-  return (
-    <mesh
-      position={[glow.x, SEA_LEVEL - 0.02, glow.z]}
-      rotation={[-Math.PI / 2, 0, 0]}
-    >
-      <planeGeometry args={[glow.width, glow.depth]} />
-      <meshBasicMaterial
-        map={glow.texture}
-        transparent
-        depthWrite={false}
-        toneMapped={false}
-      />
-    </mesh>
-  );
-}
 /** Shallow shelf, foam line and sand rim between the open sea and the islands. */
 function CoastalWater({ world }: { world: WorldGeometry }) {
   const geometry = useMemo(
@@ -800,7 +729,6 @@ function Contents(props: WorldSceneProps) {
           </lineSegments>
         </group>
       ))}
-      <ShorelineGlow provinces={selectedProvinces} />
       <mesh geometry={world.lake} dispose={null} receiveShadow>
         <meshLambertMaterial color="#86d6dc" />
       </mesh>
