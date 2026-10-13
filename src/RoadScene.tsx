@@ -53,7 +53,12 @@ export type Strip = { positions: number[] };
 /** A flat ribbon draped over a road's (or railway's) ground points. */
 export function addRibbon(
   strip: Strip,
-  road: Pick<Road, "points">,
+  road: {
+    points: { x: number; y: number; z: number }[];
+    /** Points past either end, where the line carries on into another. */
+    before?: { x: number; z: number };
+    after?: { x: number; z: number };
+  },
   from: number,
   to: number,
   half: number,
@@ -61,9 +66,10 @@ export function addRibbon(
   lift: number,
 ) {
   const sides: number[][] = [];
+  const last = road.points.length - 1;
   for (let i = from; i <= to; i++) {
-    const a = road.points[Math.max(0, i - 1)],
-      b = road.points[Math.min(road.points.length - 1, i + 1)];
+    const a = i === 0 ? (road.before ?? road.points[0]) : road.points[i - 1],
+      b = i === last ? (road.after ?? road.points[last]) : road.points[i + 1];
     const dx = b.x - a.x,
       dz = b.z - a.z,
       length = Math.hypot(dx, dz) || 1;
@@ -248,8 +254,7 @@ export default function RoadNetwork({
             tower.grow <= grown &&
             !railPoints.some(
               (p) =>
-                Math.abs(p.x - tower.x) < tower.w + 0.06 &&
-                Math.abs(p.z - tower.z) < tower.w + 0.06,
+                Math.hypot(p.x - tower.x, p.z - tower.z) < tower.w * 0.6 + 0.07,
             ),
         )
         .map((tower) => {

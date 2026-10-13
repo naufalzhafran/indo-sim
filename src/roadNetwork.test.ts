@@ -67,13 +67,19 @@ describe("road network", () => {
     expect(worst).toBeLessThan(0.03);
   });
   it("draws a trunk several roads share only once", () => {
-    const drawn = unsharedRanges(network.roads);
-    const index = network.roads.findIndex(
-      (r) => r.id === "yogyakarta-surabaya",
-    );
-    const covered = drawn[index].reduce((sum, [a, b]) => sum + b - a, 0);
-    expect(covered).toBeLessThan(network.roads[index].points.length / 2);
-    expect(drawn[0]).toEqual([[0, network.roads[0].points.length - 1]]);
+    const trunk = Array.from({ length: 20 }, (_, i) => ({ x: i * 0.14, z: 0 }));
+    const branch = [
+      ...trunk.slice(0, 10),
+      ...Array.from({ length: 8 }, (_, i) => ({
+        x: 1.26 + i * 0.1,
+        z: 0.1 + i * 0.14,
+      })),
+    ];
+    const drawn = unsharedRanges([{ points: trunk }, { points: branch }]);
+    expect(drawn[0]).toEqual([[0, trunk.length - 1]]);
+    // The branch is drawn only from where it leaves the trunk.
+    const covered = drawn[1].reduce((sum, [a, b]) => sum + b - a, 0);
+    expect(covered).toBeLessThan(branch.length / 2 + 4);
   });
   it("leaves no gap where a road leaves a shared trunk", () => {
     const cities = network.cities.map((c) => c.position);

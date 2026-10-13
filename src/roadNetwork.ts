@@ -1,4 +1,4 @@
-import { Vector2, Vector3 } from "three";
+import { CatmullRomCurve3, Vector2, Vector3 } from "three";
 import { projectCoordinate, type WorldGeometry } from "./mapGeometry";
 import { gradeTerrain } from "./terrainGrading";
 
@@ -11,14 +11,9 @@ const CITIES: [string, number, number, number][] = [
   ["jambi", 103.61, -1.61, 0.7],
   ["palembang", 104.76, -2.99, 0.9],
   ["bandar-lampung", 105.26, -5.43, 0.75],
-  ["merak", 106.0, -5.93, 0.6],
   ["jakarta", 106.85, -6.2, 1],
-  ["bandung", 107.61, -6.92, 0.9],
-  ["cirebon", 108.55, -6.73, 0.65],
-  ["semarang", 110.42, -6.97, 0.85],
   ["yogyakarta", 110.36, -7.8, 0.8],
   ["surabaya", 112.75, -7.25, 1],
-  ["banyuwangi", 114.37, -8.22, 0.6],
   ["gilimanuk", 114.44, -8.17, 0.6],
   ["denpasar", 115.22, -8.65, 0.85],
   ["singaraja", 115.09, -8.11, 0.6],
@@ -51,45 +46,287 @@ const CITIES: [string, number, number, number][] = [
   ["jayapura", 140.72, -2.53, 0.75],
   ["merauke", 140.4, -8.49, 0.65],
 ];
-/** Trunk corridors between those cities (Trans-Sumatra, Trans-Java, …). */
-const CORRIDORS: [string, string][] = [
-  ["banda-aceh", "medan"],
-  ["medan", "pekanbaru"],
-  ["pekanbaru", "padang"],
-  ["pekanbaru", "jambi"],
-  ["jambi", "palembang"],
-  ["palembang", "bandar-lampung"],
-  ["bandar-lampung", "merak"],
-  ["merak", "jakarta"],
-  ["jakarta", "bandung"],
-  ["jakarta", "cirebon"],
-  ["cirebon", "semarang"],
-  ["bandung", "yogyakarta"],
-  ["semarang", "yogyakarta"],
-  ["semarang", "surabaya"],
-  ["yogyakarta", "surabaya"],
-  ["surabaya", "banyuwangi"],
-  ["gilimanuk", "denpasar"],
-  ["denpasar", "singaraja"],
-  ["mataram", "selong"],
-  ["sumbawa-besar", "bima"],
-  ["labuan-bajo", "ruteng"],
-  ["ruteng", "ende"],
-  ["ende", "maumere"],
-  ["kupang", "atambua"],
-  ["pontianak", "palangkaraya"],
-  ["palangkaraya", "banjarmasin"],
-  ["banjarmasin", "balikpapan"],
-  ["balikpapan", "samarinda"],
-  ["manado", "palu"],
-  ["palu", "makassar"],
-  ["makassar", "kendari"],
-  ["sorong", "manokwari"],
-  ["manokwari", "nabire"],
-  ["nabire", "timika"],
-  ["timika", "wamena"],
-  ["wamena", "jayapura"],
-  ["timika", "merauke"],
+/**
+ * Trunk roads between those cities, drawn by hand rather than searched for:
+ * [from, to, [lon, lat] waypoints in between]. Each road is a smooth curve
+ * through its waypoints, so editing a route is just moving a point. Waypoints
+ * keep well inland; the shape is illustrative, not the real alignment.
+ */
+const ROUTES: [string, string, [number, number][]][] = [
+  [
+    "banda-aceh",
+    "medan",
+    [
+      [95.61, 5.27],
+      [96.26, 5.02],
+      [96.7, 4.98],
+      [97.32, 4.84],
+      [97.86, 4.22],
+      [97.96, 3.99],
+      [98.25, 3.75],
+    ],
+  ],
+  [
+    "medan",
+    "pekanbaru",
+    [
+      [98.9, 3.34],
+      [99.26, 2.89],
+      [99.91, 2.5],
+      [100.37, 1.97],
+      [100.6, 1.52],
+      [101.1, 1.04],
+    ],
+  ],
+  [
+    "pekanbaru",
+    "padang",
+    [
+      [101.28, 0.1],
+      [100.79, -0.48],
+    ],
+  ],
+  [
+    "pekanbaru",
+    "jambi",
+    [
+      [101.85, 0.2],
+      [102.33, -0.39],
+      [102.81, -0.7],
+      [103.28, -1.3],
+    ],
+  ],
+  [
+    "jambi",
+    "palembang",
+    [
+      [103.96, -2.06],
+      [104.33, -2.41],
+      [104.52, -2.81],
+    ],
+  ],
+  [
+    "palembang",
+    "bandar-lampung",
+    [
+      [104.78, -3.37],
+      [105.02, -3.81],
+      [105.11, -4.44],
+      [105.36, -4.88],
+    ],
+  ],
+  [
+    "jakarta",
+    "yogyakarta",
+    [
+      [107.13, -6.52],
+      [107.75, -6.65],
+      [108.53, -7.06],
+      [109.79, -7.3],
+      [110.05, -7.66],
+    ],
+  ],
+  [
+    "yogyakarta",
+    "surabaya",
+    [
+      [110.83, -7.66],
+      [111.4, -7.66],
+      [112.06, -7.42],
+    ],
+  ],
+  ["gilimanuk", "denpasar", [[115.24, -8.35]]],
+  [
+    "denpasar",
+    "singaraja",
+    [
+      [115.18, -8.37],
+      [115.12, -8.32],
+    ],
+  ],
+  ["mataram", "selong", []],
+  [
+    "sumbawa-besar",
+    "bima",
+    [
+      [117.71, -8.76],
+      [118.09, -8.75],
+    ],
+  ],
+  ["labuan-bajo", "ruteng", []],
+  [
+    "ruteng",
+    "ende",
+    [
+      [120.94, -8.6],
+      [121.42, -8.73],
+    ],
+  ],
+  ["ende", "maumere", []],
+  [
+    "kupang",
+    "atambua",
+    [
+      [124.24, -9.82],
+      [124.42, -9.76],
+    ],
+  ],
+  [
+    "pontianak",
+    "palangkaraya",
+    [
+      [109.88, -0.18],
+      [110.38, -0.57],
+      [110.98, -0.77],
+      [111.49, -1.16],
+      [112.09, -1.36],
+      [112.59, -1.75],
+      [113.19, -1.95],
+      [113.63, -2.2],
+    ],
+  ],
+  [
+    "palangkaraya",
+    "banjarmasin",
+    [
+      [114.12, -2.54],
+      [114.45, -2.92],
+    ],
+  ],
+  [
+    "banjarmasin",
+    "balikpapan",
+    [
+      [114.42, -2.87],
+      [114.59, -2.56],
+      [115.05, -2.13],
+      [115.42, -1.46],
+      [115.62, -1.31],
+      [116.04, -1.17],
+      [116.43, -0.96],
+    ],
+  ],
+  ["balikpapan", "samarinda", []],
+  [
+    "manado",
+    "palu",
+    [
+      [124.5, 1.06],
+      [124.19, 0.85],
+      [124.01, 0.79],
+      [123.69, 0.76],
+      [123.33, 0.65],
+      [122.25, 0.65],
+      [121.64, 0.8],
+      [120.57, 0.62],
+      [120.39, 0.56],
+      [120.19, 0.41],
+      [120.08, 0.19],
+      [119.76, -0.91],
+    ],
+  ],
+  [
+    "palu",
+    "makassar",
+    [
+      [119.65, -1.53],
+      [119.61, -1.79],
+      [119.7, -2.42],
+      [119.64, -2.98],
+      [119.8, -3.6],
+      [119.74, -4.16],
+      [119.86, -4.72],
+      [119.83, -4.97],
+    ],
+  ],
+  [
+    "makassar",
+    "kendari",
+    [
+      [119.81, -5.0],
+      [119.86, -4.75],
+      [119.75, -4.12],
+      [119.78, -3.88],
+      [119.7, -3.56],
+      [119.74, -3.29],
+      [119.65, -3.0],
+      [119.64, -2.82],
+      [119.88, -2.67],
+      [120.82, -2.54],
+      [121.07, -2.59],
+      [121.31, -2.78],
+      [121.85, -3.41],
+      [121.96, -3.77],
+      [122.19, -3.99],
+    ],
+  ],
+  [
+    "sorong",
+    "manokwari",
+    [
+      [131.8, -1.06],
+      [132.3, -1.14],
+      [132.92, -1.0],
+      [133.42, -1.07],
+    ],
+  ],
+  [
+    "manokwari",
+    "nabire",
+    [
+      [133.77, -1.7],
+      [134.01, -2.13],
+      [134.07, -2.76],
+      [134.32, -2.95],
+      [134.61, -3.29],
+      [134.83, -3.42],
+      [135.32, -3.53],
+    ],
+  ],
+  [
+    "nabire",
+    "timika",
+    [
+      [135.95, -3.75],
+      [136.25, -4.16],
+      [136.77, -4.52],
+    ],
+  ],
+  [
+    "timika",
+    "wamena",
+    [
+      [137.31, -4.4],
+      [137.88, -4.4],
+      [138.53, -4.15],
+    ],
+  ],
+  [
+    "wamena",
+    "jayapura",
+    [
+      [139.2, -3.83],
+      [139.64, -3.58],
+      [140.12, -2.99],
+    ],
+  ],
+  [
+    "timika",
+    "merauke",
+    [
+      [137.19, -4.43],
+      [137.38, -4.4],
+      [137.82, -4.41],
+      [137.98, -4.54],
+      [138.13, -4.74],
+      [138.3, -5.22],
+      [138.75, -5.75],
+      [138.92, -6.23],
+      [139.37, -6.76],
+      [139.57, -7.29],
+      [140.02, -7.82],
+    ],
+  ],
 ];
 
 export type Tower = {
@@ -124,6 +361,12 @@ export type Road = {
   length: number;
   /** Province under each point, so each stretch follows its own region's stats. */
   provinces: string[];
+  /**
+   * Where the road carries on through a city into another road, that road's
+   * next point past the city, so the two ribbons meet edge to edge.
+   */
+  before?: { x: number; y: number; z: number };
+  after?: { x: number; y: number; z: number };
 };
 export type RoadNetwork = { cities: City[]; roads: Road[] };
 
@@ -169,10 +412,10 @@ export function drapeOver(
   }
 }
 
-const GRID = 0.3;
-const MARGIN = 0.14;
 const SAMPLE = 0.14;
 const CITY_MARGIN = 0.55;
+/** Two towns on one island keep at least this far apart. */
+const CITY_GAP = 0.75;
 /** Half the widest road plus a little verge, which the deck must clear. */
 const DECK_HALF_WIDTH = 0.12;
 const TOLL_AT = 66,
@@ -260,180 +503,60 @@ export function landPlanner(world: WorldGeometry) {
   return { onLand, island };
 }
 
-type Planner = ReturnType<typeof landPlanner>;
-const routeCaches = new WeakMap<
-  Planner,
-  { land: Map<number, Map<string, boolean>>; height: Map<string, number> }
->();
-
-/** Cheapest land route between two points: favours lowlands and avoids the coast. */
-function route(
-  world: WorldGeometry,
-  plan: Planner,
-  from: Vector2,
-  to: Vector2,
-  margin: number,
-  used: Set<string>,
-  /** Extra cost for ground to keep away from, such as another network's roads. */
-  penalty: (x: number, y: number) => number = () => 1,
-): Vector2[] | null {
-  const key = (ix: number, iy: number) => `${ix},${iy}`;
-  // A grid shared by every road, so later roads can join earlier ones exactly.
-  const at = (ix: number, iy: number) => new Vector2(ix * GRID, iy * GRID);
-  const start = [Math.round(from.x / GRID), Math.round(from.y / GRID)];
-  const goal = [Math.round(to.x / GRID), Math.round(to.y / GRID)];
-  const cost = new Map<string, number>([[key(start[0], start[1]), 0]]);
-  const parent = new Map<string, string>();
-  const open: { ix: number; iy: number; f: number }[] = [
-    { ix: start[0], iy: start[1], f: 0 },
-  ];
-  const h = (ix: number, iy: number) =>
-    Math.hypot(ix - goal[0], iy - goal[1]) * GRID * 0.4;
-  // Land tests and heights on the shared grid are reused by every route.
-  let caches = routeCaches.get(plan);
-  if (!caches)
-    routeCaches.set(plan, (caches = { land: new Map(), height: new Map() }));
-  let valid = caches.land.get(margin);
-  if (!valid) caches.land.set(margin, (valid = new Map()));
-  const startKey = key(start[0], start[1]),
-    goalKey = key(goal[0], goal[1]);
-  const ok = (ix: number, iy: number) => {
-    const k = key(ix, iy);
-    if (k === startKey || k === goalKey) return true;
-    let v = valid.get(k);
-    if (v === undefined) {
-      const p = at(ix, iy);
-      v = plan.onLand(p.x, p.y, margin);
-      valid.set(k, v);
-    }
-    return v;
-  };
-  const heightAt = (ix: number, iy: number, p: Vector2) => {
-    const k = key(ix, iy);
-    let v = caches.height.get(k);
-    if (v === undefined) {
-      v = Math.max(0, world.surfaceHeight(p));
-      caches.height.set(k, v);
-    }
-    return v;
-  };
-  let guard = 0;
-  // A binary heap keyed on f; entries made stale by a cheaper visit are skipped.
-  const push = (node: (typeof open)[number]) => {
-    open.push(node);
-    for (let i = open.length - 1; i > 0;) {
-      const parentIndex = (i - 1) >> 1;
-      if (open[parentIndex].f <= open[i].f) break;
-      [open[parentIndex], open[i]] = [open[i], open[parentIndex]];
-      i = parentIndex;
-    }
-  };
-  const pop = () => {
-    const top = open[0],
-      last = open.pop()!;
-    if (open.length) {
-      open[0] = last;
-      for (let i = 0; ;) {
-        const l = i * 2 + 1,
-          r = l + 1;
-        let m = i;
-        if (l < open.length && open[l].f < open[m].f) m = l;
-        if (r < open.length && open[r].f < open[m].f) m = r;
-        if (m === i) break;
-        [open[m], open[i]] = [open[i], open[m]];
-        i = m;
-      }
-    }
-    return top;
-  };
-  const closed = new Set<string>();
-  while (open.length && guard++ < 120000) {
-    const cur = pop();
-    const ck = key(cur.ix, cur.iy);
-    if (closed.has(ck)) continue;
-    closed.add(ck);
-    if (cur.ix === goal[0] && cur.iy === goal[1]) {
-      const path: Vector2[] = [];
-      let k: string | undefined = ck;
-      while (k) {
-        const [ix, iy] = k.split(",").map(Number);
-        path.push(at(ix, iy));
-        used.add(k);
-        k = parent.get(k);
-      }
-      return path.reverse();
-    }
-    for (let dx = -1; dx <= 1; dx++)
-      for (let dy = -1; dy <= 1; dy++) {
-        if (!dx && !dy) continue;
-        const nx = cur.ix + dx,
-          ny = cur.iy + dy;
-        if (!ok(nx, ny)) continue;
-        const p = at(nx, ny);
-        const height = heightAt(nx, ny, p);
-        // Roads already built are cheap to follow, so routes merge into trunks.
-        const step =
-          Math.hypot(dx, dy) *
-          GRID *
-          (1 + height * 1.6) *
-          (used.has(key(nx, ny)) ? 0.15 : 1) *
-          penalty(p.x, p.y);
-        const next = (cost.get(ck) ?? 0) + step;
-        const nk = key(nx, ny);
-        if (next < (cost.get(nk) ?? Infinity)) {
-          cost.set(nk, next);
-          parent.set(nk, ck);
-          push({ ix: nx, iy: ny, f: next + h(nx, ny) });
-        }
-      }
-  }
-  return null;
-}
-
 /**
- * A smooth overland route between two map points that keeps clear of the
- * roads where it can, for railways. Lines laid earlier (in `used`) are cheap
- * to follow, so railways meet and share track rather than run side by side.
+ * Lets a new path settle onto the paths laid before it. Routes follow an
+ * earlier trunk only to within a grid cell, which would leave two lines a
+ * hair's breadth apart; this draws points near a trunk fully onto it and
+ * eases the ones further out, so branches leave a trunk cleanly.
  */
-export function routeAwayFromRoads(
-  world: WorldGeometry,
-  plan: Planner,
-  network: RoadNetwork,
-  from: Vector2,
-  to: Vector2,
-  clearance: number,
-  used: Set<string>,
-) {
-  const penalty = (x: number, y: number) =>
-    onRoadOrCity(network, x, -y, clearance, 0) ? 8 : 1;
-  const grid =
-    route(world, plan, from, to, MARGIN, used, penalty) ??
-    route(world, plan, from, to, 0.04, used, penalty) ??
-    route(world, plan, from, to, 0, used, penalty);
-  if (!grid) return null;
-  grid[0] = from.clone();
-  grid[grid.length - 1] = to.clone();
-  return smooth(grid, plan);
-}
-
-/** Rounds the grid path's corners without leaving the land. */
-function smooth(path: Vector2[], plan: Planner) {
-  let points = path;
-  for (let round = 0; round < 4; round++) {
-    const next: Vector2[] = [points[0]];
-    for (let i = 0; i < points.length - 1; i++) {
-      const a = points[i],
-        b = points[i + 1];
-      const q = a.clone().lerp(b, 0.25),
-        r = a.clone().lerp(b, 0.75);
-      if (i === 0 || plan.onLand(q.x, q.y, 0.06)) next.push(q);
-      if (i === points.length - 2 || plan.onLand(r.x, r.y, 0.06)) next.push(r);
-    }
-    // Rounding the corners must not pull the ends away from their cities.
-    next.push(points[points.length - 1]);
-    points = next;
-  }
-  return points;
+export function trunkSnapper(inner = 0.1, outer = 0.2) {
+  const cell = 0.5;
+  const grid = new Map<string, number[][]>();
+  const cellKey = (i: number, j: number) => `${i},${j}`;
+  return {
+    add(points: readonly { x: number; z: number }[]) {
+      for (let i = 1; i < points.length; i++) {
+        const a = points[i - 1],
+          b = points[i];
+        const seg = [a.x, a.z, b.x, b.z];
+        const minI = Math.floor((Math.min(a.x, b.x) - outer) / cell),
+          maxI = Math.floor((Math.max(a.x, b.x) + outer) / cell),
+          minJ = Math.floor((Math.min(a.z, b.z) - outer) / cell),
+          maxJ = Math.floor((Math.max(a.z, b.z) + outer) / cell);
+        for (let ci = minI; ci <= maxI; ci++)
+          for (let cj = minJ; cj <= maxJ; cj++) {
+            const k = cellKey(ci, cj);
+            const list = grid.get(k);
+            if (list) list.push(seg);
+            else grid.set(k, [seg]);
+          }
+      }
+    },
+    /** The point `(x, z)` moved toward the nearest earlier path. */
+    snap(x: number, z: number): [number, number] {
+      let best = Infinity,
+        bx = x,
+        bz = z;
+      for (const [ax, az, cx, cz] of grid.get(
+        cellKey(Math.floor(x / cell), Math.floor(z / cell)),
+      ) ?? []) {
+        const dx = cx - ax,
+          dz = cz - az,
+          length2 = dx * dx + dz * dz || 1;
+        const t = Math.max(
+          0,
+          Math.min(1, ((x - ax) * dx + (z - az) * dz) / length2),
+        );
+        const px = ax + dx * t,
+          pz = az + dz * t,
+          d = Math.hypot(x - px, z - pz);
+        if (d < best) ((best = d), (bx = px), (bz = pz));
+      }
+      if (best >= outer) return [x, z];
+      const w = best <= inner ? 1 : (outer - best) / (outer - inner);
+      return [x + (bx - x) * w, z + (bz - z) * w];
+    },
+  };
 }
 
 /**
@@ -534,21 +657,47 @@ export function buildRoadNetwork(world: WorldGeometry): RoadNetwork {
   let network = cache.get(world);
   if (network) return network;
   const plan = landPlanner(world);
-  // Cities sit on the nearest inland ground, so each one stands on its island.
+  // Cities sit on the nearest inland ground of their own island, and no two
+  // towns on one island share a spot.
   const cities = new Map<string, { city: City; map: Vector2 }>();
+  const placed: { island: number; at: Vector2 }[] = [];
   for (const [id, lon, lat, size] of CITIES) {
     const target = projectCoordinate([lon, lat]);
+    // The island the town belongs to: the one with land nearest its coordinates.
+    let home = -1;
+    for (let radius = 0; radius <= 2.2 && home < 0; radius += 0.1)
+      for (let k = 0; k < (radius ? 16 : 1) && home < 0; k++) {
+        const a = (k / 16) * Math.PI * 2;
+        const x = target.x + Math.cos(a) * radius,
+          y = target.y + Math.sin(a) * radius;
+        if (plan.onLand(x, y, 0)) home = plan.island(x, y);
+      }
+    if (home < 0) continue;
     let found: Vector2 | null = null;
     // Prefer well inland ground; narrow islands settle for a closer coast.
-    for (const margin of [CITY_MARGIN, 0.3, 0.14])
+    for (const [margin, gap] of [
+      [CITY_MARGIN, CITY_GAP],
+      [0.3, CITY_GAP],
+      [0.14, CITY_GAP * 0.6],
+    ])
       for (let radius = 0; radius <= 2.2 && !found; radius += 0.1)
         for (let k = 0; k < (radius ? 16 : 1) && !found; k++) {
           const a = (k / 16) * Math.PI * 2;
           const x = target.x + Math.cos(a) * radius,
             y = target.y + Math.sin(a) * radius;
-          if (plan.onLand(x, y, margin)) found = new Vector2(x, y);
+          if (
+            plan.onLand(x, y, margin) &&
+            plan.island(x, y) === home &&
+            !placed.some(
+              (other) =>
+                other.island === home &&
+                Math.hypot(other.at.x - x, other.at.y - y) < gap,
+            )
+          )
+            found = new Vector2(x, y);
         }
     if (!found) continue;
+    placed.push({ island: home, at: found });
     const height = Math.max(0.03, world.surfaceHeight(found));
     cities.set(id, {
       city: {
@@ -583,37 +732,103 @@ export function buildRoadNetwork(world: WorldGeometry): RoadNetwork {
   for (const { city, map } of cities.values())
     city.province = owner(map.x, map.y);
   const roads: Road[] = [];
-  const used = new Set<string>();
-  for (const [a, b] of CORRIDORS) {
+  const roadOf = new Map<number, Road>();
+  const trunks = trunkSnapper();
+  // Each route's control points, from its city through its waypoints to the next.
+  const controls = ROUTES.map(([a, b, waypoints]) => {
     const from = cities.get(a),
       to = cities.get(b);
-    if (!from || !to) continue;
-    if (plan.island(from.map.x, from.map.y) !== plan.island(to.map.x, to.map.y))
-      continue;
-    // Narrow necks of land can't keep the usual clearance from the coast.
-    const grid =
-      route(world, plan, from.map, to.map, MARGIN, used) ??
-      route(world, plan, from.map, to.map, 0.04, used) ??
-      route(world, plan, from.map, to.map, 0, used);
-    if (!grid) continue;
-    // The grid snaps the far end; pin both ends to their cities.
-    grid[0] = from.map.clone();
-    grid[grid.length - 1] = to.map.clone();
-    const path = smooth(grid, plan);
+    return from && to
+      ? [from.map, ...waypoints.map(projectCoordinate), to.map]
+      : null;
+  });
+  // Roads that pass through a city carry on through it: at every city, the
+  // two road ends that line up best are paired, as A → B → C. Each curve then
+  // takes its neighbour's next point as a guide, so both leave the city in
+  // one direction and the road flows on instead of stopping at a corner.
+  const beyond = new Map<string, Vector2>(); // `${route}:${end}` → guide point
+  const joins: [string, string][] = [];
+  for (const [id] of cities) {
+    const ends: { key: string; out: Vector2; next: Vector2 }[] = [];
+    ROUTES.forEach(([a, b], r) => {
+      const c = controls[r];
+      if (!c) return;
+      if (a === id) ends.push({ key: `${r}:0`, out: c[1], next: c[1] });
+      if (b === id)
+        ends.push({
+          key: `${r}:1`,
+          out: c[c.length - 2],
+          next: c[c.length - 2],
+        });
+    });
+    const centre = cities.get(id)!.map;
+    const pairs: { i: number; j: number; straight: number }[] = [];
+    for (let i = 0; i < ends.length; i++)
+      for (let j = i + 1; j < ends.length; j++) {
+        const u = ends[i].out.clone().sub(centre).normalize(),
+          v = ends[j].out.clone().sub(centre).normalize();
+        // -1 is dead straight through; roads that double back don't join up.
+        const straight = u.dot(v);
+        if (straight < 0.3) pairs.push({ i, j, straight });
+      }
+    pairs.sort((p, q) => p.straight - q.straight);
+    const taken = new Set<number>();
+    for (const { i, j } of pairs) {
+      if (taken.has(i) || taken.has(j)) continue;
+      taken.add(i).add(j);
+      beyond.set(ends[i].key, ends[j].next);
+      beyond.set(ends[j].key, ends[i].next);
+      joins.push([ends[i].key, ends[j].key]);
+    }
+  }
+  for (const [r, [a, b]] of ROUTES.entries()) {
+    const from = cities.get(a),
+      to = cities.get(b),
+      control = controls[r];
+    if (!from || !to || !control) continue;
+    // A centripetal curve through the waypoints: smooth, without overshoot.
+    // Guide points past either city shape the ends but aren't drawn.
+    const before = beyond.get(`${r}:0`),
+      after = beyond.get(`${r}:1`);
+    const list = [
+      ...(before ? [before] : []),
+      ...control,
+      ...(after ? [after] : []),
+    ];
+    const curve = new CatmullRomCurve3(
+      list.map((p) => new Vector3(p.x, p.y, 0)),
+      false,
+      "centripetal",
+    );
+    const first = before ? 1 : 0,
+      lastIndex = list.length - 1 - (after ? 1 : 0),
+      segments = list.length - 1;
+    const steps = Math.max(8, Math.ceil(curve.getLength() / 0.05));
+    const path = Array.from({ length: steps + 1 }, (_, k) => {
+      const t = (first + ((lastIndex - first) * k) / steps) / segments;
+      const p = curve.getPoint(t);
+      return new Vector2(p.x, p.y);
+    });
+    path[0] = from.map.clone();
+    path[path.length - 1] = to.map.clone();
     const points: Vector3[] = [],
       distances: number[] = [],
       provinces: string[] = [];
     let travelled = 0,
       carry = 0,
       last = path[0];
-    const push = (p: Vector2) => {
-      points.push(
-        new Vector3(p.x, Math.max(0.03, world.surfaceHeight(p)), -p.y),
-      );
+    const push = (p: Vector2, pinned = false) => {
+      // Settle onto a trunk laid earlier, except in and next to the cities,
+      // where a road carrying on through town must keep its own line.
+      const nearCity =
+        p.distanceTo(from.map) < 0.3 || p.distanceTo(to.map) < 0.3;
+      const [sx, sz] =
+        pinned || nearCity ? [p.x, -p.y] : trunks.snap(p.x, -p.y);
+      points.push(new Vector3(sx, Math.max(0.03, world.surfaceHeight(p)), sz));
       distances.push(travelled);
       provinces.push(owner(p.x, p.y));
     };
-    push(path[0]);
+    push(path[0], true);
     for (let i = 1; i < path.length; i++) {
       const segment = last.distanceTo(path[i]);
       let along = SAMPLE - carry;
@@ -632,7 +847,7 @@ export function buildRoadNetwork(world: WorldGeometry): RoadNetwork {
     const rest = Math.hypot(tail.x - end.x, tail.z + end.y);
     if (rest > 0.005) {
       travelled += rest;
-      push(end);
+      push(end, true);
     }
     // Stretches outside every province outline take the nearest province's value.
     for (let i = 0; i < provinces.length; i++)
@@ -641,6 +856,7 @@ export function buildRoadNetwork(world: WorldGeometry): RoadNetwork {
           provinces.slice(i).find(Boolean) ??
           provinces.slice(0, i).reverse().find(Boolean) ??
           "";
+    trunks.add(points);
     roads.push({
       id: `${a}-${b}`,
       points,
@@ -648,6 +864,7 @@ export function buildRoadNetwork(world: WorldGeometry): RoadNetwork {
       length: travelled,
       provinces,
     });
+    roadOf.set(r, roads[roads.length - 1]);
   }
   // Level a road bed into the hills, then lay each road on its graded ground.
   gradeTerrain(world, roads);
@@ -657,66 +874,132 @@ export function buildRoadNetwork(world: WorldGeometry): RoadNetwork {
       p.y = Math.max(0.03, world.surfaceHeight(probe.set(p.x, -p.z)));
     drapeOver(world, road.points, DECK_HALF_WIDTH);
   }
+  // Roads that carry on through a city share its point and see past it into
+  // each other, so their ribbons join without a seam.
+  for (const [p, q] of joins) {
+    const end = (key: string) => {
+      const [r, side] = key.split(":").map(Number);
+      const road = roadOf.get(r);
+      if (!road) return null;
+      const last = road.points.length - 1;
+      return { road, side, at: side ? last : 0, next: side ? last - 1 : 1 };
+    };
+    const a = end(p),
+      b = end(q);
+    if (!a || !b) continue;
+    const y = Math.max(a.road.points[a.at].y, b.road.points[b.at].y);
+    a.road.points[a.at].y = b.road.points[b.at].y = y;
+    const link = (from: typeof a, to: typeof a) => {
+      const n = to.road.points[to.next];
+      from.road[from.side ? "after" : "before"] = { x: n.x, y: n.y, z: n.z };
+    };
+    link(a, b);
+    link(b, a);
+  }
   for (const { city, map } of cities.values())
     city.position.y = Math.max(0.03, world.surfaceHeight(map));
   network = {
     cities: [...cities.values()].map((c) => c.city),
     roads,
   };
-  // Towers fill in around each centre, on land and clear of the roads.
+  // Towns grow along the trunk roads that serve them: buildings line both
+  // sides of each road leaving the centre, tallest in the middle, so the road
+  // runs straight through town rather than past scattered blocks.
   const roadPoints = roadGrid(roads.flatMap((r) => r.points));
   network.cities.forEach((city, c) => {
-    const count = Math.round(6 + city.size * 10);
-    for (let i = 0; i < count; i++) {
-      const hashed = (a: number) =>
-        Math.abs(Math.sin(c * 12.9898 + i * 78.233 + a) * 43758.5453) % 1;
-      const angle = hashed(1) * Math.PI * 2,
-        reach = 0.12 + Math.sqrt(hashed(2)) * (0.3 + city.size * 0.55);
-      const x = city.position.x + Math.cos(angle) * reach,
-        z = city.position.z + Math.sin(angle) * reach;
-      const w = 0.13 + hashed(3) * 0.1;
-      if (
-        !plan.onLand(x, -z, 0.15) ||
-        nearPoint(roadPoints, x, z, 0.1 + w * 0.6)
-      )
-        continue;
-      // Towers rise toward the middle, so each city reads as a downtown.
-      const core = Math.max(0.25, 1 - reach / (0.5 + city.size * 0.55));
-      city.towers.push({
-        x,
-        z,
-        w,
-        h: (0.22 + hashed(4) * 0.3) * (0.5 + city.size * core * 1.3),
-        seed: hashed(5),
-        grow: 0,
-      });
+    const hashed = (i: number, a: number) =>
+      Math.abs(Math.sin(c * 12.9898 + i * 78.233 + a * 37.719) * 43758.5453) %
+      1;
+    const reach = 0.4 + city.size * 0.5;
+    // Each frontage: points along a road from the centre outwards.
+    const frontages: { x: number; z: number }[][] = [];
+    for (const road of roads)
+      for (const fromStart of [true, false]) {
+        const end = fromStart ? road.points[0] : road.points.at(-1)!;
+        if (Math.hypot(end.x - city.position.x, end.z - city.position.z) > 0.05)
+          continue;
+        const ordered = fromStart ? road.points : [...road.points].reverse();
+        frontages.push(
+          ordered.filter(
+            (p) =>
+              Math.hypot(p.x - city.position.x, p.z - city.position.z) <= reach,
+          ),
+        );
+      }
+    // A town without a road still gets a short main street's worth of houses.
+    if (!frontages.length) {
+      const heading = hashed(0, 1) * Math.PI;
+      for (const dir of [1, -1])
+        frontages.push(
+          Array.from({ length: Math.round(reach / 0.14) + 1 }, (_, i) => ({
+            x: city.position.x + Math.cos(heading) * dir * i * 0.14,
+            z: city.position.z + Math.sin(heading) * dir * i * 0.14,
+          })),
+        );
     }
-    // Suburbs held in reserve: they fill in as the region's economy grows.
-    const extra = Math.round(4 + city.size * 8);
-    for (let i = 0; i < extra; i++) {
-      const hashed = (a: number) =>
-        Math.abs(Math.sin(c * 39.346 + i * 11.135 + a * 7.7) * 24634.6345) % 1;
-      const angle = hashed(1) * Math.PI * 2,
-        reach = 0.2 + Math.sqrt(hashed(2)) * (0.45 + city.size * 0.7);
-      const x = city.position.x + Math.cos(angle) * reach,
-        z = city.position.z + Math.sin(angle) * reach;
-      const w = 0.11 + hashed(3) * 0.09;
+    const candidates: Tower[] = [];
+    frontages.forEach((line, f) => {
+      for (let i = 1; i < line.length; i++) {
+        const a = line[i - 1],
+          b = line[i];
+        const length = Math.hypot(b.x - a.x, b.z - a.z) || 1;
+        const nx = -(b.z - a.z) / length,
+          nz = (b.x - a.x) / length;
+        // Rows behind the street front stand clear of a railway that may run
+        // beside the road; bigger towns have more of them, more densely.
+        const rows = city.size >= 0.85 ? 3 : 2;
+        for (let row = 0; row < rows; row++)
+          for (const side of [-1, 1]) {
+            const k = f * 400 + i * 6 + row * 2 + (side > 0 ? 1 : 0);
+            if (hashed(k, 4) < (row ? 0.95 - city.size * 0.6 : 0.1)) continue;
+            const w = 0.07 + hashed(k, 3) * 0.05;
+            const offset = (row ? 0.22 + row * 0.17 : 0.15) + w * 0.5;
+            const x = (a.x + b.x) / 2 + nx * side * offset,
+              z = (a.z + b.z) / 2 + nz * side * offset;
+            if (
+              !plan.onLand(x, -z, 0.1) ||
+              nearPoint(roadPoints, x, z, 0.13 + w * 0.5)
+            )
+              continue;
+            const distance = Math.hypot(
+              x - city.position.x,
+              z - city.position.z,
+            );
+            const core = Math.max(0.2, 1 - distance / reach);
+            candidates.push({
+              x,
+              z,
+              w,
+              h:
+                (0.12 + hashed(k, 5) * 0.16) * (0.55 + city.size * core * 1.25),
+              seed: hashed(k, 6),
+              grow: 0,
+            });
+          }
+      }
+    });
+    // Nearest the centre first, so growth adds suburbs rather than downtown.
+    candidates.sort(
+      (p, q) =>
+        Math.hypot(p.x - city.position.x, p.z - city.position.z) -
+        Math.hypot(q.x - city.position.x, q.z - city.position.z),
+    );
+    const kept: Tower[] = [];
+    for (const tower of candidates)
       if (
-        !plan.onLand(x, -z, 0.15) ||
-        nearPoint(roadPoints, x, z, 0.1 + w * 0.6) ||
-        city.towers.some((t) => Math.hypot(t.x - x, t.z - z) < (t.w + w) * 0.6)
+        !kept.some(
+          (other) =>
+            Math.hypot(other.x - tower.x, other.z - tower.z) <
+            (other.w + tower.w) * 0.62,
+        )
       )
-        continue;
-      const core = Math.max(0.25, 1 - reach / (0.6 + city.size * 0.7));
-      city.towers.push({
-        x,
-        z,
-        w,
-        h: (0.2 + hashed(4) * 0.28) * (0.5 + city.size * core * 1.2),
-        seed: hashed(5),
-        grow: (i + 0.5) / extra,
-      });
-    }
+        kept.push(tower);
+    const opening = Math.ceil(kept.length * 0.7);
+    kept.forEach((tower, i) => {
+      tower.grow =
+        i < opening ? 0 : (i - opening + 0.5) / (kept.length - opening);
+    });
+    city.towers = kept;
   });
   cache.set(world, network);
   return network;

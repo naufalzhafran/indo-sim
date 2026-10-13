@@ -37,7 +37,8 @@ class SceneBoundary extends Component<
   static getDerivedStateFromError() {
     return { failed: true };
   }
-  componentDidCatch() {
+  componentDidCatch(error: unknown) {
+    console.error("[3D] Scene crashed, falling back to 2D:", error);
     this.props.onFailure();
   }
   render() {
@@ -131,8 +132,9 @@ export default function WorldMap({
     if (!map || mode !== "3d") return;
     let live = true;
     setSceneDrawn(false);
-    const unavailable = () => {
+    const unavailable = (reason?: unknown) => {
       if (!live) return;
+      console.error("[3D] Unavailable, falling back to 2D:", reason ?? "WebGL2 not supported");
       setFailure(true);
       preparationCallbacks.current.onFinish();
       preparationCallbacks.current.onMode("2d");
@@ -145,8 +147,8 @@ export default function WorldMap({
         return;
       }
       probe.getExtension("WEBGL_lose_context")?.loseContext();
-    } catch {
-      unavailable();
+    } catch (error) {
+      unavailable(error);
       return;
     }
     import("./worldLoader")
@@ -154,7 +156,7 @@ export default function WorldMap({
       .then((world) => {
         if (live) setPrepared({ map, world });
       })
-      .catch(unavailable);
+      .catch((error) => unavailable(error));
     return () => {
       live = false;
     };

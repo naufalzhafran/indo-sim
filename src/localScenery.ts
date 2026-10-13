@@ -227,8 +227,8 @@ export function getLocalScenery(world: WorldGeometry): LocalSceneryChunk[] {
   ) => {
     const scale =
       kind === "house"
-        ? 0.32 + random(seed + 9) * 0.1
-        : 0.27 + random(seed + 9) * 0.09;
+        ? 0.24 + random(seed + 9) * 0.075
+        : 0.2 + random(seed + 9) * 0.07;
     const radius = scale * 0.75;
     if (
       !markerFree(x, z, p) ||

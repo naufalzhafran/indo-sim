@@ -59,7 +59,7 @@ import WorldCamera, { type CameraAction } from "./WorldCamera";
 import LocalSceneryScene from "./LocalSceneryScene";
 import WorldSun from "./WorldSun";
 import TransportScene from "./TransportScene";
-import CrisisScenery from "./CrisisScenery";
+import CrisisScenery from "./CrisisSceneryScene";
 import { buildTransportNetwork } from "./transportNetwork";
 import { planFleet, regionGrowth } from "./transportTraffic";
 import { getPalmModels } from "./localSceneryModels";
@@ -596,6 +596,7 @@ function Contents(props: WorldSceneProps) {
   useEffect(() => {
     const lost = (e: Event) => {
       e.preventDefault();
+      console.error("[3D] WebGL context lost, falling back to 2D");
       onFailure();
     };
     gl.domElement.addEventListener("webglcontextlost", lost);

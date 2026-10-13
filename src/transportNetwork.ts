@@ -9,7 +9,7 @@ import {
   drapeOver,
   landPlanner,
   onRoadOrCity,
-  routeAwayFromRoads,
+  trunkSnapper,
   type Road,
 } from "./roadNetwork";
 import { regionForProvince } from "./engine/gameRegions";
@@ -35,6 +35,9 @@ export type RailLine = TransportPath & {
   region: RegionId;
   /** Lines Indonesia already runs; the others open with intercity rail policy. */
   baseline: boolean;
+  /** Where the track carries on through a station into another line, that line's next point. */
+  before?: { x: number; y: number; z: number };
+  after?: { x: number; y: number; z: number };
 };
 export type Airport = {
   id: string;
@@ -115,92 +118,85 @@ const FERRY_LINES: [string, string][] = [
   ["kayangan", "pototano"],
   ["sape", "labuan-bajo"],
 ];
-/** Trunk corridors that already carry trains: Java's lines and South Sumatra. */
+/** Trunk corridors that already carry trains: Java's main line and South Sumatra. */
 export const BASELINE_RAIL = new Set([
-  "merak-jakarta",
-  "jakarta-bandung",
-  "bandung-yogyakarta",
-  "semarang-solo",
+  "jakarta-yogyakarta",
   "yogyakarta-surabaya",
-  "surabaya-banyuwangi",
   "palembang-bandar-lampung",
 ]);
+/** How far a railway runs from the road it follows, and how far it takes to reach its station. */
+const RAIL_OFFSET = 0.22;
+const STATION_BLEND = 0.35;
+
+const smoothstep = (t: number) => {
+  const x = Math.max(0, Math.min(1, t));
+  return x * x * (3 - 2 * x);
+};
+
 /**
- * Java's railways run inland along the island's southern half, through the
- * towns the real lines serve, so they keep clear of the north-coast road:
- * [id, from city, [lon, lat] stops along the way, to city or a last stop].
+ * A railway laid alongside a road, on `side` or else on whichever side has
+ * more room. Where the ground gives out it tucks in toward the road instead
+ * of leaving the island.
  */
-const JAVA_RAIL: [
-  string,
-  string,
-  [number, number][],
-  string | [number, number],
-][] = [
-  [
-    "merak-jakarta",
-    "merak",
-    [
-      [106.25, -6.36],
-      [106.55, -6.33],
-    ],
-    "jakarta",
-  ],
-  [
-    "jakarta-bandung",
-    "jakarta",
-    [
-      [106.8, -6.6],
-      [106.93, -6.92],
-      [107.3, -6.95],
-    ],
-    "bandung",
-  ],
-  [
-    "bandung-yogyakarta",
-    "bandung",
-    [
-      [107.9, -7.2],
-      [108.22, -7.33],
-      [108.54, -7.37],
-      [109.0, -7.55],
-      [109.65, -7.65],
-    ],
-    "yogyakarta",
-  ],
-  [
-    "yogyakarta-surabaya",
-    "yogyakarta",
-    [
-      [110.82, -7.57],
-      [111.52, -7.63],
-      [112.1, -7.6],
-      [112.5, -7.45],
-    ],
-    "surabaya",
-  ],
-  [
-    "surabaya-banyuwangi",
-    "surabaya",
-    [
-      [112.6, -7.62],
-      [112.63, -7.98],
-      [113.0, -8.18],
-      [113.7, -8.2],
-      [114.0, -8.32],
-    ],
-    "banyuwangi",
-  ],
-  // A branch that joins the southern main line at Solo; laid last so it can.
-  [
-    "semarang-solo",
-    "semarang",
-    [
-      [110.6, -7.1],
-      [110.9, -7.2],
-    ],
-    [110.82, -7.57],
-  ],
-];
+function laneBeside(
+  road: Road,
+  plan: ReturnType<typeof landPlanner>,
+  forced?: number,
+) {
+  const pts = road.points;
+  const last = pts.length - 1;
+  // At a city where the road carries on, the end normal looks past the city
+  // into the next road, so the two railways beside them line up exactly.
+  const normals = pts.map((_, i) => {
+    const a =
+        i === 0
+          ? (road.before ?? pts[0])
+          : i === last
+            ? pts[i - 1]
+            : pts[Math.max(0, i - 2)],
+      b =
+        i === last
+          ? (road.after ?? pts[last])
+          : i === 0
+            ? pts[1]
+            : pts[Math.min(last, i + 2)];
+    const length = Math.hypot(b.x - a.x, b.z - a.z) || 1;
+    return new Vector2(-(b.z - a.z) / length, (b.x - a.x) / length);
+  });
+  const at = (i: number, side: number, reach: number) =>
+    new Vector2(
+      pts[i].x + normals[i].x * side * reach,
+      -(pts[i].z + normals[i].y * side * reach),
+    );
+  const room = (side: number) =>
+    pts.reduce((sum, _, i) => {
+      const p = at(i, side, RAIL_OFFSET);
+      return sum + Number(plan.onLand(p.x, p.y, 0.1));
+    }, 0);
+  const rooms = { [1]: room(1), [-1]: room(-1) } as Record<number, number>;
+  const side = forced ?? (rooms[1] >= rooms[-1] ? 1 : -1);
+  // Each point keeps as much of the offset as the ground allows, then the
+  // offsets are smoothed so the line doesn't jitter at the coast.
+  const reach = pts.map((_, i) => {
+    for (const r of [RAIL_OFFSET, RAIL_OFFSET * 0.65, RAIL_OFFSET * 0.35, 0]) {
+      const p = at(i, side, r);
+      if (plan.onLand(p.x, p.y, 0.08)) return r;
+    }
+    return 0;
+  });
+  for (let round = 0; round < 4; round++)
+    for (let i = 1; i < reach.length - 1; i++)
+      reach[i] = Math.min(
+        reach[i],
+        (reach[i - 1] + 2 * reach[i] + reach[i + 1]) / 4,
+      );
+  return {
+    side,
+    rooms,
+    points: pts.map((_, i) => at(i, side, reach[i])),
+  };
+}
+
 /** Airport hubs, by road-network city id. */
 const AIRPORT_CITIES = [
   "medan",
@@ -224,8 +220,6 @@ const STEP = 0.3;
 /** Railways are sampled finely enough to follow the hills between points. */
 const RAIL_STEP = 0.14;
 const CELL = 0.25;
-/** Stations and track keep at least this far from a road's centre line. */
-const RAIL_ROAD_CLEARANCE = 0.26;
 /** Half the gravel bed's width, which the track must clear. */
 const RAIL_HALF_WIDTH = 0.04;
 
@@ -604,91 +598,90 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
 
   // Rail runs beside each road corridor, on the side with more room.
   const rail: RailLine[] = [];
-  const railCells = new Set<string>();
-  // Each city's railway station stands apart from its road junction, so trains
-  // and cars never share the same spot. Every line calling there uses it.
-  const stations = new Map<string, Vector2>();
-  const stationAt = (id: string) => {
-    if (stations.has(id)) return stations.get(id)!;
-    const city = roads.cities.find((c) => c.id === id);
-    if (!city) return undefined;
-    const centre = new Vector2(city.position.x, -city.position.z);
-    let found = centre;
-    search: for (let r = 0.3; r <= 0.9; r += 0.05)
-      for (let k = 0; k < 24; k++) {
-        // Start the sweep inland of south, where the railways run.
-        const a =
-          -Math.PI / 2 + (k % 2 ? 1 : -1) * Math.ceil(k / 2) * (Math.PI / 12);
-        const x = centre.x + Math.cos(a) * r,
-          y = centre.y + Math.sin(a) * r;
-        if (!plan.onLand(x, y, 0.1)) continue;
-        if (onRoadOrCity(roads, x, -y, RAIL_ROAD_CLEARANCE, 0)) continue;
-        found = new Vector2(x, y);
-        break search;
-      }
-    stations.set(id, found);
-    return found;
-  };
-  /** A branch ends on the track already laid nearest its last stop, so it joins it. */
-  const junction = (stop: [number, number]) => {
-    const target = projectCoordinate(stop);
-    let best = target,
-      near = 0.8;
-    for (const line of rail)
-      for (const p of line.points) {
-        const d = Math.hypot(p.x - target.x, -p.z - target.y);
-        if (d < near) ((near = d), (best = new Vector2(p.x, -p.z)));
-      }
-    return best;
+  const railTrunks = trunkSnapper();
+  /** Points near a line laid earlier settle onto it, so branches meet it cleanly. */
+  const settleOnTrunks = (points: Vector3[]) => {
+    // The ends are stations or junctions that stay where they are.
+    const ends = [points[0], points[points.length - 1]];
+    for (let i = 1; i < points.length - 1; i++) {
+      // Near a station each line keeps its own run in, so lines carrying on
+      // through it stay straight instead of being pulled onto each other.
+      if (
+        ends.some((e) => Math.hypot(e.x - points[i].x, e.z - points[i].z) < 0.3)
+      )
+        continue;
+      const [x, z] = railTrunks.snap(points[i].x, points[i].z);
+      points[i].x = x;
+      points[i].z = z;
+    }
+    railTrunks.add(points);
   };
   const cityOf = (p: Vector3) =>
     roads.cities.reduce((best, c) =>
       c.position.distanceTo(p) < best.position.distanceTo(p) ? c : best,
     ).id;
-  for (const [id, from, stops, to] of JAVA_RAIL) {
-    const start = stationAt(from),
-      end = typeof to === "string" ? stationAt(to) : junction(to);
-    if (!start || !end) continue;
-    // Each leg between stops is routed overland, steering round the roads.
-    const waypoints = [start, ...stops.map(projectCoordinate), end];
-    const path: Vector2[] = [];
-    for (let i = 1; i < waypoints.length; i++) {
-      const leg = routeAwayFromRoads(
-        world,
-        plan,
-        roads,
-        waypoints[i - 1],
-        waypoints[i],
-        RAIL_ROAD_CLEARANCE,
-        railCells,
-      ) ?? [waypoints[i - 1], waypoints[i]];
-      path.push(...(i > 1 ? leg.slice(1) : leg));
-    }
-    const line = samplePath(
-      path,
-      (p) => Math.max(0.03, world.surfaceHeight(p)),
-      RAIL_STEP,
-    );
-    drapeOver(world, line.points, RAIL_HALF_WIDTH);
-    rail.push({ id, region: "java", baseline: BASELINE_RAIL.has(id), ...line });
-  }
-  for (const road of roads.roads) {
-    // Java has its own inland railways, laid above.
-    if (road.provinces.every((p) => regionForProvince(p)?.id === "java"))
-      continue;
-    const first = stationAt(cityOf(road.points[0])),
-      last = stationAt(cityOf(road.points[road.points.length - 1]));
-    if (!first || !last) continue;
-    const path = routeAwayFromRoads(
-      world,
-      plan,
-      roads,
-      first,
-      last,
-      RAIL_ROAD_CLEARANCE,
-      railCells,
-    );
-    if (!path) continue;
+  // Each road gets a railway beside it. Lines that meet at a city keep to the
+  // same side of the road, so they run into one shared station instead of
+  // forking across the road.
+  const endsAt = (road: Road) => [
+    cityOf(road.points[0]),
+    cityOf(road.points[road.points.length - 1]),
+  ];
+  const lanes = roads.roads
+    .filter((road) => road.points.length >= 3)
+    .map((road) => ({ road, cities: endsAt(road), ...laneBeside(road, plan) }));
+  lanes.forEach((lane, i) => {
+    for (const before of lanes.slice(0, i))
+      for (const [k, city] of lane.cities.entries()) {
+        const j = before.cities.indexOf(city);
+        if (j < 0) continue;
+        const theirs = j ? before.points.at(-1)! : before.points[0];
+        const end = (side: number) => {
+          const p = laneBeside(lane.road, plan, side).points;
+          return k ? p.at(-1)! : p[0];
+        };
+        const other = -lane.side;
+        // Switch sides to meet the earlier line, unless that side is cramped.
+        if (
+          end(other).distanceTo(theirs) < end(lane.side).distanceTo(theirs) &&
+          lane.rooms[other] >= lane.rooms[lane.side] * 0.8
+        )
+          Object.assign(lane, laneBeside(lane.road, plan, other));
+      }
+  });
+  // A city's station sits where its lines arrive, beside the road.
+  const arrivals = new Map<string, Vector2[]>();
+  for (const lane of lanes)
+    lane.cities.forEach((city, k) => {
+      const end = k ? lane.points.at(-1)! : lane.points[0];
+      arrivals.set(city, [...(arrivals.get(city) ?? []), end]);
+    });
+  const stations = new Map(
+    [...arrivals].map(([city, ends]) => [
+      city,
+      ends
+        .reduce((sum, p) => sum.add(p), new Vector2())
+        .divideScalar(ends.length),
+    ]),
+  );
+  for (const { road, cities, points } of lanes) {
+    const first = stations.get(cities[0])!,
+      last = stations.get(cities[1])!;
+    const path = points.map((p, i) => {
+      const s = road.distances[i],
+        fromEnd = road.length - s;
+      // Ease from each station onto the line beside the road.
+      const out = new Vector2().lerpVectors(
+        first,
+        p,
+        smoothstep(s / STATION_BLEND),
+      );
+      return out.lerpVectors(
+        last,
+        out.clone(),
+        smoothstep(fromEnd / STATION_BLEND),
+      );
+    });
     const line = samplePath(
       path,
       (p) => Math.max(0.03, world.surfaceHeight(p)),
@@ -696,6 +689,7 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
     );
     // Cities whose stations coincide need no line of their own.
     if (line.length < 1) continue;
+    settleOnTrunks(line.points);
     drapeOver(world, line.points, RAIL_HALF_WIDTH);
     const counts = new Map<string, number>();
     for (const id of road.provinces) {
@@ -711,6 +705,32 @@ export function buildTransportNetwork(world: WorldGeometry): TransportNetwork {
       ...line,
     });
   }
+  // Lines that run on through a station join edge to edge, like the roads.
+  for (const [i, line] of rail.entries())
+    for (const other of rail.slice(i + 1))
+      for (const mine of [0, 1] as const)
+        for (const theirs of [0, 1] as const) {
+          const end = (l: RailLine, k: 0 | 1) =>
+            k ? l.points[l.points.length - 1] : l.points[0];
+          const next = (l: RailLine, k: 0 | 1) =>
+            k ? l.points[l.points.length - 2] : l.points[1];
+          const a = end(line, mine),
+            b = end(other, theirs);
+          if (Math.hypot(a.x - b.x, a.z - b.z) > 0.01) continue;
+          const u = next(line, mine).clone().sub(a),
+            v = next(other, theirs).clone().sub(b);
+          // Only lines that carry straight on, not branches doubling back.
+          if (
+            u.x * v.x + u.z * v.z >
+            -0.5 * Math.hypot(u.x, u.z) * Math.hypot(v.x, v.z)
+          )
+            continue;
+          a.y = b.y = Math.max(a.y, b.y);
+          const n = next(other, theirs),
+            m = next(line, mine);
+          line[mine ? "after" : "before"] = { x: n.x, y: n.y, z: n.z };
+          other[theirs ? "after" : "before"] = { x: m.x, y: m.y, z: m.z };
+        }
 
   // A runway on open, level ground just outside each hub city.
   const airports: Airport[] = [];

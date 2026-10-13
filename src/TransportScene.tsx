@@ -35,6 +35,14 @@ import {
 import { baseWorldZoom } from "./worldCameraMath";
 
 const RAIL_LIFT = 0.036;
+/**
+ * Hulls and aircraft are drawn well above true scale next to the roads, so
+ * they stay readable, but kept small enough that a ship is a fraction of an
+ * island rather than a third of one.
+ */
+const SHIP_SCALE = { cargo: 0.6, tolLaut: 0.55, ferry: 0.5 };
+const PLANE_SCALE = 0.6;
+const RUNWAY_SCALE = 0.7;
 const CRUISE = 2.6;
 const LOCOMOTIVE = new Color("#eb7057"),
   CARRIAGE = new Color("#fffaf0");
@@ -164,7 +172,7 @@ export default function TransportScene({
       transform.position.copy(airport.position);
       transform.position.y += 0.004;
       transform.rotation.set(0, -airport.heading, 0);
-      transform.scale.setScalar(1);
+      transform.scale.setScalar(RUNWAY_SCALE);
       transform.updateMatrix();
       mesh.setMatrixAt(i, transform.matrix);
     });
@@ -219,9 +227,9 @@ export default function TransportScene({
       mesh.count = plans.length;
       mesh.instanceMatrix.needsUpdate = true;
     };
-    ships(cargo.current, fleet.cargo, 3, 0.16, 1);
-    ships(tolLaut.current, fleet.tolLaut, 4, 0.12, 0.9);
-    ships(ferries.current, fleet.ferries, 3, 0.05, 0.7);
+    ships(cargo.current, fleet.cargo, 3, 0.12, SHIP_SCALE.cargo);
+    ships(tolLaut.current, fleet.tolLaut, 4, 0.1, SHIP_SCALE.tolLaut);
+    ships(ferries.current, fleet.ferries, 3, 0.04, SHIP_SCALE.ferry);
 
     // Fishing boats bob near the coast and only show up close.
     const near = Math.min(1, Math.max(0, (zoom - 2.5) / 1.5));
@@ -312,7 +320,7 @@ export default function TransportScene({
           pitch,
           "YXZ",
         );
-        transform.scale.setScalar(1);
+        transform.scale.setScalar(PLANE_SCALE);
         write(mesh, count++);
       }
       mesh.count = count;

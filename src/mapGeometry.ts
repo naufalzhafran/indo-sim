@@ -848,7 +848,7 @@ function scenery(
           houses.push({
             province,
             position: new Vector3(point.x, seat(0.15) + 0.005, -point.y),
-            scale: 0.3,
+            scale: 0.22,
             rotation,
           });
         else if (kind === "palm")
